@@ -28,7 +28,9 @@ public class ResponseData {
 	public static Map<String, Object> buildSuccessResponse(Object data) {
 		return buildResponse(ResponseEnum.SUCCESS, data);
 	}
-
+	public static Map<String, Object> buildSuccessResponseWithMeg(String msg) {
+		return buildResponse(ResponseEnum.SUCCESS,msg);
+	}
 	public static Map<String, Object> buildSuccessResponse() {
 		return buildSuccessResponse(null);
 	}

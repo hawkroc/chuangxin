@@ -47,28 +47,28 @@ public class IntAppuserController extends BaseController {
 		pd = this.getPageData();
 		String result = "00";
 		
-		try{
-			if(Tools.checkKey("USERNAME", pd.getString("FKEY"))){	//检验请求key值是否合法
-				if(AppUtil.checkParam("getAppuserByUsernmae", pd)){	//检查参数
-					pd = appuserService.findByUId(pd);
-					
-					map.put("pd", pd);
-					result = (null == pd) ?  "02" :  "01";
-					
-				}else {
-					result = "03";
-				}
-			}else{
-				result = "05";
-			}
-		}catch (Exception e){
-			logger.error(e.toString(), e);
-		}finally{
-			map.put("result", result);
-			logAfter(logger);
-		}
+//		try{
+//			if(Tools.checkKey("USERNAME", pd.getString("FKEY"))){	//检验请求key值是否合法
+//				if(AppUtil.checkParam("getAppuserByUsernmae", pd)){	//检查参数
+//					pd = appuserService.findByUId(pd);
+//					
+//					map.put("pd", pd);
+//					result = (null == pd) ?  "02" :  "01";
+//					
+//				}else {
+//					result = "03";
+//				}
+//			}else{
+//				result = "05";
+//			}
+//		}catch (Exception e){
+//			logger.error(e.toString(), e);
+//		}finally{
+//			map.put("result", result);
+//			logAfter(logger);
+//		}
 		
-		return ResponseData.buildSuccessResponse(map);
+		return ResponseData.buildSuccessResponseWithMeg("dsfdsfdsf");
 		///return AppUtil.returnObject(new PageData(), map);
 	}
 	
