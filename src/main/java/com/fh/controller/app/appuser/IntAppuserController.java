@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fh.controller.base.BaseController;
+import com.fh.controller.base.ResponseData;
 import com.fh.service.system.appuser.AppuserService;
 import com.fh.util.AppUtil;
 import com.fh.util.PageData;
@@ -67,7 +68,8 @@ public class IntAppuserController extends BaseController {
 			logAfter(logger);
 		}
 		
-		return AppUtil.returnObject(new PageData(), map);
+		return ResponseData.buildSuccessResponse(map);
+		///return AppUtil.returnObject(new PageData(), map);
 	}
 	
 
