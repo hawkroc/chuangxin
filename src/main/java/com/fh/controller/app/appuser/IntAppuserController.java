@@ -20,8 +20,12 @@ import com.fh.controller.base.BaseController;
 import com.fh.controller.base.ResponseData;
 import com.fh.entity.TestEntity;
 import com.fh.service.system.appuser.AppuserService;
-
+import com.fh.util.AppUtil;
+import com.fh.util.MD5;
 import com.fh.util.PageData;
+import com.fh.util.Tools;
+
+import net.sf.ehcache.Cache;
 
 /**
  * 会员-接口类
@@ -41,37 +45,37 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/getAppuserByUm")
 	@ResponseBody
-	public Object getAppuserByUsernmae() {
-		logBefore(logger, "test");
-		Map<String, Object> map = new HashMap<String, Object>();
+	public Object getAppuserByUsernmae(){
+		logBefore(logger, "根据用户名获取会员信息");
+		Map<String,Object> map = new HashMap<String,Object>();
 		PageData pd = new PageData();
 		pd = this.getPageData();
 		String result = "00";
-
-		// try{
-		// if(Tools.checkKey("USERNAME", pd.getString("FKEY"))){ //检验请求key值是否合法
-		// if(AppUtil.checkParam("getAppuserByUsernmae", pd)){ //检查参数
-		// pd = appuserService.findByUId(pd);
-		//
-		// map.put("pd", pd);
-		// result = (null == pd) ? "02" : "01";
-		//
-		// }else {
-		// result = "03";
-		// }
-		// }else{
-		// result = "05";
-		// }
-		// }catch (Exception e){
-		// logger.error(e.toString(), e);
-		// }finally{
-		// map.put("result", result);
-		// logAfter(logger);
-		// }
-
-		return ResponseData.buildSuccessResponseWithMeg("dsfdsfdsf");
-		/// return AppUtil.returnObject(new PageData(), map);
+		
+		try{
+			if(Tools.checkKey("USERNAME", pd.getString("FKEY"))){	//检验请求key值是否合法
+				if(AppUtil.checkParam("getAppuserByUsernmae", pd)){	//检查参数
+					pd = appuserService.findByUId(pd);
+					
+					map.put("pd", pd);
+					result = (null == pd) ?  "02" :  "01";
+					
+				}else {
+					result = "03";
+				}
+			}else{
+				result = "05";
+			}
+		}catch (Exception e){
+			logger.error(e.toString(), e);
+		}finally{
+			map.put("result", result);
+			logAfter(logger);
+		}
+		
+		return map;
 	}
+	
 
 	/**
 	 * 
@@ -80,10 +84,27 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/getTest", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
-	@Cacheable
+	@Cacheable(value ="myCache")
 	public Object getAppuserAll(@RequestBody TestEntity p) {
 		logBefore(logger, "TEST @RequestBody");
+System.out.println("ok");
 		return ResponseData.buildSuccessResponseWithMeg("" + p.getName() + p.getRole());
+
+	}
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/getTest5/{id}", method = RequestMethod.POST)
+	@ResponseBody
+
+	public Object getAppuserAllByCache(@PathVariable String id) {
+		logBefore(logger, "TEST cache");
+
+String s=MD5.md5(id);
+System.out.println(s);
+		return ResponseData.buildSuccessResponseWithMeg(s);
 
 	}
 

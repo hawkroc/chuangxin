@@ -4,11 +4,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.fh.dao.DaoSupport;
 import com.fh.entity.Page;
-import com.fh.entity.system.User;
+
 import com.fh.util.PageData;
 
 
@@ -29,7 +30,9 @@ public class AppuserService {
 	/*
 	* 通过loginname获取数据
 	*/
+	 @Cacheable(value="myCache", key="123456") 
 	public PageData findByUId(PageData pd)throws Exception{
+		 System.out.println("1dsfdsf");
 		return (PageData)dao.findForObject("AppuserMapper.findByUId", pd);
 	}
 	

@@ -2,9 +2,11 @@ package com.fh.util;
 
 import java.security.MessageDigest;
 
-public class MD5 {
 
+public class MD5 {
+ 
 	public static String md5(String str) {
+
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			md.update(str.getBytes());
