@@ -14,6 +14,24 @@
             diskExpiryThreadIntervalSeconds="120"  
             memoryStoreEvictionPolicy="LRU"  
             /> 
+            
+            
+            <cache name="myCache"         
+        maxElementsInMemory="1000"
+        maxElementsOnDisk="0" 
+        eternal="false" 
+        overflowToDisk="false"
+        diskPersistent="false" 
+        timeToIdleSeconds="120" 
+        timeToLiveSeconds="300"
+        diskSpoolBufferSizeMB="50" 
+        diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LFU" /> 
+            
+            
+            
+            
+            
       <!--  
     name：Cache的唯一标识  
     maxElementsInMemory：内存中最大缓存对象数  

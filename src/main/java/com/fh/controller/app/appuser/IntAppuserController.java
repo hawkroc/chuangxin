@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -79,6 +80,7 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/getTest", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
+	@Cacheable
 	public Object getAppuserAll(@RequestBody TestEntity p) {
 		logBefore(logger, "TEST @RequestBody");
 		return ResponseData.buildSuccessResponseWithMeg("" + p.getName() + p.getRole());
@@ -109,8 +111,10 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
+	
 	@RequestMapping(value = "/getTest3", method = RequestMethod.GET)
 	@ResponseBody
+   
 	public Object getAppuserAll3(@CookieValue(value = "userPhone", required = false) String phone,
 			@ModelAttribute("test") TestEntity p) {
 		logBefore(logger, "TEST2");
