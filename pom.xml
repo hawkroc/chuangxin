@@ -104,12 +104,12 @@
 			<version>${mysql-connector-java.version}</version>
 		</dependency>
 
-
+<!-- 
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-		</dependency>
+			<version>3.1.0</version>
+		</dependency> -->
 		<dependency>
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
@@ -391,13 +391,7 @@
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/mybatis-oscache-1.0.1.jar</systemPath>
 		</dependency>
 		<!-- ojdbc6 -->
-		<dependency>
-			<groupId>ojdbc6</groupId>
-			<artifactId>ojdbc6</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/ojdbc6.jar</systemPath>
-		</dependency>
+	
 		<!-- pinyin4j-2.5.0 -->
 		<dependency>
 			<groupId>pinyin4j</groupId>
