@@ -105,11 +105,11 @@
 		</dependency>
 
 
-		<dependency>
+	<!-- 	<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>aopalliance</groupId>
 			<artifactId>aopalliance</artifactId>
@@ -168,12 +168,12 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
+			<version>2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
+    <artifactId>commons-lang</artifactId>
+    <version>2.6</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -271,12 +271,12 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.9</version>
+			<version>1.7.21</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.9</version>
+			<version>1.7.21</version>
 		</dependency>
 		<dependency>
 			<groupId>taglibs</groupId>
@@ -288,11 +288,11 @@
 			<artifactId>wsdl4j</artifactId>
 			<version>1.6.3</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>javax.websocket</groupId>
 			<artifactId>javax.websocket-api</artifactId>
 			<version>1.1</version>
-		</dependency>
+		</dependency> -->
 		<!-- yz Add Plugin -->
 		<!-- axis-ant -->
 		<dependency>
@@ -351,13 +351,13 @@
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/json-lib-2.4-jdk15.jar</systemPath>
 		</dependency>
 		<!-- jackjson-all-1.7.6 -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>jackson</groupId>
 			<artifactId>jackson</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/jackson-all-1.7.6.jar</systemPath>
-		</dependency>
+		</dependency> -->
 		<!-- jpush-java-libraryV2 -->
 		<dependency>
 			<groupId>jpush</groupId>
@@ -383,13 +383,13 @@
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/mybatis-ehcache-1.0.3.jar</systemPath>
 		</dependency>
 		<!-- mybatis-oscache-1.0 -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>mybatis-oscache</groupId>
 			<artifactId>mybatis-oscache</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/mybatis-oscache-1.0.1.jar</systemPath>
-		</dependency>
+		</dependency> -->
 		
 		<!-- pinyin4j-2.5.0 -->
 		<dependency>
