@@ -35,6 +35,16 @@
         </property>  
 	</bean> 
 	
+	
+	<!--  use thread pool-->
+<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+    <property name="corePoolSize" value="3" />
+    <property name="maxPoolSize" value="10" />
+    <property name="queueCapacity" value="25" />
+</bean>
+	
+	
+	
 	<!-- 阿里 druid数据库连接池 -->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">  
          <!-- 数据库基本信息配置 -->
