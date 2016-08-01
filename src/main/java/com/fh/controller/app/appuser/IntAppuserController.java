@@ -53,19 +53,13 @@ public class IntAppuserController extends BaseController {
 		String result = "00";
 		
 		try{
-			if(Tools.checkKey("USERNAME", pd.getString("FKEY"))){	//检验请求key值是否合法
-				if(AppUtil.checkParam("getAppuserByUsernmae", pd)){	//检查参数
+			
 					pd = appuserService.findByUId(pd);
 					
 					map.put("pd", pd);
 					result = (null == pd) ?  "02" :  "01";
 					
-				}else {
-					result = "03";
-				}
-			}else{
-				result = "05";
-			}
+				
 		}catch (Exception e){
 			logger.error(e.toString(), e);
 		}finally{
