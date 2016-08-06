@@ -20,12 +20,10 @@ import com.fh.controller.base.BaseController;
 import com.fh.controller.base.ResponseData;
 import com.fh.entity.TestEntity;
 import com.fh.service.system.appuser.AppuserService;
-import com.fh.util.AppUtil;
+
 import com.fh.util.MD5;
 import com.fh.util.PageData;
-import com.fh.util.Tools;
 
-import net.sf.ehcache.Cache;
 
 /**
  * 会员-接口类
