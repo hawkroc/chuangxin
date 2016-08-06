@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>FH</groupId>
-	<artifactId>FHM</artifactId>
+	<groupId>SOS</groupId>
+	<artifactId>SOS</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>FHM Maven Webapp</name>
+	<name> Webapp</name>
 	<url>http://maven.apache.org</url>
 
 
@@ -295,13 +295,13 @@
 		</dependency>
 		<!-- yz Add Plugin -->
 		<!-- axis-ant -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>axis-ant</groupId>
 			<artifactId>axis-ant</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/axis-ant.jar</systemPath>
-		</dependency>
+		</dependency> -->
 		<!-- fcexporter -->
 		<dependency>
 			<groupId>fcexporter</groupId>
@@ -351,13 +351,13 @@
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/json-lib-2.4-jdk15.jar</systemPath>
 		</dependency>
 		<!-- jackjson-all-1.7.6 -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>jackson</groupId>
 			<artifactId>jackson</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/jackson-all-1.7.6.jar</systemPath>
-		</dependency>
+		</dependency> -->
 		<!-- jpush-java-libraryV2 -->
 		<dependency>
 			<groupId>jpush</groupId>

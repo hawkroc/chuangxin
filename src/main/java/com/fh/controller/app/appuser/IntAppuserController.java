@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.fh.controller.base.BaseController;
+import com.fh.controller.base.LoginRequest;
 import com.fh.controller.base.ResponseData;
 import com.fh.entity.TestEntity;
 import com.fh.service.system.appuser.AppuserService;
@@ -74,15 +75,42 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
+	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+	
+	public Object login(@RequestBody LoginRequest p) {
+		logBefore(logger, "TEST @LoginRequest");
+
+	//	return ResponseData.buildSuccessResponseWithMeg("" + p.getAction_version() + p.getApi_version()+p.getAction().getPhone()+p.getAction().getPassword());
+		return ResponseData.creatResponseWithSuccessMessage(null, p);
+
+	}
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
 	@RequestMapping(value = "/getTest", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
-	@Cacheable(value ="myCache")
+	
 	public Object getAppuserAll(@RequestBody TestEntity p) {
 		logBefore(logger, "TEST @RequestBody");
-System.out.println("ok");
+
 		return ResponseData.buildSuccessResponseWithMeg("" + p.getName() + p.getRole());
 
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * 
 	 * @param id

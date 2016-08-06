@@ -18,7 +18,7 @@ public class BaseController {
 	
 	protected Logger logger = Logger.getLogger(this.getClass());
 
-	private static final long serialVersionUID = 6357869213649815390L;
+	
 	
 	/**
 	 * 得到PageData

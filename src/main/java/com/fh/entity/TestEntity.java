@@ -16,5 +16,22 @@ public class TestEntity extends BaseEntity {
 	}
 	private String role;
 	private String name;
+	private String phone;
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	private String password;
+	
+
+
 
 }
