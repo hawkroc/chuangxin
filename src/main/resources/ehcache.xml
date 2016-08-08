@@ -29,7 +29,19 @@
         memoryStoreEvictionPolicy="LFU" /> 
             
             
-            
+               
+            <cache name="myThought"         
+        maxElementsInMemory="10000"
+        maxElementsOnDisk="0" 
+        eternal="false" 
+        overflowToDisk="false"
+        diskPersistent="false" 
+        timeToIdleSeconds="7200" 
+        timeToLiveSeconds="7800"
+        diskSpoolBufferSizeMB="50" 
+        diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LFU" /> 
+               
             
             
       <!--  
