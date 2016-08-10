@@ -1,9 +1,14 @@
 package com.fh.controller.app.appuser;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -13,8 +18,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.fh.controller.base.BaseController;
 import com.fh.controller.base.LoginRequest;
@@ -24,7 +34,6 @@ import com.fh.service.system.appuser.AppuserService;
 
 import com.fh.util.MD5;
 import com.fh.util.PageData;
-
 
 /**
  * 会员-接口类
@@ -44,31 +53,29 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/getAppuserByUm")
 	@ResponseBody
-	public Object getAppuserByUsernmae(){
+	public Object getAppuserByUsernmae() {
 		logBefore(logger, "根据用户名获取会员信息");
-		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		PageData pd = new PageData();
 		pd = this.getPageData();
 		String result = "00";
-		
-		try{
-			
-					pd = appuserService.findByUId(pd);
-					
-					map.put("pd", pd);
-					result = (null == pd) ?  "02" :  "01";
-					
-				
-		}catch (Exception e){
+
+		try {
+
+			pd = appuserService.findByUId(pd);
+
+			map.put("pd", pd);
+			result = (null == pd) ? "02" : "01";
+
+		} catch (Exception e) {
 			logger.error(e.toString(), e);
-		}finally{
+		} finally {
 			map.put("result", result);
 			logAfter(logger);
 		}
-		
+
 		return map;
 	}
-	
 
 	/**
 	 * 
@@ -77,18 +84,18 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
-	
+
 	public Object login(@RequestBody LoginRequest p) {
 		logBefore(logger, "TEST @LoginRequest");
 
-	//	return ResponseData.buildSuccessResponseWithMeg("" + p.getAction_version() + p.getApi_version()+p.getAction().getPhone()+p.getAction().getPassword());
+		// return ResponseData.buildSuccessResponseWithMeg("" +
+		// p.getAction_version() +
+		// p.getApi_version()+p.getAction().getPhone()+p.getAction().getPassword());
+
 		return ResponseData.creatResponseWithSuccessMessage(null, p);
 
 	}
-	
-	
-	
-	
+
 	/**
 	 * 
 	 * @param p
@@ -96,21 +103,14 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/getTest", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
-	
+
 	public Object getAppuserAll(@RequestBody TestEntity p) {
 		logBefore(logger, "TEST @RequestBody");
 
 		return ResponseData.buildSuccessResponseWithMeg("" + p.getName() + p.getRole());
 
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * 
 	 * @param id
@@ -122,8 +122,8 @@ public class IntAppuserController extends BaseController {
 	public Object getAppuserAllByCache(@PathVariable String id) {
 		logBefore(logger, "TEST cache");
 
-String s=MD5.md5(id);
-System.out.println(s);
+		String s = MD5.md5(id);
+		System.out.println(s);
 		return ResponseData.buildSuccessResponseWithMeg(s);
 
 	}
@@ -152,15 +152,80 @@ System.out.println(s);
 	 * @param p
 	 * @return
 	 */
-	
+
 	@RequestMapping(value = "/getTest3", method = RequestMethod.GET)
 	@ResponseBody
-   
+
 	public Object getAppuserAll3(@CookieValue(value = "userPhone", required = false) String phone,
 			@ModelAttribute("test") TestEntity p) {
 		logBefore(logger, "TEST2");
 		return ResponseData.buildSuccessResponseWithMeg("" + phone);
 		/// return AppUtil.returnObject(new PageData(), map);
 	}
-
+	
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
+	 @RequestMapping("springUpload")
+	    public String  springUpload(HttpServletRequest request) throws IllegalStateException, IOException
+	    {
+	         long  startTime=System.currentTimeMillis();
+	         //将当前上下文初始化给  CommonsMutipartResolver （多部分解析器）
+	        CommonsMultipartResolver multipartResolver=new CommonsMultipartResolver(
+	                request.getSession().getServletContext());
+	        //检查form中是否有enctype="multipart/form-data"
+	        if(multipartResolver.isMultipart(request))
+	        {
+	            //将request变成多部分request
+	            MultipartHttpServletRequest multiRequest=(MultipartHttpServletRequest)request;
+	           //获取multiRequest 中所有的文件名
+	            Iterator iter=multiRequest.getFileNames();
+	             
+	            while(iter.hasNext())
+	            {
+	                //一次遍历所有文件
+	                MultipartFile file=multiRequest.getFile(iter.next().toString());
+	                if(file!=null)
+	                {
+	                    String path="E:/springUpload"+file.getOriginalFilename();
+	                    //上传
+	                    file.transferTo(new File(path));
+	                }
+	                 
+	            }
+	           
+	        }
+	        long  endTime=System.currentTimeMillis();
+	        System.out.println("方法三的运行时间："+String.valueOf(endTime-startTime)+"ms");
+	    return "/success"; 
+	    }
+	 
+	 
+	 /**
+	  * 
+	  * @param file
+	  * @return
+	  * @throws IOException
+	  */
+	 @RequestMapping("fileUpload2")
+	    public String  fileUpload2(@RequestParam("file") CommonsMultipartFile file) throws IOException {
+	         long  startTime=System.currentTimeMillis();
+	        System.out.println("fileName："+file.getOriginalFilename());
+	        String path="E:/"+new Date().getTime()+file.getOriginalFilename();
+	         
+	        File newFile=new File(path);
+	        //通过CommonsMultipartFile的方法直接写文件（注意这个时候）
+	        file.transferTo(newFile);
+	        long  endTime=System.currentTimeMillis();
+	        System.out.println("方法二的运行时间："+String.valueOf(endTime-startTime)+"ms");
+	        return "/success"; 
+	    }
+	 
+	 
+	 
+	 
 }
