@@ -251,7 +251,7 @@ public class Tools {
 	
 	
 	public static void main(String[] args) {
-		System.out.println(getRandomNum());
+		System.out.println(Tools.getRandomNum());
 	}
 	
 }

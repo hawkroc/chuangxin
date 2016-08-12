@@ -31,39 +31,30 @@ public class ResponseData {
 	public static final String Error_Count="error_count";//int
 	public static final String Result_Code="result_code";//int
 	
-	public static Map<String, Object> creatResponseWithFullMessage(int RCount, int ECount,String EMessages,String RFRequest,Object rec) {
+	public static Map<String, Object> creatResponseWithFullMessage(int RCount, int ECount,String EMessages,String RFRequest,Object obj) {
 		final Map<String, Object> result = new HashMap<String, Object>();
 		//result.put(CODE_KEY, code);
 		result.put(Result_Code, RCount);
 		result.put(Error_Count, ECount);
 		result.put(Error_Messages, EMessages);
-		result.put(Record_For_Request, RFRequest);
-		result.put(DATA_KEY, rec);
-		return result;
-	}
-	
-	
-	public static Map<String, Object> creatResponseWithSuccessMessage(String RFRequest,Object obj) {
-		final Map<String, Object> result = new HashMap<String, Object>();
-		//result.put(CODE_KEY, code);
-		result.put(Result_Code, 0);
-		result.put(Error_Count, 0);
-		result.put(Error_Messages, null);
 		result.put(Record_For_Request, RFRequest);
 		result.put(DATA_KEY, obj);
 		return result;
 	}
 	
 	
+	public static Map<String, Object> creatResponseWithSuccessMessage(String RFRequest,Object obj) {
+		final Map<String, Object> result = new HashMap<String, Object>();
+		
+		return creatResponseWithFullMessage(0,0,null,RFRequest,obj);
+	}
+	
+	
 
 	public static Map<String, Object> creatResponseWithFailMessage(int RCount, int ECount,String EMessages,String RFRequest) {
 		final Map<String, Object> result = new HashMap<String, Object>();
-		//result.put(CODE_KEY, code);
-		result.put(Result_Code, RCount);
-		result.put(Error_Count, ECount);
-		result.put(Error_Messages, EMessages);
-		result.put(Record_For_Request, RFRequest);
-		return result;
+	
+		return creatResponseWithFullMessage(RCount,ECount,EMessages,RFRequest,null);
 	}
 	
 	
