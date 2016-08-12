@@ -44,7 +44,7 @@ public class ResponseData {
 	
 	
 	public static Map<String, Object> creatResponseWithSuccessMessage(String RFRequest,Object obj) {
-		final Map<String, Object> result = new HashMap<String, Object>();
+		
 		
 		return creatResponseWithFullMessage(0,0,null,RFRequest,obj);
 	}
@@ -52,7 +52,7 @@ public class ResponseData {
 	
 
 	public static Map<String, Object> creatResponseWithFailMessage(int RCount, int ECount,String EMessages,String RFRequest) {
-		final Map<String, Object> result = new HashMap<String, Object>();
+	
 	
 		return creatResponseWithFullMessage(RCount,ECount,EMessages,RFRequest,null);
 	}
