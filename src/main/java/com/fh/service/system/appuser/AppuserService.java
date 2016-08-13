@@ -4,13 +4,17 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.ibatis.javassist.bytecode.annotation.IntegerMemberValue;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.fh.controller.app.request.SignUpRequest;
 import com.fh.dao.DaoSupport;
 import com.fh.entity.Page;
-
+import com.fh.entity.SignUpEntity;
 import com.fh.util.PageData;
+
+import sun.util.logging.resources.logging;
 
 
 @Service("appuserService")
@@ -32,20 +36,35 @@ public class AppuserService {
 	*/
 	 @Cacheable(value="myCache", key="123456") 
 	public PageData findByUId(PageData pd)throws Exception{
-		 System.out.println("1dsfdsf");
+		
 		return (PageData)dao.findForObject("AppuserMapper.findByUId", pd);
 	}
 	 
-	 /**
-	  * 
-	  * @param phone
-	  * @return
-	  */
-	 public boolean checkPhone(String phone) {
+/**
+ * 
+ * @param p
+ * @return
+ * @throws Exception
+ */
+	 public boolean checkPhone(SignUpEntity p) throws Exception {
 			
 			boolean res=false;
+			java.lang.Integer n=(Integer)dao.findForObject("WebappuserMapper.checkUser", p);
+		 
+			if(n.intValue()==0){
+				res=true;
+			}
+			
 			return res;
 			
+		}
+	 
+
+	 /*
+		* 保存webapp用户
+		*/
+		public void saveAppUser(SignUpEntity p)throws Exception{
+			dao.save("WebappuserMapper.saveU", p);
 		}
 
 	/*

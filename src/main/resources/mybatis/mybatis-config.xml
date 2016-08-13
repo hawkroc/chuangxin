@@ -16,6 +16,10 @@
 		<typeAlias type="com.fh.util.PageData" alias="pd"/>
 		<!-- 分页 -->
 		<typeAlias type="com.fh.entity.Page" alias="Page"/>
+		
+		<!-- webapp model -->
+		
+		<typeAlias type="com.fh.entity.SignUpEntity" alias="SignUp"/>
 	</typeAliases>
 	
 	<plugins>

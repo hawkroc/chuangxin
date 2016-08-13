@@ -115,17 +115,29 @@ public class IntAppuserController extends BaseController {
 	logBefore(logger, "RandomNum is "+Tools.getRandomNum());
 	SignUpResponse rs=new SignUpResponse() ;
 	HttpSession s =this.getRequest().getSession();
-	if(appuserService.checkPhone(p.getPhone())){
-		rs.setStatus("login");
-	}else  if(!StringUtils.isNotEmpty(p.getVerification_code())) {
-		rs.setStatus("pending");
-		String Verification_code=String.valueOf(Tools.getRandomNum());
-		rs.setVerification_code(Verification_code);
-		s.setAttribute("Verification_code", Verification_code);
-		s.setAttribute("Verification_code_time", System.currentTimeMillis()/1000);
-	}else {
-		
-		rs.setStatus("success");
+	try {
+		if(!appuserService.checkPhone(p.getAction())){
+			rs.setStatus("login");
+		}else if (p.getAction().getVerification_code()==null|| p.getAction().getVerification_code().equals("")){
+			rs.setStatus("pending");
+			String Verification_code=String.valueOf(Tools.getRandomNum());
+			rs.setVerification_code(Verification_code);
+			s.setAttribute("Verification_code", Verification_code);
+			s.setAttribute("Verification_code_time", System.currentTimeMillis());
+		}else {
+			 long sec=((System.currentTimeMillis())-(long)s.getAttribute("Verification_code_time"))/1000;
+			 //long temp =()->				
+			if (p.getAction().getVerification_code().equalsIgnoreCase((String)s.getAttribute("Verification_code"))&&sec<90) {
+				appuserService.saveAppUser(p.getAction());
+				rs.setStatus("success");
+			}else {
+				rs.setStatus("verify_failed");
+			}	
+			
+		}
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 	}
 	
 	//this.getRequest().getSession().setAttribute(arg0, arg1);
