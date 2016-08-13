@@ -115,6 +115,7 @@ public class IntAppuserController extends BaseController {
 	logBefore(logger, "RandomNum is "+Tools.getRandomNum());
 	SignUpResponse rs=new SignUpResponse() ;
 	HttpSession s =this.getRequest().getSession();
+
 	try {
 		if(!appuserService.checkPhone(p.getAction())){
 			rs.setStatus("login");
