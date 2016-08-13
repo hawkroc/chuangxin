@@ -35,7 +35,19 @@ public class AppuserService {
 		 System.out.println("1dsfdsf");
 		return (PageData)dao.findForObject("AppuserMapper.findByUId", pd);
 	}
-	
+	 
+	 /**
+	  * 
+	  * @param phone
+	  * @return
+	  */
+	 public boolean checkPhone(String phone) {
+			
+			boolean res=false;
+			return res;
+			
+		}
+
 	/*
 	* 通过邮箱获取数据
 	*/

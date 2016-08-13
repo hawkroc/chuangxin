@@ -8,9 +8,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.cache.annotation.Cacheable;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,14 +29,19 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import com.fh.controller.app.request.LoginRequest;
+import com.fh.controller.app.request.SignUpRequest;
+import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.base.BaseController;
-import com.fh.controller.base.LoginRequest;
 import com.fh.controller.base.ResponseData;
 import com.fh.entity.TestEntity;
 import com.fh.service.system.appuser.AppuserService;
 
 import com.fh.util.MD5;
 import com.fh.util.PageData;
+
+import com.fh.util.Tools;
+
 
 /**
  * 会员-接口类
@@ -87,7 +95,8 @@ public class IntAppuserController extends BaseController {
 
 	public Object login(@RequestBody LoginRequest p) {
 		logBefore(logger, "TEST @LoginRequest");
-
+	logBefore(logger, "RandomNum is "+Tools.getRandomNum());
+	
 		// return ResponseData.buildSuccessResponseWithMeg("" +
 		// p.getAction_version() +
 		// p.getApi_version()+p.getAction().getPhone()+p.getAction().getPassword());
@@ -95,6 +104,44 @@ public class IntAppuserController extends BaseController {
 		return ResponseData.creatResponseWithSuccessMessage(null, p);
 
 	}
+	
+	
+	
+	@RequestMapping(value = "/signup", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object signUp(@RequestBody SignUpRequest p) {
+		
+	logBefore(logger, "RandomNum is "+Tools.getRandomNum());
+	SignUpResponse rs=new SignUpResponse() ;
+	HttpSession s =this.getRequest().getSession();
+	if(appuserService.checkPhone(p.getPhone())){
+		rs.setStatus("login");
+	}else  if(!StringUtils.isNotEmpty(p.getVerification_code())) {
+		rs.setStatus("pending");
+		String Verification_code=String.valueOf(Tools.getRandomNum());
+		rs.setVerification_code(Verification_code);
+		s.setAttribute("Verification_code", Verification_code);
+		s.setAttribute("Verification_code_time", System.currentTimeMillis()/1000);
+	}else {
+		
+		rs.setStatus("success");
+	}
+	
+	//this.getRequest().getSession().setAttribute(arg0, arg1);
+	
+		// return ResponseData.buildSuccessResponseWithMeg("" +
+		// p.getAction_version() +
+		// p.getApi_version()+p.getAction().getPhone()+p.getAction().getPassword());
+
+		return ResponseData.creatResponseWithSuccessMessage(null, rs);
+
+	}
+	
+	
+	
+	
+	
 
 	/**
 	 * 

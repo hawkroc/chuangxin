@@ -1,4 +1,6 @@
-package com.fh.controller.base;
+package com.fh.controller.app.request;
+
+import com.fh.controller.base.RequestData;
 
 public class SignUpRequest  extends RequestData { 
 	/**

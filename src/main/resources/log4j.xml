@@ -12,28 +12,28 @@
 	
 	<!-- Application Loggers -->
 	<logger name="com.fh">
-		<level value="ERROR" />
+		<level value="info" />
 	</logger>
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
-		<level value="ERROR" />
+		<level value="info" />
 	</logger>	
 	
 	<logger name="org.springframework.beans">
-		<level value="ERROR" />
+		<level value="info" />
 	</logger>
 	
 	<logger name="org.springframework.context">
-		<level value="ERROR" />
+		<level value="info" />
 	</logger>
 
 	<logger name="org.springframework.web">
-		<level value="ERROR" />
+		<level value="info" />
 	</logger>
 
 	<logger name="org.springframework.jdbc">
-		<level value="ERROR" />
+		<level value="info" />
 	</logger>
 
 	<logger name="org.mybatis.spring">

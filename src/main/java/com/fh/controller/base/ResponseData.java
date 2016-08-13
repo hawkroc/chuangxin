@@ -3,9 +3,6 @@ package com.fh.controller.base;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
-
 /**
  * 返回值统一对象
  */
@@ -14,26 +11,22 @@ public class ResponseData {
 	public static final String CODE_KEY = "CODE";
 	public static final String MSG_KEY = "error_messages";
 
-	
 	/**
-	 *  “result_code”: integer
-     “error_count”: integer
-     “error_messages”: []
-     “record_for_request”: string
-     “record”: object
-
+	 * “result_code”: integer “error_count”: integer “error_messages”: []
+	 * “record_for_request”: string “record”: object
+	 * 
 	 */
-	
-	
-	public static final String Record_For_Request="record_for_request";//string
-	public static final String Error_Messages="";//string
-	public static final String DATA_KEY = "record";//obj
-	public static final String Error_Count="error_count";//int
-	public static final String Result_Code="result_code";//int
-	
-	public static Map<String, Object> creatResponseWithFullMessage(int RCount, int ECount,String EMessages,String RFRequest,Object obj) {
+
+	public static final String Record_For_Request = "record_for_request";// string
+	public static final String Error_Messages = "";// string
+	public static final String DATA_KEY = "record";// obj
+	public static final String Error_Count = "error_count";// int
+	public static final String Result_Code = "result_code";// int
+
+	public static Map<String, Object> creatResponseWithFullMessage(int RCount, int ECount, String EMessages,
+			String RFRequest, Object obj) {
 		final Map<String, Object> result = new HashMap<String, Object>();
-		//result.put(CODE_KEY, code);
+		// result.put(CODE_KEY, code);
 		result.put(Result_Code, RCount);
 		result.put(Error_Count, ECount);
 		result.put(Error_Messages, EMessages);
@@ -41,26 +34,18 @@ public class ResponseData {
 		result.put(DATA_KEY, obj);
 		return result;
 	}
-	
-	
-	public static Map<String, Object> creatResponseWithSuccessMessage(String RFRequest,Object obj) {
-		
-		
-		return creatResponseWithFullMessage(0,0,null,RFRequest,obj);
-	}
-	
-	
 
-	public static Map<String, Object> creatResponseWithFailMessage(int RCount, int ECount,String EMessages,String RFRequest) {
-	
-	
-		return creatResponseWithFullMessage(RCount,ECount,EMessages,RFRequest,null);
+	public static Map<String, Object> creatResponseWithSuccessMessage(String RFRequest, Object obj) {
+
+		return creatResponseWithFullMessage(0, 0, null, RFRequest, obj);
 	}
-	
-	
-	
-	
-	
+
+	public static Map<String, Object> creatResponseWithFailMessage(int RCount, int ECount, String EMessages,
+			String RFRequest) {
+
+		return creatResponseWithFullMessage(RCount, ECount, EMessages, RFRequest, null);
+	}
+
 	public static Map<String, Object> buildResponse(ResponseEnum responseEnum) {
 		return buildResponse(responseEnum, null);
 	}
@@ -76,9 +61,11 @@ public class ResponseData {
 	public static Map<String, Object> buildSuccessResponse(Object data) {
 		return buildResponse(ResponseEnum.SUCCESS, data);
 	}
+
 	public static Map<String, Object> buildSuccessResponseWithMeg(String msg) {
-		return buildResponse(ResponseEnum.SUCCESS,msg);
+		return buildResponse(ResponseEnum.SUCCESS, msg);
 	}
+
 	public static Map<String, Object> buildSuccessResponse() {
 		return buildSuccessResponse(null);
 	}
@@ -93,7 +80,7 @@ public class ResponseData {
 
 	public static Map<String, Object> buildResponse(String code, String msg) {
 		final Map<String, Object> result = new HashMap<String, Object>();
-		//result.put(CODE_KEY, code);
+		// result.put(CODE_KEY, code);
 		result.put(MSG_KEY, msg);
 		result.put(MSG_KEY, msg);
 		result.put(MSG_KEY, msg);
