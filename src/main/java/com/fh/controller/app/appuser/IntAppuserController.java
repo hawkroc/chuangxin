@@ -31,6 +31,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.fh.controller.app.request.LoginRequest;
 import com.fh.controller.app.request.SignUpRequest;
+import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.base.BaseController;
 import com.fh.controller.base.ResponseData;
@@ -41,7 +42,6 @@ import com.fh.util.MD5;
 import com.fh.util.PageData;
 
 import com.fh.util.Tools;
-
 
 /**
  * 会员-接口类
@@ -94,67 +94,68 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public Object login(@RequestBody LoginRequest p) {
-		logBefore(logger, "TEST @LoginRequest");
-	logBefore(logger, "RandomNum is "+Tools.getRandomNum());
 	
+		LoginResponse t=null;
 		// return ResponseData.buildSuccessResponseWithMeg("" +
 		// p.getAction_version() +
 		// p.getApi_version()+p.getAction().getPhone()+p.getAction().getPassword());
-
-		return ResponseData.creatResponseWithSuccessMessage(null, p);
+		try {
+			t= appuserService.loginAppUser(p.getAction());
+			if(t!=null){
+				t.setStattus("login successfully.");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ResponseData.creatResponseWithSuccessMessage(null, t);
 
 	}
-	
-	
-	
+
 	@RequestMapping(value = "/signup", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 
 	public Object signUp(@RequestBody SignUpRequest p) {
-		
-	logBefore(logger, "RandomNum is "+Tools.getRandomNum());
-	SignUpResponse rs=new SignUpResponse() ;
-	HttpSession s =this.getRequest().getSession();
 
-	try {
-		if(!appuserService.checkPhone(p.getAction())){
-			rs.setStatus("login");
-		}else if (p.getAction().getVerification_code()==null|| p.getAction().getVerification_code().equals("")){
-			rs.setStatus("pending");
-			String Verification_code=String.valueOf(Tools.getRandomNum());
-			rs.setVerification_code(Verification_code);
-			s.setAttribute("Verification_code", Verification_code);
-			s.setAttribute("Verification_code_time", System.currentTimeMillis());
-		}else {
-			 long sec=((System.currentTimeMillis())-(long)s.getAttribute("Verification_code_time"))/1000;
-			 //long temp =()->				
-			if (p.getAction().getVerification_code().equalsIgnoreCase((String)s.getAttribute("Verification_code"))&&sec<90) {
-				appuserService.saveAppUser(p.getAction());
-				rs.setStatus("success");
-			}else {
-				rs.setStatus("verify_failed");
-			}	
-			
+		logBefore(logger, "RandomNum is " + Tools.getRandomNum());
+		SignUpResponse rs = new SignUpResponse();
+		HttpSession s = this.getRequest().getSession();
+
+		try {
+
+			if (appuserService.checkPhone(p.getAction()) != null) {
+				rs.setStatus("login");
+			} else if (p.getAction().getVerification_code() == null
+					|| p.getAction().getVerification_code().equals("")) {
+				rs.setStatus("pending");
+				String Verification_code = String.valueOf(Tools.getRandomNum());
+				rs.setVerification_code(Verification_code);
+				s.setAttribute("Verification_code", Verification_code);
+				s.setAttribute("Verification_code_time", System.currentTimeMillis());
+			} else {
+				long sec = ((System.currentTimeMillis()) - (long) s.getAttribute("Verification_code_time")) / 1000;
+				// long temp =()->
+				if (p.getAction().getVerification_code().equalsIgnoreCase((String) s.getAttribute("Verification_code"))
+						&& sec < 90) {
+					appuserService.saveAppUser(p.getAction());
+					rs.setStatus("success");
+
+					rs.setUser_id(String.valueOf(appuserService.checkPhone(p.getAction()).intValue()));
+				} else {
+					rs.setStatus("verify_failed");
+				}
+
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+
 	
-	//this.getRequest().getSession().setAttribute(arg0, arg1);
-	
-		// return ResponseData.buildSuccessResponseWithMeg("" +
-		// p.getAction_version() +
-		// p.getApi_version()+p.getAction().getPhone()+p.getAction().getPassword());
 
 		return ResponseData.creatResponseWithSuccessMessage(null, rs);
 
 	}
-	
-	
-	
-	
-	
 
 	/**
 	 * 
@@ -222,7 +223,7 @@ public class IntAppuserController extends BaseController {
 		return ResponseData.buildSuccessResponseWithMeg("" + phone);
 		/// return AppUtil.returnObject(new PageData(), map);
 	}
-	
+
 	/**
 	 * 
 	 * @param request
@@ -230,62 +231,54 @@ public class IntAppuserController extends BaseController {
 	 * @throws IllegalStateException
 	 * @throws IOException
 	 */
-	 @RequestMapping("springUpload")
-	    public String  springUpload(HttpServletRequest request) throws IllegalStateException, IOException
-	    {
-	         long  startTime=System.currentTimeMillis();
-	         //将当前上下文初始化给  CommonsMutipartResolver （多部分解析器）
-	        CommonsMultipartResolver multipartResolver=new CommonsMultipartResolver(
-	                request.getSession().getServletContext());
-	        //检查form中是否有enctype="multipart/form-data"
-	        if(multipartResolver.isMultipart(request))
-	        {
-	            //将request变成多部分request
-	            MultipartHttpServletRequest multiRequest=(MultipartHttpServletRequest)request;
-	           //获取multiRequest 中所有的文件名
-	            Iterator iter=multiRequest.getFileNames();
-	             
-	            while(iter.hasNext())
-	            {
-	                //一次遍历所有文件
-	                MultipartFile file=multiRequest.getFile(iter.next().toString());
-	                if(file!=null)
-	                {
-	                    String path="E:/springUpload"+file.getOriginalFilename();
-	                    //上传
-	                    file.transferTo(new File(path));
-	                }
-	                 
-	            }
-	           
-	        }
-	        long  endTime=System.currentTimeMillis();
-	        System.out.println("方法三的运行时间："+String.valueOf(endTime-startTime)+"ms");
-	    return "/success"; 
-	    }
-	 
-	 
-	 /**
-	  * 
-	  * @param file
-	  * @return
-	  * @throws IOException
-	  */
-	 @RequestMapping("fileUpload2")
-	    public String  fileUpload2(@RequestParam("file") CommonsMultipartFile file) throws IOException {
-	         long  startTime=System.currentTimeMillis();
-	        System.out.println("fileName："+file.getOriginalFilename());
-	        String path="E:/"+new Date().getTime()+file.getOriginalFilename();
-	         
-	        File newFile=new File(path);
-	        //通过CommonsMultipartFile的方法直接写文件（注意这个时候）
-	        file.transferTo(newFile);
-	        long  endTime=System.currentTimeMillis();
-	        System.out.println("方法二的运行时间："+String.valueOf(endTime-startTime)+"ms");
-	        return "/success"; 
-	    }
-	 
-	 
-	 
-	 
+	@RequestMapping("springUpload")
+	public String springUpload(HttpServletRequest request) throws IllegalStateException, IOException {
+		long startTime = System.currentTimeMillis();
+		// 将当前上下文初始化给 CommonsMutipartResolver （多部分解析器）
+		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
+				request.getSession().getServletContext());
+		// 检查form中是否有enctype="multipart/form-data"
+		if (multipartResolver.isMultipart(request)) {
+			// 将request变成多部分request
+			MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+			// 获取multiRequest 中所有的文件名
+			Iterator iter = multiRequest.getFileNames();
+
+			while (iter.hasNext()) {
+				// 一次遍历所有文件
+				MultipartFile file = multiRequest.getFile(iter.next().toString());
+				if (file != null) {
+					String path = "E:/springUpload" + file.getOriginalFilename();
+					// 上传
+					file.transferTo(new File(path));
+				}
+
+			}
+
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("方法三的运行时间：" + String.valueOf(endTime - startTime) + "ms");
+		return "/success";
+	}
+
+	/**
+	 * 
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping("fileUpload2")
+	public String fileUpload2(@RequestParam("file") CommonsMultipartFile file) throws IOException {
+		long startTime = System.currentTimeMillis();
+		System.out.println("fileName：" + file.getOriginalFilename());
+		String path = "E:/" + new Date().getTime() + file.getOriginalFilename();
+
+		File newFile = new File(path);
+		// 通过CommonsMultipartFile的方法直接写文件（注意这个时候）
+		file.transferTo(newFile);
+		long endTime = System.currentTimeMillis();
+		System.out.println("方法二的运行时间：" + String.valueOf(endTime - startTime) + "ms");
+		return "/success";
+	}
+
 }

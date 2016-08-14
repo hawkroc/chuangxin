@@ -4,12 +4,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.ibatis.javassist.bytecode.annotation.IntegerMemberValue;
+//import org.apache.ibatis.javassist.bytecode.annotation.IntegerMemberValue;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.fh.controller.app.request.SignUpRequest;
+import com.fh.controller.app.response.LoginResponse;
 import com.fh.dao.DaoSupport;
+import com.fh.entity.LoginEntity;
 import com.fh.entity.Page;
 import com.fh.entity.SignUpEntity;
 import com.fh.util.PageData;
@@ -46,20 +48,24 @@ public class AppuserService {
  * @return
  * @throws Exception
  */
-	 public boolean checkPhone(SignUpEntity p) throws Exception {
+	 public Integer checkPhone(SignUpEntity p) throws Exception {
 			
-			boolean res=false;
-			java.lang.Integer n=(Integer)dao.findForObject("WebappuserMapper.checkUser", p);
-		 
-			if(n.intValue()==0){
-				res=true;
-			}
-			
+			java.lang.Integer res=(Integer)dao.findForObject("WebappuserMapper.checkUser", p);			
 			return res;
 			
 		}
 	 
-
+public LoginResponse  loginAppUser(LoginEntity e) throws Exception {
+	
+	LoginResponse loginResponse=(LoginResponse)	dao.findForObject("WebappuserMapper.login", e);
+	if(loginResponse!=null){
+		
+		dao.findForObject("WebappuserMapper.saveLocation", e);
+	}
+	
+	return loginResponse;
+	
+}
 	 /*
 		* 保存webapp用户
 		*/

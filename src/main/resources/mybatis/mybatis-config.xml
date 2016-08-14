@@ -20,6 +20,9 @@
 		<!-- webapp model -->
 		
 		<typeAlias type="com.fh.entity.SignUpEntity" alias="SignUp"/>
+		<typeAlias type="com.fh.entity.LoginEntity" alias="Login"/>
+		<typeAlias type="com.fh.controller.app.response.LoginResponse" alias="LoginRes"/>
+		
 	</typeAliases>
 	
 	<plugins>

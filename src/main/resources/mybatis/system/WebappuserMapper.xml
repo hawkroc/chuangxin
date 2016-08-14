@@ -2,253 +2,273 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="WebappuserMapper">
-	
-	
+
+
 	<!-- 更新登录时间 -->
 	<update id="updateLastLogin" parameterType="pd">
-		update SYS_APP_USER set 
-		LAST_LOGIN = #{LAST_LOGIN} 
+		update SYS_APP_USER
+		set
+		LAST_LOGIN = #{LAST_LOGIN}
 		where USER_ID = #{USER_ID}
 	</update>
-	
+
 	<!-- 判断用户名和密码 -->
 	<select id="getUserInfo" parameterType="pd" resultType="pd">
-		select * from SYS_APP_USER 
+		select * from SYS_APP_USER
 		where 1=1
 		<if test="USERNAME != null and PASSWORD != null">
-	  	and	
-	  		(
-	  		("USERNAME" = #{USERNAME} and "PASSWORD" = #{PASSWORD})
-	  		or
-	  		("EMAIL" = #{USERNAME} and "PASSWORD" = #{PASSWORD})
-	  		or
-	  		("NUMBER" = #{USERNAME} and "PASSWORD" = #{PASSWORD})
-	  		)
+			and
+			(
+			("USERNAME" = #{USERNAME} and "PASSWORD" = #{PASSWORD})
+			or
+			("EMAIL" = #{USERNAME} and "PASSWORD" = #{PASSWORD})
+			or
+			("NUMBER" = #{USERNAME} and "PASSWORD" = #{PASSWORD})
+			)
 		</if>
 		<if test="USER_ID != null and USER_ID != ''">
-		and USER_ID = #{USER_ID}
+			and USER_ID = #{USER_ID}
 		</if>
 	</select>
-	
-	<!-- 存入IP -->
-	<update id="saveIP" parameterType="pd">
-		update SYS_APP_USER 
-			set 
-				IP = #{IP}
-			where 
-				USERNAME = #{USERNAME}
-	</update>
-	
+
+
+
 	<!-- 修改 -->
 	<update id="editU" parameterType="pd">
-		update  SYS_APP_USER
-			set USERNAME				= #{USERNAME},
-				NAME					= #{NAME},
-				ROLE_ID 				= #{ROLE_ID},
-				BZ						= #{BZ},
-				PHONE 					= #{PHONE},
-				SFID 					= #{SFID},
-				START_TIME	 			= #{START_TIME},
-				END_TIME 				= #{END_TIME},
-				YEARS					= #{YEARS},
-				STATUS 					= #{STATUS},
-				EMAIL					= #{EMAIL},
-				NUMBER 					= #{NUMBER}
-			<if test="PASSWORD != null and PASSWORD != ''">
-				,PASSWORD				= #{PASSWORD}
-			</if>
-			where 
-				USER_ID = #{USER_ID}
+		update SYS_APP_USER
+		set USERNAME = #{USERNAME},
+		NAME = #{NAME},
+		ROLE_ID = #{ROLE_ID},
+		BZ = #{BZ},
+		PHONE = #{PHONE},
+		SFID = #{SFID},
+		START_TIME = #{START_TIME},
+		END_TIME = #{END_TIME},
+		YEARS = #{YEARS},
+		STATUS = #{STATUS},
+		EMAIL = #{EMAIL},
+		NUMBER = #{NUMBER}
+		<if test="PASSWORD != null and PASSWORD != ''">
+			,PASSWORD = #{PASSWORD}
+		</if>
+		where
+		USER_ID = #{USER_ID}
 	</update>
-	
+
 	<!-- 通过user_id获取数据 -->
 	<select id="findByUiId" parameterType="pd" resultType="pd">
-		select 
-			USER_ID,
-			USERNAME,
-			PASSWORD,
-			NAME,
-			RIGHTS,
-			ROLE_ID,
-			LAST_LOGIN,
-			IP,
-			STATUS,
-			BZ,
-			PHONE,
-			SFID,
-			START_TIME,
-			END_TIME,
-			YEARS,
-			EMAIL,
-			NUMBER
-		from 
-			SYS_APP_USER
-		where 
-			USER_ID = #{USER_ID}
+		select
+		USER_ID,
+		USERNAME,
+		PASSWORD,
+		NAME,
+		RIGHTS,
+		ROLE_ID,
+		LAST_LOGIN,
+		IP,
+		STATUS,
+		BZ,
+		PHONE,
+		SFID,
+		START_TIME,
+		END_TIME,
+		YEARS,
+		EMAIL,
+		NUMBER
+		from
+		SYS_APP_USER
+		where
+		USER_ID = #{USER_ID}
 	</select>
-	
+
 	<!-- 通过邮箱获取数据 -->
 	<select id="findByUE" parameterType="pd" resultType="pd">
-		select 
-			USER_ID,
-			USERNAME,
-			PASSWORD,
-			NAME,
-			RIGHTS,
-			ROLE_ID,
-			LAST_LOGIN,
-			IP,
-			STATUS,
-			BZ,
-			PHONE,
-			SFID,
-			START_TIME,
-			END_TIME,
-			YEARS,
-			EMAIL,
-			NUMBER
-		from 
-			SYS_APP_USER
-		where 
-			EMAIL = #{EMAIL}
+		select
+		USER_ID,
+		USERNAME,
+		PASSWORD,
+		NAME,
+		RIGHTS,
+		ROLE_ID,
+		LAST_LOGIN,
+		IP,
+		STATUS,
+		BZ,
+		PHONE,
+		SFID,
+		START_TIME,
+		END_TIME,
+		YEARS,
+		EMAIL,
+		NUMBER
+		from
+		SYS_APP_USER
+		where
+		EMAIL = #{EMAIL}
 		<if test="USERNAME != null and USERNAME != ''">
-			and USERNAME != #{USERNAME} 
+			and USERNAME != #{USERNAME}
 		</if>
 	</select>
-	
+
 	<!-- 通过编号获取数据 -->
 	<select id="findByUN" parameterType="pd" resultType="pd">
-		select 
-			USER_ID,
-			USERNAME,
-			PASSWORD,
-			NAME,
-			RIGHTS,
-			ROLE_ID,
-			LAST_LOGIN,
-			IP,
-			STATUS,
-			BZ,
-			PHONE,
-			SFID,
-			START_TIME,
-			END_TIME,
-			YEARS,
-			EMAIL,
-			NUMBER
-		from 
-			SYS_APP_USER
-		where 
-			NUMBER = #{NUMBER}
+		select
+		USER_ID,
+		USERNAME,
+		PASSWORD,
+		NAME,
+		RIGHTS,
+		ROLE_ID,
+		LAST_LOGIN,
+		IP,
+		STATUS,
+		BZ,
+		PHONE,
+		SFID,
+		START_TIME,
+		END_TIME,
+		YEARS,
+		EMAIL,
+		NUMBER
+		from
+		SYS_APP_USER
+		where
+		NUMBER = #{NUMBER}
 		<if test="USERNAME != null and USERNAME != ''">
-			and USERNAME != #{USERNAME} 
+			and USERNAME != #{USERNAME}
 		</if>
 	</select>
-	
+
 	<!-- 通过USERNAME获取数据 -->
 	<select id="findByUId" parameterType="pd" resultType="pd">
-		select 
-			USER_ID,
-			USERNAME,
-			PASSWORD,
-			NAME,
-			RIGHTS,
-			ROLE_ID,
-			LAST_LOGIN,
-			IP,
-			STATUS,
-			BZ,
-			PHONE,
-			SFID,
-			START_TIME,
-			END_TIME,
-			YEARS,
-			EMAIL,
-			NUMBER
-		from 
-			SYS_APP_USER
-		where 
-			USERNAME = #{USERNAME}
+		select
+		USER_ID,
+		USERNAME,
+		PASSWORD,
+		NAME,
+		RIGHTS,
+		ROLE_ID,
+		LAST_LOGIN,
+		IP,
+		STATUS,
+		BZ,
+		PHONE,
+		SFID,
+		START_TIME,
+		END_TIME,
+		YEARS,
+		EMAIL,
+		NUMBER
+		from
+		SYS_APP_USER
+		where
+		USERNAME = #{USERNAME}
 	</select>
-	
+
 	<!-- 新增app用户 -->
 	<insert id="saveU" parameterType="SignUp">
-		insert into webapp_user (			
-			PASSWORD,			
-			PHONE		
-		) values (			
-			#{password},			
-			#{phone}			
+		insert into webapp_user (
+		PASSWORD,
+		PHONE
+		) values (
+		#{password},
+		#{phone}
 		)
 	</insert>
 	<!-- check if the user in database -->
 	<select id="checkUser" parameterType="SignUp" resultType="java.lang.Integer">
-		select  count(*)
-		from webapp_user 
-		where 
-			phone = #{phone}
+		select
+		id
+		from webapp_user
+		where
+		phone = #{phone}
 	</select>
-	
+
+
+
+	<!-- login -->
+	<select id="login" parameterType="Login" resultType="LoginRes">		
+		select u.id ,u.type ,t.thought from webapp_user u ,webapp_thought t 
+		where t.userid=u.id,
+		u.phone = #{phone},
+		u.PASSWORD = #{password}		
+	</select>
+
+	<!-- 存入location -->
+	<update id="saveLocation" parameterType="Login">
+		update webapp_user
+		set
+		lon = #{current_lng},
+		lat= #{current_lat}
+		where
+		phone= #{phone}
+
+	</update>
+
+
+
+
 	<!-- 用户列表(全部) -->
 	<select id="listAllUser" parameterType="pd" resultType="pd">
-		select  u.USER_ID,
-				u.USERNAME,
-				u.PASSWORD,
-				u.LAST_LOGIN,
-				u.NAME,
-				u.IP,
-				u.END_TIME,
-				u.YEARS,
-				u.STATUS,
-				u.EMAIL,
-				u.SFID,
-				u.PHONE,
-				u.NUMBER,
-				r.ROLE_ID,
-				r.ROLE_NAME
-		from SYS_APP_USER u, SYS_ROLE r 
-		where u.ROLE_ID = r.ROLE_ID 
+		select u.USER_ID,
+		u.USERNAME,
+		u.PASSWORD,
+		u.LAST_LOGIN,
+		u.NAME,
+		u.IP,
+		u.END_TIME,
+		u.YEARS,
+		u.STATUS,
+		u.EMAIL,
+		u.SFID,
+		u.PHONE,
+		u.NUMBER,
+		r.ROLE_ID,
+		r.ROLE_NAME
+		from SYS_APP_USER u, SYS_ROLE r
+		where u.ROLE_ID = r.ROLE_ID
 		and 1 = 1
 		and r.PARENT_ID = '7'
-		
+
 		<if test="USERNAME != null and USERNAME != ''"><!-- 用户名检索 -->
 			and (
-				u.USERNAME LIKE CONCAT(CONCAT('%', #{USERNAME}),'%')
-				or
-				u.EMAIL LIKE CONCAT(CONCAT('%', #{USERNAME}),'%')
-				or
-				u.NUMBER LIKE CONCAT(CONCAT('%', #{USERNAME}),'%')
-				)
+			u.USERNAME LIKE CONCAT(CONCAT('%', #{USERNAME}),'%')
+			or
+			u.EMAIL LIKE CONCAT(CONCAT('%', #{USERNAME}),'%')
+			or
+			u.NUMBER LIKE CONCAT(CONCAT('%', #{USERNAME}),'%')
+			)
 		</if>
 		<if test="ROLE_ID != null and ROLE_ID != ''"><!-- 角色检索 -->
-			and u.ROLE_ID=#{ROLE_ID} 
+			and u.ROLE_ID=#{ROLE_ID}
 		</if>
 		<if test="lastLoginStart!=null and lastLoginStart!=''"><!-- 到期时间检索 -->
-			and u.END_TIME &gt;= #{lastLoginStart} 
+			and u.END_TIME &gt;= #{lastLoginStart}
 		</if>
 		<if test="lastLoginEnd!=null and lastLoginEnd!=''"><!-- 到期时间检索 -->
-			and u.END_TIME &lt;= #{lastLoginEnd} 
+			and u.END_TIME &lt;= #{lastLoginEnd}
 		</if>
 		<if test="STATUS != null and STATUS != ''"><!-- 状态检索 -->
-			and u.STATUS=#{STATUS} 
+			and u.STATUS=#{STATUS}
 		</if>
 	</select>
-	
+
 	<!-- 删除用户 -->
 	<delete id="deleteU" parameterType="pd">
-		delete from SYS_APP_USER 
-		where 
-			USER_ID = #{USER_ID}
+		delete from SYS_APP_USER
+		where
+		USER_ID = #{USER_ID}
 	</delete>
-	
+
 	<!-- 批量删除用户 -->
 	<delete id="deleteAllU" parameterType="String">
 		delete from SYS_APP_USER
-		where 
-			USER_ID in
-  			 <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
-                  #{item}
-             </foreach>
+		where
+		USER_ID in
+		<foreach item="item" index="index" collection="array" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
 	</delete>
-	
+
 </mapper>
