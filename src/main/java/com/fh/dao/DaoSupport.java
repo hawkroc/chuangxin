@@ -34,7 +34,7 @@ public class DaoSupport implements DAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object batchSave(String str, List objs )throws Exception{
+	public Object batchSave(String str, List<Object> objs )throws Exception{
 		return sqlSessionTemplate.insert(str, objs);
 	}
 	
