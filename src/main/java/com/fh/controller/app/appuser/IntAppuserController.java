@@ -94,15 +94,15 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public Object login(@RequestBody LoginRequest p) {
-	
+	    System.out.println(""+p.getAction().getCurrent_lat());
 		LoginResponse t=null;
-		// return ResponseData.buildSuccessResponseWithMeg("" +
-		// p.getAction_version() +
-		// p.getApi_version()+p.getAction().getPhone()+p.getAction().getPassword());
 		try {
 			t= appuserService.loginAppUser(p.getAction());
 			if(t!=null){
 				t.setStattus("login successfully.");
+			}else{
+				//t.setStattus("faild");
+				return ResponseData.creatResponseWithFailMessage(1,1,"there are no this user","Rf");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

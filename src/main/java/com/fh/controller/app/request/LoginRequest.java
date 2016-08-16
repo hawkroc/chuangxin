@@ -11,6 +11,7 @@ public LoginEntity getAction() {
 }
 
 public void setAction(LoginEntity action) {
+	
 	this.action = action;
 }
 }
