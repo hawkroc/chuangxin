@@ -117,7 +117,7 @@ public class IntAppuserController extends BaseController {
 		LoginResponse t=null;
 		
 		try {
-			if (appuserService.checkPhone(p.getAction().getPhone()) == null) {
+			if (appuserService.checkPhone(p.getAction().getPhone()) == null&& StringUtils.isEmpty(p.getAction().getUser_token())) {
 				return ResponseData.creatResponseWithFailMessage(1,1,"there are no this user","Rf");
 			} 
 			t= appuserService.loginAppUser(p.getAction());
