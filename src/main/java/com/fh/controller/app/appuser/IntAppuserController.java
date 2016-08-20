@@ -96,13 +96,14 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public Object logout(@RequestBody LoginRequest p) {
+		LoginResponse t=null;
 		try {
-			appuserService.Logout(p.getAction());
+			t=	appuserService.logout(p.getAction());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ResponseData.creatResponseWithSuccessMessage(null, "logout success");
+		return ResponseData.creatResponseWithSuccessMessage(null, t);
 
 	}
 
@@ -132,7 +133,7 @@ public class IntAppuserController extends BaseController {
 				t.setStatus("1");
 			}else{
 				//t.setStattus("faild");
-				return ResponseData.creatResponseWithFailMessage(1,1,"password is error","Rf");
+				return ResponseData.creatResponseWithFailMessage(1,1,"password or user_token is error","Rf");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

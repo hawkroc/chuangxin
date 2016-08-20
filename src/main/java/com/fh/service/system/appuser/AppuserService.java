@@ -82,9 +82,14 @@ public LoginResponse  loginAppUser(LoginEntity e) throws Exception {
 			}
 			
 	}else if (StringUtils.isNotEmpty(e.getUser_token())){
-		String phone =(String) CacheUtil.getCacheObject(e.getUser_token(),"userCache").getObjectValue(); 
+		Element o=CacheUtil.getCacheObject(e.getUser_token(),"userCache");
+		if(o!=null){
+		String phone =(String) o.getObjectValue(); 
 		e.setPhone(phone);
-		 loginResponse=(LoginResponse)	dao.findForObject("WebappuserMapper.loginByToken", e);
+		
+		 loginResponse=(LoginResponse)	dao.findForObject("WebappuserMapper.loginByToken", phone);
+			dao.findForObject("WebappuserMapper.saveLocation", e);
+		}
 	}
 	
 	
@@ -97,11 +102,18 @@ public LoginResponse  loginAppUser(LoginEntity e) throws Exception {
  * 
  * @param e
  */
-public void Logout(LoginEntity e) throws Exception{
-	String phone =(String) CacheUtil.getCacheObject(e.getUser_token(),"userCache").getObjectValue(); 
-	dao.findForObject("WebappuserMapper.saveLocation", phone);
-	CacheUtil.removeCache(e.getUser_token(), "userCache");
+public LoginResponse  logout(LoginEntity e) throws Exception{
+	Element o=CacheUtil.getCacheObject(e.getUser_token(),"userCache");
+	LoginResponse	 loginResponse=null;
+	if(o!=null){
+		String phone =(String)o.getObjectValue(); 
+		dao.findForObject("WebappuserMapper.logout", phone);
+		e.setPhone(phone);
+		loginResponse=(LoginResponse)	dao.findForObject("WebappuserMapper.loginByToken", phone);
+		CacheUtil.removeCache(e.getUser_token(), "userCache");
+	}
 	
+	return loginResponse;
 	
 }
 
