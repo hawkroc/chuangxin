@@ -96,7 +96,12 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public Object logout(@RequestBody LoginRequest p) {
-		appuserService.Logout(p.getAction());
+		try {
+			appuserService.Logout(p.getAction());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return ResponseData.creatResponseWithSuccessMessage(null, "logout success");
 
 	}
@@ -113,7 +118,7 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public Object login(@RequestBody LoginRequest p) {
-	    System.out.println(""+p.getAction().getCurrent_lat());
+	  
 		LoginResponse t=null;
 		
 		try {
@@ -124,7 +129,7 @@ public class IntAppuserController extends BaseController {
 			if(t!=null){
 				HttpSession s = this.getRequest().getSession();
 				s.setAttribute("LoginResponse", t);
-				t.setStattus("login successfully.");
+				t.setStatus("1");
 			}else{
 				//t.setStattus("faild");
 				return ResponseData.creatResponseWithFailMessage(1,1,"password is error","Rf");

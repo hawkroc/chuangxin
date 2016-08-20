@@ -208,7 +208,20 @@
 		update webapp_user
 		set
 		lon = #{current_lng},
-		lat= #{current_lat}
+		lat= #{current_lat},
+		status=1
+		where
+		phone= #{phone}
+
+	</update>
+	
+	
+	
+	<!-- update status-->
+	<update id="logout" parameterType="String">
+		update webapp_user
+		set
+		status=0
 		where
 		phone= #{phone}
 

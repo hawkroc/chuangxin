@@ -11,13 +11,14 @@ public class LoginResponse {
 	public void setId(int id) {
 		this.id = id;
 	}
-	private String stattus;
-	public String getStattus() {
-		return stattus;
+	private String status;
+	public String getStatus() {
+		return status;
 	}
-	public void setStattus(String stattus) {
-		this.stattus = stattus;
+	public void setStatus(String status) {
+		this.status = status;
 	}
+
 	public String getType() {
 		return type;
 	}

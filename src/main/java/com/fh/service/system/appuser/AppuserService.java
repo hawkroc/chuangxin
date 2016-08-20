@@ -97,9 +97,11 @@ public LoginResponse  loginAppUser(LoginEntity e) throws Exception {
  * 
  * @param e
  */
-public void Logout(LoginEntity e) {
-	
+public void Logout(LoginEntity e) throws Exception{
+	String phone =(String) CacheUtil.getCacheObject(e.getUser_token(),"userCache").getObjectValue(); 
+	dao.findForObject("WebappuserMapper.saveLocation", phone);
 	CacheUtil.removeCache(e.getUser_token(), "userCache");
+	
 	
 }
 
