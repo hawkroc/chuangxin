@@ -86,6 +86,21 @@ public class IntAppuserController extends BaseController {
 	}
 	
 	
+
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object logout(@RequestBody LoginRequest p) {
+		appuserService.Logout(p.getAction());
+		return ResponseData.creatResponseWithSuccessMessage(null, "logout success");
+
+	}
+
 	
 	
 
