@@ -176,7 +176,7 @@
 		)
 	</insert>
 	<!-- check if the user in database -->
-	<select id="checkUser" parameterType="SignUp" resultType="java.lang.Integer">
+	<select id="checkUser" parameterType="String" resultType="java.lang.Integer">
 		select
 		id
 		from webapp_user

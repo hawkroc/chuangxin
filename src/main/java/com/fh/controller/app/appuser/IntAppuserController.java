@@ -115,7 +115,11 @@ public class IntAppuserController extends BaseController {
 	public Object login(@RequestBody LoginRequest p) {
 	    System.out.println(""+p.getAction().getCurrent_lat());
 		LoginResponse t=null;
+		
 		try {
+			if (appuserService.checkPhone(p.getAction().getPhone()) == null) {
+				return ResponseData.creatResponseWithFailMessage(1,1,"there are no this user","Rf");
+			} 
 			t= appuserService.loginAppUser(p.getAction());
 			if(t!=null){
 				HttpSession s = this.getRequest().getSession();
@@ -123,7 +127,7 @@ public class IntAppuserController extends BaseController {
 				t.setStattus("login successfully.");
 			}else{
 				//t.setStattus("faild");
-				return ResponseData.creatResponseWithFailMessage(1,1,"there are no this user","Rf");
+				return ResponseData.creatResponseWithFailMessage(1,1,"password is error","Rf");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -138,22 +142,23 @@ public class IntAppuserController extends BaseController {
 
 	public Object signUp(@RequestBody SignUpRequest p) {
 
-		logBefore(logger, "RandomNum is " + Tools.getRandomNum());
+		
 		SignUpResponse rs = new SignUpResponse();
 		HttpSession s = this.getRequest().getSession();
 
 		try {
 
-			if (appuserService.checkPhone(p.getAction()) != null) {
-				rs.setStatus("login");
-			} else if (p.getAction().getVerification_code() == null
-					|| p.getAction().getVerification_code().equals("")) {
+			if (appuserService.checkPhone(p.getAction().getPhone()) != null) {
+				rs.setStatus("you already sigup please login");
+			} else if (StringUtils.isEmpty((p.getAction().getVerification_code()))||s.getAttribute("Verification_code_time")==null) {
 				rs.setStatus("pending");
 				String Verification_code = String.valueOf(Tools.getRandomNum());
 				rs.setVerification_code(Verification_code);
 				s.setAttribute("Verification_code", Verification_code);
+				logBefore(logger, "RandomNum is " + Verification_code);
 				s.setAttribute("Verification_code_time", System.currentTimeMillis());
 			} else {
+		
 				long sec = ((System.currentTimeMillis()) - (long) s.getAttribute("Verification_code_time")) / 1000;
 				// long temp =()->
 				if (p.getAction().getVerification_code().equalsIgnoreCase((String) s.getAttribute("Verification_code"))
@@ -161,7 +166,7 @@ public class IntAppuserController extends BaseController {
 					appuserService.saveAppUser(p.getAction());
 					rs.setStatus("success");
 
-					rs.setUser_id(String.valueOf(appuserService.checkPhone(p.getAction()).intValue()));
+					rs.setUser_id(String.valueOf(appuserService.checkPhone(p.getAction().getPhone()).intValue()));
 				} else {
 					rs.setStatus("verify_failed");
 				}

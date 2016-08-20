@@ -56,9 +56,9 @@ public class AppuserService {
  * @return
  * @throws Exception
  */
-	 public Integer checkPhone(SignUpEntity p) throws Exception {
+	 public Integer checkPhone(String phone) throws Exception {
 			
-			java.lang.Integer res=(Integer)dao.findForObject("WebappuserMapper.checkUser", p);			
+			java.lang.Integer res=(Integer)dao.findForObject("WebappuserMapper.checkUser", phone);			
 			return res;
 			
 		}
@@ -79,7 +79,7 @@ public LoginResponse  loginAppUser(LoginEntity e) throws Exception {
 				
 			  CacheUtil.cacheSave(loginResponse.getUser_token(), loginResponse.getPhone(), "userCache");
 				 
-			}	
+			}
 			
 	}else if (StringUtils.isNotEmpty(e.getUser_token())){
 		String phone =(String) CacheUtil.getCacheObject(e.getUser_token(),"userCache").getObjectValue(); 

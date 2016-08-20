@@ -18,7 +18,7 @@ public class ResponseData {
 	 */
 
 	public static final String Record_For_Request = "record_for_request";// string
-	public static final String Error_Messages = "";// string
+	public static final String Error_Messages = "Error_Messages";// string
 	public static final String DATA_KEY = "record";// obj
 	public static final String Error_Count = "error_count";// int
 	public static final String Result_Code = "result_code";// int
