@@ -32,6 +32,20 @@ public class LoginResponse {
 	}
 	private String type;
 	private String thought;
+	public String getUser_token() {
+		return user_token;
+	}
+	public void setUser_token(String user_token) {
+		this.user_token = user_token;
+	}
+	private String user_token;
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	private String phone;
 	
 	
 	

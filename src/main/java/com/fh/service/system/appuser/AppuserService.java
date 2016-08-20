@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 //import org.apache.ibatis.javassist.bytecode.annotation.IntegerMemberValue;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,20 @@ import com.fh.dao.DaoSupport;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.Page;
 import com.fh.entity.SignUpEntity;
+import com.fh.util.CacheUtil;
+import com.fh.util.MD5;
 import com.fh.util.PageData;
 
-import sun.util.logging.resources.logging;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
+
 
 
 @Service("appuserService")
 public class AppuserService {
+//	private  static	 Cache cache   = CacheManager.getInstance().getCache("myCache");
 
 	@Resource(name = "daoSupport")
 	private DaoSupport dao;
@@ -54,18 +62,51 @@ public class AppuserService {
 			return res;
 			
 		}
-	 
+	 /**
+	  * 
+	  * @param e
+	  * @return
+	  * @throws Exception
+	  */
 public LoginResponse  loginAppUser(LoginEntity e) throws Exception {
-	
-	LoginResponse loginResponse=(LoginResponse)	dao.findForObject("WebappuserMapper.login", e);
-	if(loginResponse!=null){
-		
-		dao.findForObject("WebappuserMapper.saveLocation", e);
+	LoginResponse loginResponse=null;
+
+	if(StringUtils.isNotEmpty(e.getPassword())&&StringUtils.isNotEmpty(e.getPhone())){
+		 loginResponse=(LoginResponse)	dao.findForObject("WebappuserMapper.login", e);
+		 if(loginResponse!=null){
+			 loginResponse.setUser_token(MD5.md5((e.getPhone()+System.currentTimeMillis())));
+				dao.findForObject("WebappuserMapper.saveLocation", e);
+				
+			  CacheUtil.cacheSave(loginResponse.getUser_token(), loginResponse.getPhone(), "userCache");
+				 
+			}	
+			
+	}else if (StringUtils.isNotEmpty(e.getUser_token())){
+		String phone =(String) CacheUtil.getCacheObject(e.getUser_token(),"userCache").getObjectValue(); 
+		e.setPhone(phone);
+		 loginResponse=(LoginResponse)	dao.findForObject("WebappuserMapper.loginByToken", e);
 	}
+	
+	
 	
 	return loginResponse;
 	
 }
+
+/**
+ * 
+ * @param e
+ */
+public void Logout(LoginEntity e) {
+	
+	CacheUtil.removeCache(e.getUser_token(), "userCache");
+	
+}
+
+
+
+
+
 	 /*
 		* 保存webapp用户
 		*/

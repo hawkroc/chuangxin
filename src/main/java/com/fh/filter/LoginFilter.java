@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fh.controller.base.BaseController;
-import com.fh.util.FileUtil;
+
 
 /**
  * 登录验证过滤器

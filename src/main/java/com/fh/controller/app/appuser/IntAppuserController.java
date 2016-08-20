@@ -84,6 +84,10 @@ public class IntAppuserController extends BaseController {
 
 		return map;
 	}
+	
+	
+	
+	
 
 	/**
 	 * 
@@ -99,6 +103,8 @@ public class IntAppuserController extends BaseController {
 		try {
 			t= appuserService.loginAppUser(p.getAction());
 			if(t!=null){
+				HttpSession s = this.getRequest().getSession();
+				s.setAttribute("LoginResponse", t);
 				t.setStattus("login successfully.");
 			}else{
 				//t.setStattus("faild");

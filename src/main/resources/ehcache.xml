@@ -16,10 +16,10 @@
             /> 
             
             
-            <cache name="myCache"         
-        maxElementsInMemory="1000"
+            <cache name="userCache"         
+        maxElementsInMemory="10000"
         maxElementsOnDisk="0" 
-        eternal="false" 
+        eternal="true" 
         overflowToDisk="false"
         diskPersistent="false" 
         timeToIdleSeconds="120" 
