@@ -5,6 +5,7 @@ public class LatLonUtil {
 	private static final double PI = 3.14159265; // 圆周率
 	private static final double EARTH_RADIUS = 6378137; // 地球半径
 	private static final double RAD = Math.PI / 180.0; // 一百八十度角
+	private static Double degree = (24901 * 1609) / 360.0;
 	private static double rad(double d)
 	{
 	   return d * Math.PI / 180.0;
@@ -36,7 +37,7 @@ public class LatLonUtil {
 		Double latitude = lat;// 传值给经度
 		Double longitude = lon;// 传值给纬度
 
-		Double degree = (24901 * 1609) / 360.0; // 获取每度
+		//Double degree = (24901 * 1609) / 360.0; // 获取每度
 		double raidusMile = raidus;
 
 		Double dpmLat = 1 / degree;
@@ -58,6 +59,11 @@ public class LatLonUtil {
 				+ maxLat + "zuidaweidu" + maxLng);
 
 		return new double[] { minLat, minLng, maxLat, maxLng };
+	}
+	
+	public static double[] getDefaultAround(double lat, double lon) {
+		return getAround(lat,lon,1000);
+		
 	}
 	//测试方法
 	public static void main(String [] src){
