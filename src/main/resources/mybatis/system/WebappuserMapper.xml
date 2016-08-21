@@ -202,6 +202,13 @@
 	</select>
 	
 	
+		
+	<select id="searchResident" parameterType="locatRan" resultType="resident">		
+		
+	</select>
+	
+	
+	
 
 	<!-- 存入location -->
 	<update id="saveLocation" parameterType="Login">

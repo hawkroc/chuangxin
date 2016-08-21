@@ -23,6 +23,13 @@
 		<typeAlias type="com.fh.entity.LoginEntity" alias="Login"/>
 		<typeAlias type="com.fh.controller.app.response.LoginResponse" alias="LoginRes"/>
 		
+		<typeAlias type="com.fh.entity.LocationRangeEntity" alias="locatRan"/>
+		
+		
+		<typeAlias type="com.fh.controller.app.response.Resident" alias="resident"/>
+		
+			
+		
 	</typeAliases>
 	
 	<plugins>

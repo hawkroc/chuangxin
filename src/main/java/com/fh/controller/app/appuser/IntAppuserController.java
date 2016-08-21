@@ -30,8 +30,10 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.fh.controller.app.request.LoginRequest;
+import com.fh.controller.app.request.ResidentListRequest;
 import com.fh.controller.app.request.SignUpRequest;
 import com.fh.controller.app.response.LoginResponse;
+import com.fh.controller.app.response.ResidentsListResponse;
 import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.base.BaseController;
 import com.fh.controller.base.ResponseData;
@@ -40,7 +42,7 @@ import com.fh.service.system.appuser.AppuserService;
 
 import com.fh.util.MD5;
 import com.fh.util.PageData;
-
+import com.fh.util.StringUtil;
 import com.fh.util.Tools;
 
 /**
@@ -92,6 +94,30 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
+	@RequestMapping(value = "/resident_list", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object residentList(@RequestBody ResidentListRequest p) {
+		
+		if (StringUtils.isNotBlank(p.getAction().getUser_id())) {
+			
+		}
+		ResidentsListResponse t=null;
+//		try {
+//			t=	appuserService.logout(p.getAction());
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		return ResponseData.creatResponseWithSuccessMessage(null, t);
+
+	}
+
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
 	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 
@@ -107,7 +133,6 @@ public class IntAppuserController extends BaseController {
 
 	}
 
-	
 	
 
 	/**

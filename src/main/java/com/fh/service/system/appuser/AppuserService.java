@@ -11,11 +11,15 @@ import org.springframework.stereotype.Service;
 
 import com.fh.controller.app.request.SignUpRequest;
 import com.fh.controller.app.response.LoginResponse;
+import com.fh.controller.app.response.Resident;
 import com.fh.dao.DaoSupport;
+import com.fh.entity.LocationRangeEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.Page;
+import com.fh.entity.ResidentEntity;
 import com.fh.entity.SignUpEntity;
 import com.fh.util.CacheUtil;
+import com.fh.util.LatLonUtil;
 import com.fh.util.MD5;
 import com.fh.util.PageData;
 
@@ -82,20 +86,47 @@ public LoginResponse  loginAppUser(LoginEntity e) throws Exception {
 			}
 			
 	}else if (StringUtils.isNotEmpty(e.getUser_token())){
-		Element o=CacheUtil.getCacheObject(e.getUser_token(),"userCache");
-		if(o!=null){
-		String phone =(String) o.getObjectValue(); 
-		e.setPhone(phone);
-		
-		 loginResponse=(LoginResponse)	dao.findForObject("WebappuserMapper.loginByToken", phone);
-			dao.findForObject("WebappuserMapper.saveLocation", e);
+		String phone =getPhoneByTokenFromCache(e.getUser_token()); 
+		if(phone!=null){
+			e.setPhone(phone);
+			
+			 loginResponse=(LoginResponse)	dao.findForObject("WebappuserMapper.loginByToken", phone);
+				dao.findForObject("WebappuserMapper.saveLocation", e);
 		}
+		
+		
 	}
 	
 	
 	
 	return loginResponse;
 	
+}
+
+
+public List<Resident> getResidentList(ResidentEntity r) throws Exception {
+	
+	List<Resident> residents=null;
+	if(getPhoneByTokenFromCache(r.getUser_token())!=null){
+		LocationRangeEntity l=LatLonUtil.getInstance().getDefaultAround(r.getGeo_lat(), r.getGet_lng());
+		residents=(List<Resident>)	dao.findForObject("WebappuserMapper.searchResident", l);
+	}
+	return residents;
+	
+}
+
+/**
+ * 
+ * @param token
+ * @return
+ */
+private String getPhoneByTokenFromCache(String token){
+	Element o=CacheUtil.getCacheObject(token,"userCache");
+	String phone =null;
+	if(o!=null){
+	 phone =(String) o.getObjectValue(); 
+	}
+	return phone;
 }
 
 /**

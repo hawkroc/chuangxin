@@ -1,11 +1,16 @@
 package com.fh.util;
 
-public class LatLonUtil {
+import com.fh.entity.LocationRangeEntity;
+
+
+public  class LatLonUtil {
 
 	private static final double PI = 3.14159265; // 圆周率
 	private static final double EARTH_RADIUS = 6378137; // 地球半径
 	private static final double RAD = Math.PI / 180.0; // 一百八十度角
 	private static Double degree = (24901 * 1609) / 360.0;
+	private static double  dpmLat =1/degree;
+	private  static LatLonUtil la=null;
 	private static double rad(double d)
 	{
 	   return d * Math.PI / 180.0;
@@ -23,6 +28,21 @@ public class LatLonUtil {
 	   s = Math.round(s * 10000) / 10000;
 	   return s;
 	}
+	private LatLonUtil() {
+		
+	}
+	/**
+	 * 
+	 * @return
+	 */
+public static LatLonUtil getInstance() {
+	if( la==null){
+		la=new LatLonUtil();
+	}
+	return la;
+	
+}
+	
 
 	/**
 	 * @param raidus
@@ -32,7 +52,7 @@ public class LatLonUtil {
 	 * 最大经度 maxLng 
 	 * 最大纬度 minLat
 	 */
-	public static double[] getAround(double lat, double lon, int raidus) {
+	public  LocationRangeEntity getAround(double lat, double lon, int raidus) {
 
 		Double latitude = lat;// 传值给经度
 		Double longitude = lon;// 传值给纬度
@@ -40,7 +60,7 @@ public class LatLonUtil {
 		//Double degree = (24901 * 1609) / 360.0; // 获取每度
 		double raidusMile = raidus;
 
-		Double dpmLat = 1 / degree;
+		//Double dpmLat = 1 / degree;
 		Double radiusLat = dpmLat * raidusMile;
 		// 获取最小纬度
 		Double minLat = latitude - radiusLat;
@@ -58,16 +78,19 @@ public class LatLonUtil {
 		System.out.println("jingdu" + minLat + "weidu" + minLng + "zuidajingdu"
 				+ maxLat + "zuidaweidu" + maxLng);
 
-		return new double[] { minLat, minLng, maxLat, maxLng };
+		return new LocationRangeEntity(minLat, minLng, maxLat, maxLng);
 	}
 	
-	public static double[] getDefaultAround(double lat, double lon) {
+	public  LocationRangeEntity getDefaultAround(double lat, double lon) {
 		return getAround(lat,lon,1000);
 		
 	}
+	
+	
+	
 	//测试方法
 	public static void main(String [] src){
-		getAround(36.68027, 117.12744, 1000);
+		//getAround(36.68027, 117.12744, 1000);
 	}
 
 }
