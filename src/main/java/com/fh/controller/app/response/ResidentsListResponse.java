@@ -3,12 +3,13 @@ package com.fh.controller.app.response;
 import java.util.List;
 
 public class ResidentsListResponse {
-private int n;
-public int getN() {
-	return n;
+private int residents;
+
+public int getResidents() {
+	return residents;
 }
-public void setN(int n) {
-	this.n = n;
+public void setResidents(int residents) {
+	this.residents = residents;
 }
 public List<Resident> getList() {
 	return list;
