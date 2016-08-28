@@ -135,7 +135,9 @@ public class AppuserService {
 		}
 		int userid = checkPhone( phone);
 		ThoughtEntity t= r.getThought();
-		r.getThought().setUserid(userid);
+		t.setUserid(userid);
+		t.getKeyInfo();
+		System.out.println(t.getKeyInfo());
 		dao.save("WebappuserMapper.saveThought", t);
 		System.out.println(t.getId());
 		CacheUtil.cacheSave(phone, t, "myThought");

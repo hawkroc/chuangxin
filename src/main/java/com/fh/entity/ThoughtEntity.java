@@ -102,8 +102,8 @@ public void setTags(java.util.List<Tag> tags) {
 	
 	public String getKeyInfo() {
 		StringBuffer buffer=new StringBuffer();
-		buffer.append(JSONUtils.toJSONString(this.product_info));
-		buffer.append(JSONUtils.toJSONString(this.tags));
+		buffer.append(JSONUtils.toJSONString(this.getProduct_info()));
+		buffer.append(JSONUtils.toJSONString(this.getTags()));
 		keyInfo=buffer.toString();
 		return keyInfo;
 	}
