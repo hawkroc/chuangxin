@@ -50,7 +50,7 @@ public class AppuserService {
 	/*
 	 * 通过loginname获取数据
 	 */
-	@Cacheable(value = "myCache", key = "123456")
+
 	public PageData findByUId(PageData pd) throws Exception {
 
 		return (PageData) dao.findForObject("AppuserMapper.findByUId", pd);
