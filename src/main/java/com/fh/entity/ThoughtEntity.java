@@ -1,6 +1,7 @@
 package com.fh.entity;
 
 import com.alibaba.druid.support.json.JSONUtils;
+import com.fh.util.JsonUtil;
 
 
 public class ThoughtEntity extends BaseEntity{
@@ -102,8 +103,8 @@ public void setTags(java.util.List<Tag> tags) {
 	
 	public String getKeyInfo() {
 		StringBuffer buffer=new StringBuffer();
-		buffer.append(JSONUtils.toJSONString(this.getProduct_info()));
-		buffer.append(JSONUtils.toJSONString(this.getTags()));
+		buffer.append(JsonUtil.beanToJson(this.getProduct_info()));
+		buffer.append(JsonUtil.beanToJson(this.getTags()));
 		keyInfo=buffer.toString();
 		return keyInfo;
 	}
