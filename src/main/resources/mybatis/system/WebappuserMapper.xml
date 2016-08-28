@@ -16,6 +16,29 @@
 		#{phone}
 		)
 	</insert>
+
+	<!-- 新增thought -->
+
+	<insert id="saveThought" parameterType="thought">
+		insert into
+		webapp_thought (
+		userid,
+		thought,
+		moment,
+		topic,
+		sellingreason
+		) values (
+		#{userid},
+		#{keyInfo},
+		#{moment},
+		#{topic},
+		#{selling_reason}
+		)
+	</insert>
+
+
+
+
 	<!-- check if the user in database -->
 	<select id="checkUser" parameterType="String" resultType="java.lang.Integer">
 		select
@@ -28,28 +51,30 @@
 
 
 	<!-- login -->
-	<select id="login" parameterType="Login" resultType="LoginRes">		
-			select u.phone, u.id ,u.type ,t.thought from webapp_user u  left JOIN webapp_thought t on(u.id=t.userid)
-		where 
-		u.phone = #{phone} and 
-		u.PASSWORD = #{password}		
+	<select id="login" parameterType="Login" resultType="LoginRes">
+		select u.phone, u.id ,u.type ,t.thought from webapp_user u left JOIN
+		webapp_thought t on(u.id=t.userid)
+		where
+		u.phone = #{phone} and
+		u.PASSWORD = #{password}
 	</select>
-	
-	
-	<select id="loginByToken" parameterType="Login" resultType="LoginRes">		
-			select u.status ,u.phone, u.id ,u.type ,t.thought from webapp_user u  left JOIN webapp_thought t on(u.id=t.userid)
-		where 
-		u.phone = #{phone} 		
+
+
+	<select id="loginByToken" parameterType="Login" resultType="LoginRes">
+		select u.status ,u.phone, u.id ,u.type ,t.thought from webapp_user u
+		left JOIN webapp_thought t on(u.id=t.userid)
+		where
+		u.phone = #{phone}
 	</select>
-	
-	
-		
-	<select id="searchResident" parameterType="locatRan" resultType="resident">		
-		
+
+
+
+	<select id="searchResident" parameterType="locatRan" resultType="resident">
+
 	</select>
-	
-	
-	
+
+
+
 
 	<!-- 存入location -->
 	<update id="saveLocation" parameterType="Login">
@@ -62,10 +87,10 @@
 		phone= #{phone}
 
 	</update>
-	
-	
-	
-	<!-- update status-->
+
+
+
+	<!-- update status -->
 	<update id="logout" parameterType="String">
 		update webapp_user
 		set

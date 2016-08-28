@@ -27,7 +27,7 @@
 		
 		
 		<typeAlias type="com.fh.controller.app.response.Resident" alias="resident"/>
-		
+			<typeAlias type="com.fh.entity.ThoughtEntity" alias="thought"/>
 			
 		
 	</typeAliases>

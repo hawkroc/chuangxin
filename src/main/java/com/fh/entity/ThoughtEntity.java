@@ -1,6 +1,7 @@
 package com.fh.entity;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
+import com.alibaba.druid.support.json.JSONUtils;
+
 
 public class ThoughtEntity extends BaseEntity{
 /**
@@ -33,7 +34,7 @@ public class ThoughtEntity extends BaseEntity{
 
  */
 	
-	private String topic;
+
 	public String getTopic() {
 	return topic;
 }
@@ -77,13 +78,37 @@ public void setTags(java.util.List<Tag> tags) {
 	this.tags = tags;
 }
 	private String moment;
+	public int getUserid() {
+		return userid;
+	}
+	public void setUserid(int userid) {
+		this.userid = userid;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	private int userid;
+	private int id;
 	private String vedio_url;
 	private String image_url;
 	private int selling_reason;
 	private ProductInfo product_info;
 	private java.util.List<Tag> tags;
 	
+	private String topic;
 	
+	public String getKeyInfo() {
+		StringBuffer buffer=new StringBuffer();
+		buffer.append(JSONUtils.toJSONString(this.product_info));
+		buffer.append(JSONUtils.toJSONString(this.tags));
+		keyInfo=buffer.toString();
+		return keyInfo;
+	}
+
+	private String keyInfo;
 	
 	
 	
