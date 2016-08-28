@@ -1,5 +1,7 @@
 package com.fh.controller.app.response;
 
+import com.fh.entity.ThoughtEntity;
+
 public class Resident {
 //	  “user_id”: string,
 //      “phone”: string,
@@ -22,10 +24,10 @@ public class Resident {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public String getThought() {
+	public ThoughtEntity getThought() {
 		return thought;
 	}
-	public void setThought(String thought) {
+	public void setThought(ThoughtEntity thought) {
 		this.thought = thought;
 	}
 	public double getGeo_lat() {
@@ -41,7 +43,7 @@ public class Resident {
 		this.get_lng = get_lng;
 	}
 	private String phone;
-	private String thought;
+	private ThoughtEntity thought;
 	private double geo_lat;
 	private double get_lng;
 	//private double distance;
