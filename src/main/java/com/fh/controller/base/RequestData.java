@@ -2,7 +2,7 @@ package com.fh.controller.base;
 
 import java.io.Serializable;
 
-public class RequestData implements Serializable {
+public  class RequestData implements Serializable {
 /**
  * “api_version”: integer,
     “action_version”: integer

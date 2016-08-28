@@ -29,6 +29,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import com.fh.controller.app.request.AddThoughtReq;
+import com.fh.controller.app.request.CheckThoughtReq;
 import com.fh.controller.app.request.LoginRequest;
 import com.fh.controller.app.request.ResidentListRequest;
 import com.fh.controller.app.request.SignUpRequest;
@@ -88,6 +90,7 @@ public class IntAppuserController extends BaseController {
 	}
 	
 	
+/////////////////////////////////////////////////////////////////////////////////////////		
 
 	/**
 	 * 
@@ -112,6 +115,71 @@ public class IntAppuserController extends BaseController {
 		return ResponseData.creatResponseWithSuccessMessage(null, t);
 
 	}
+	
+
+	
+	
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/addThought", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object addThought(@RequestBody AddThoughtReq p) {
+		
+		if (!StringUtils.isNotBlank(p.getAction().getUser_token())) {
+			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
+		}
+		ResidentsListResponse t=null;
+//		try {
+//			t=	appuserService.logout(p.getAction());
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		return ResponseData.creatResponseWithSuccessMessage(null, t);
+
+	}
+	
+	
+	
+	//Check thought
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/checkThought", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object CheckThought(@RequestBody CheckThoughtReq p) {
+		
+		if (!StringUtils.isNotBlank(p.getAction().getUser_token())) {
+			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
+		}
+		ResidentsListResponse t=null;
+//		try {
+//			t=	appuserService.logout(p.getAction());
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		return ResponseData.creatResponseWithSuccessMessage(null, t);
+
+	}
+	
+	
+/////////////////////////////////////////////////////////////////////////////////////////		
+	
+	
+	
+	
 
 	/**
 	 * 
