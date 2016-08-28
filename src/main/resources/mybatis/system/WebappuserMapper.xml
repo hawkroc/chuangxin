@@ -53,7 +53,7 @@
 
 	<!-- login with thought-->
 	<select id="login" parameterType="Login" resultType="LoginRes">
-		select u.phone, u.id ,u.type ,t.thought from webapp_user u left JOIN
+		select u.phone, u.id ,u.type ,t.id from webapp_user u left JOIN
 		webapp_thought t on(u.id=t.userid)
 		where
 		u.phone = #{phone} and
