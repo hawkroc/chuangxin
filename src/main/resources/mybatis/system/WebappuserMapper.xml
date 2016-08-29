@@ -76,7 +76,7 @@
 
 
 	<select id="searchResident" parameterType="locatRan" resultType="resident">
- select u.phone, u.id ,u.type  from webapp_user
+ select u.phone, u.id ,u.type  from webapp_user u
 		where
 		u.lat between #{minLat} and #{maxLat} 
 		and
