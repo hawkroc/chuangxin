@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -36,6 +37,7 @@ import com.fh.controller.app.request.ResidentListRequest;
 import com.fh.controller.app.request.SignUpRequest;
 import com.fh.controller.app.response.AddThoughtsRes;
 import com.fh.controller.app.response.LoginResponse;
+import com.fh.controller.app.response.Resident;
 import com.fh.controller.app.response.ResidentsListResponse;
 import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.base.BaseController;
@@ -104,15 +106,20 @@ public class IntAppuserController extends BaseController {
 	public Object residentList(@RequestBody ResidentListRequest p) {
 		
 		if (StringUtils.isNotBlank(p.getAction().getUser_id())) {
-			
+			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
 		}
-		ResidentsListResponse t=null;
-//		try {
-//			t=	appuserService.logout(p.getAction());
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		ResidentsListResponse t=new ResidentsListResponse();
+		try {
+			 List<Resident> list=	appuserService.getResidentList(p.getAction());
+			 if(list!=null){
+				 t.setResidents(list.size());
+				 t.setList(list);	
+			 }
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return ResponseData.creatResponseWithSuccessMessage(null, t);
 
 	}

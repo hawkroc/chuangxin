@@ -106,6 +106,11 @@ public class AppuserService {
 	public List<Resident> getResidentList(ResidentEntity r) throws Exception {
 
 		List<Resident> residents = null;
+		String phone = getPhoneByTokenFromCache(r.getUser_token());
+		if(phone==null){
+			//residents.setError_msg("please login again");
+			return residents;
+		}
 		if (getPhoneByTokenFromCache(r.getUser_token()) != null) {
 			LocationRangeEntity l = LatLonUtil.getInstance().getDefaultAround(r.getGeo_lat(), r.getGet_lng());
 			residents = (List<Resident>) dao.findForObject("WebappuserMapper.searchResident", l);
@@ -137,9 +142,9 @@ public class AppuserService {
 		ThoughtEntity t= r.getThought();
 		t.setUserid(userid);
 		t.getKeyInfo();
-		System.out.println(t.getKeyInfo());
+		//System.out.println(t.getKeyInfo());
 		dao.save("WebappuserMapper.saveThought", t);
-		System.out.println(t.getId());
+	//	System.out.println(t.getId());
 		CacheUtil.cacheSave(phone, t, "myThought");
 		residents.setStatus(0);
 		residents.setThought_id(t.getId());		
