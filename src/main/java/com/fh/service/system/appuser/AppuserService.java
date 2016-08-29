@@ -103,6 +103,7 @@ public class AppuserService {
 
 	}
 /// need to be done
+	@SuppressWarnings("unchecked")
 	public List<Resident> getResidentList(ResidentEntity r) throws Exception {
 
 		List<Resident> residents = null;
@@ -113,12 +114,27 @@ public class AppuserService {
 		}
 		if (getPhoneByTokenFromCache(r.getUser_token()) != null) {
 			LocationRangeEntity l = LatLonUtil.getInstance().getDefaultAround(r.getGeo_lat(), r.getGet_lng());
-			residents = (List<Resident>) dao.findForObject("WebappuserMapper.searchResident", l);
+		     residents = (List<Resident>) dao.findForObject("WebappuserMapper.searchResident", l);		
+			for (Resident resident : residents) {
+				resident.setThought(getThoughtFromCache(resident.getPhone()));
+			}
 		}
 		return residents;
 
 	}
-	
+	/**
+	 * 
+	 * @param phone
+	 * @return
+	 */
+	private ThoughtEntity getThoughtFromCache(String phone) {
+		Element o = CacheUtil.getCacheObject(phone, "myThought");
+		ThoughtEntity rs=null;
+		if (o != null) {
+			rs = (ThoughtEntity) o.getObjectValue();
+		}
+		return rs;
+	}
 	
 	// add throuts
 	
