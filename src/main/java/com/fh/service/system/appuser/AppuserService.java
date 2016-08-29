@@ -10,8 +10,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.fh.controller.app.request.AddThoughtAction;
+import com.fh.controller.app.request.CheckThoughtAction;
 import com.fh.controller.app.request.SignUpRequest;
 import com.fh.controller.app.response.AddThoughtsRes;
+import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.Resident;
 import com.fh.dao.DaoSupport;
@@ -111,17 +113,48 @@ public class AppuserService {
 		if(phone==null){
 			//residents.setError_msg("please login again");
 			return residents;
-		}
-		if (getPhoneByTokenFromCache(r.getUser_token()) != null) {
+		}else{
 			LocationRangeEntity l = LatLonUtil.getInstance().getDefaultAround(r.getGeo_lat(), r.getGet_lng());
 		     residents = (List<Resident>) dao.findForObject("WebappuserMapper.searchResident", l);		
 			for (Resident resident : residents) {
 				resident.setThought(getThoughtFromCache(resident.getPhone()));
 			}
 		}
+		
 		return residents;
 
 	}
+	
+	
+	
+	
+	public CheckThoughtRes checkThought(CheckThoughtAction r) throws Exception {
+
+		CheckThoughtRes rs=null;
+		String phone = getPhoneByTokenFromCache(r.getUser_token());
+		if(phone==null){
+			//residents.setError_msg("please login again");
+			return rs;
+		}else{
+			//r.getThought_idthougth();
+			rs=new CheckThoughtRes();
+			r.getThought_idthougth();
+			Element o	=CacheUtil.getCacheObject(r.getThought_idthougth(),  "phone_thoughtid");
+			if(o!=null){
+				ThoughtEntity thoughtEntity=	getThoughtFromCache((String)o.getObjectValue());
+				rs.setImage_url(thoughtEntity.getVedio_url());
+				rs.setVideo_url(thoughtEntity.getImage_url());
+				
+			}
+			
+		}
+		
+		return rs;
+
+	}
+	
+	
+	
 	/**
 	 * 
 	 * @param phone
@@ -158,10 +191,9 @@ public class AppuserService {
 		ThoughtEntity t= r.getThought();
 		t.setUserid(userid);
 		t.getKeyInfo();
-		//System.out.println(t.getKeyInfo());
 		dao.save("WebappuserMapper.saveThought", t);
-	//	System.out.println(t.getId());
 		CacheUtil.cacheSave(phone, t, "myThought");
+		CacheUtil.cacheSave(t.getId(), phone, "phone_thoughtid");
 		residents.setStatus(0);
 		residents.setThought_id(t.getId());		
 		return residents;

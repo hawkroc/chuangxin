@@ -36,6 +36,7 @@ import com.fh.controller.app.request.LoginRequest;
 import com.fh.controller.app.request.ResidentListRequest;
 import com.fh.controller.app.request.SignUpRequest;
 import com.fh.controller.app.response.AddThoughtsRes;
+import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.Resident;
 import com.fh.controller.app.response.ResidentsListResponse;
@@ -171,13 +172,13 @@ public class IntAppuserController extends BaseController {
 		if (!StringUtils.isNotBlank(p.getAction().getUser_token())) {
 			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
 		}
-		ResidentsListResponse t=null;
-//		try {
-//			t=	appuserService.logout(p.getAction());
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		CheckThoughtRes t=null;
+		try {
+			t=	appuserService.checkThought(p.getAction());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return ResponseData.creatResponseWithSuccessMessage(null, t);
 
 	}

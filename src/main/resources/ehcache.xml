@@ -17,7 +17,7 @@
             
             
             <cache name="userCache"         
-        maxElementsInMemory="10000"
+        maxElementsInMemory="150000"
         maxElementsOnDisk="0" 
         eternal="true" 
         overflowToDisk="false"
@@ -31,7 +31,21 @@
             
                
             <cache name="myThought"         
-        maxElementsInMemory="10000"
+        maxElementsInMemory="50000"
+        maxElementsOnDisk="0" 
+        eternal="false" 
+        overflowToDisk="false"
+        diskPersistent="false" 
+        timeToIdleSeconds="7200" 
+        timeToLiveSeconds="7800"
+        diskSpoolBufferSizeMB="50" 
+        diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LFU" /> 
+        
+        
+        
+              <cache name="phone_thoughtid"         
+        maxElementsInMemory="50000"
         maxElementsOnDisk="0" 
         eternal="false" 
         overflowToDisk="false"

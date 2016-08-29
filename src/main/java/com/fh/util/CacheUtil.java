@@ -5,7 +5,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 public class CacheUtil {
-	public static void cacheSave(String key,Object o,String cache_name){
+	public static void cacheSave(Object key,Object o,String cache_name){
 
 		getCache(cache_name).put(new Element(key,o));	
 	       
@@ -13,14 +13,14 @@ public class CacheUtil {
 		 
 	}
 
-	public static void removeCache(String key,String cache_name){
+	public static void removeCache(Object key,String cache_name){
 		getCache(cache_name).remove(key);	
 		 
 		 
 	}
 	
 	
-	public static Element getCacheObject(String key,String cache_name){
+	public static Element getCacheObject(Object key,String cache_name){
 		return getCache(cache_name).get(key);	
 		 
 		 
