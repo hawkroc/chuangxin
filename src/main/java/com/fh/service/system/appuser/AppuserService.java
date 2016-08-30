@@ -144,6 +144,7 @@ public class AppuserService {
 				ThoughtEntity thoughtEntity=	getThoughtFromCache((String)o.getObjectValue());
 				rs.setImage_url(thoughtEntity.getVedio_url());
 				rs.setVideo_url(thoughtEntity.getImage_url());
+				rs.setStatus(1);
 				
 			}
 			
