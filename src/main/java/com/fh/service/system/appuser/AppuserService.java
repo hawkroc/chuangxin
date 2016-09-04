@@ -6,12 +6,12 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 //import org.apache.ibatis.javassist.bytecode.annotation.IntegerMemberValue;
-import org.springframework.cache.annotation.Cacheable;
+
 import org.springframework.stereotype.Service;
 
 import com.fh.controller.app.request.AddThoughtAction;
 import com.fh.controller.app.request.CheckThoughtAction;
-import com.fh.controller.app.request.SignUpRequest;
+
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
@@ -27,9 +27,6 @@ import com.fh.util.CacheUtil;
 import com.fh.util.LatLonUtil;
 import com.fh.util.MD5;
 import com.fh.util.PageData;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 @Service("appuserService")
