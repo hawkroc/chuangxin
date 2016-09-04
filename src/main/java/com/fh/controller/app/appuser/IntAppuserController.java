@@ -35,7 +35,7 @@ import com.fh.controller.app.request.CheckThoughtReq;
 import com.fh.controller.app.request.LoginRequest;
 import com.fh.controller.app.request.ResidentListRequest;
 import com.fh.controller.app.request.SignUpRequest;
-import com.fh.controller.app.response.AddThoughtsRes;
+import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.Resident;
@@ -48,7 +48,7 @@ import com.fh.service.system.appuser.AppuserService;
 
 import com.fh.util.MD5;
 import com.fh.util.PageData;
-import com.fh.util.StringUtil;
+
 import com.fh.util.Tools;
 
 /**
@@ -92,31 +92,29 @@ public class IntAppuserController extends BaseController {
 
 		return map;
 	}
-	
-	
-/////////////////////////////////////////////////////////////////////////////////////////		
 
 	/**
 	 * 
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/resident_list", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@RequestMapping(value = "/resident_list", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
 	@ResponseBody
 
 	public Object residentList(@RequestBody ResidentListRequest p) {
-		
+
 		if (StringUtils.isNotBlank(p.getAction().getUser_id())) {
 			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
 		}
-		ResidentsListResponse t=new ResidentsListResponse();
+		ResidentsListResponse t = new ResidentsListResponse();
 		try {
-			 List<Resident> list=	appuserService.getResidentList(p.getAction());
-			 if(list!=null){
-				 t.setResidents(list.size());
-				 t.setList(list);	
-			 }
-			
+			List<Resident> list = appuserService.getResidentList(p.getAction());
+			if (list != null) {
+				t.setResidents(list.size());
+				t.setList(list);
+			}
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -124,10 +122,9 @@ public class IntAppuserController extends BaseController {
 		return ResponseData.creatResponseWithSuccessMessage(null, t);
 
 	}
-	
 
-	
-	
+	/////////////////////////////////////////////////////////////////////////////////////////
+
 	/**
 	 * 
 	 * @param p
@@ -137,13 +134,13 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public Object addThought(@RequestBody AddThoughtReq p) {
-		
+
 		if (!StringUtils.isNotBlank(p.getAction().getUser_token())) {
 			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
 		}
-		AddThoughtsRes t=null;
+		AddBananaRes t = null;
 		try {
-			t=	appuserService.addThought(p.getAction());
+			// t= appuserService.(p.getAction());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -151,30 +148,26 @@ public class IntAppuserController extends BaseController {
 		return ResponseData.creatResponseWithSuccessMessage(null, t);
 
 	}
-	
-	
-	
-	//Check thought
-	
-	
-	
-	
+
+	// Check thought
+
 	/**
 	 * 
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/checkThought", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@RequestMapping(value = "/checkThought", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
 	@ResponseBody
 
 	public Object CheckThought(@RequestBody CheckThoughtReq p) {
-		
+
 		if (!StringUtils.isNotBlank(p.getAction().getUser_token())) {
 			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
 		}
-		CheckThoughtRes t=null;
+		CheckThoughtRes t = null;
 		try {
-			t=	appuserService.checkThought(p.getAction());
+			t = appuserService.checkThought(p.getAction());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -182,13 +175,8 @@ public class IntAppuserController extends BaseController {
 		return ResponseData.creatResponseWithSuccessMessage(null, t);
 
 	}
-	
-	
-/////////////////////////////////////////////////////////////////////////////////////////		
-	
-	
-	
-	
+
+	/////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * 
@@ -199,9 +187,9 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public Object logout(@RequestBody LoginRequest p) {
-		LoginResponse t=null;
+		LoginResponse t = null;
 		try {
-			t=	appuserService.logout(p.getAction());
+			t = appuserService.logout(p.getAction());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -209,8 +197,6 @@ public class IntAppuserController extends BaseController {
 		return ResponseData.creatResponseWithSuccessMessage(null, t);
 
 	}
-
-	
 
 	/**
 	 * 
@@ -221,21 +207,22 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public Object login(@RequestBody LoginRequest p) {
-	  
-		LoginResponse t=null;
-		
+
+		LoginResponse t = null;
+
 		try {
-			if (appuserService.checkPhone(p.getAction().getPhone()) == null&& StringUtils.isEmpty(p.getAction().getUser_token())) {
-				return ResponseData.creatResponseWithFailMessage(1,1,"there are no this user","Rf");
-			} 
-			t= appuserService.loginAppUser(p.getAction());
-			if(t!=null){
+			if (appuserService.checkPhone(p.getAction().getPhone()) == null
+					&& StringUtils.isEmpty(p.getAction().getUser_token())) {
+				return ResponseData.creatResponseWithFailMessage(1, 1, "there are no this user", "Rf");
+			}
+			t = appuserService.updateLoginAppUser(p.getAction());
+			if (t != null) {
 				HttpSession s = this.getRequest().getSession();
 				s.setAttribute("LoginResponse", t);
 				t.setStatus("1");
-			}else{
-				//t.setStattus("faild");
-				return ResponseData.creatResponseWithFailMessage(1,1,"password or user_token is error","Rf");
+			} else {
+				// t.setStattus("faild");
+				return ResponseData.creatResponseWithFailMessage(1, 1, "password or user_token is error", "Rf");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -250,7 +237,6 @@ public class IntAppuserController extends BaseController {
 
 	public Object signUp(@RequestBody SignUpRequest p) {
 
-		
 		SignUpResponse rs = new SignUpResponse();
 		HttpSession s = this.getRequest().getSession();
 
@@ -258,7 +244,8 @@ public class IntAppuserController extends BaseController {
 
 			if (appuserService.checkPhone(p.getAction().getPhone()) != null) {
 				rs.setStatus("you already sigup please login");
-			} else if (StringUtils.isEmpty((p.getAction().getVerification_code()))||s.getAttribute("Verification_code_time")==null) {
+			} else if (StringUtils.isEmpty((p.getAction().getVerification_code()))
+					|| s.getAttribute("Verification_code_time") == null) {
 				rs.setStatus("pending");
 				String Verification_code = String.valueOf(Tools.getRandomNum());
 				rs.setVerification_code(Verification_code);
@@ -266,7 +253,7 @@ public class IntAppuserController extends BaseController {
 				logBefore(logger, "RandomNum is " + Verification_code);
 				s.setAttribute("Verification_code_time", System.currentTimeMillis());
 			} else {
-		
+
 				long sec = ((System.currentTimeMillis()) - (long) s.getAttribute("Verification_code_time")) / 1000;
 				// long temp =()->
 				if (p.getAction().getVerification_code().equalsIgnoreCase((String) s.getAttribute("Verification_code"))
@@ -284,8 +271,6 @@ public class IntAppuserController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-	
 
 		return ResponseData.creatResponseWithSuccessMessage(null, rs);
 

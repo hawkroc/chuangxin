@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.fh.controller.app.request.AddThoughtAction;
 import com.fh.controller.app.request.CheckThoughtAction;
 import com.fh.controller.app.request.SignUpRequest;
-import com.fh.controller.app.response.AddThoughtsRes;
+import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.Resident;
@@ -77,7 +77,7 @@ public class AppuserService {
 	 * @return
 	 * @throws Exception
 	 */
-	public LoginResponse loginAppUser(LoginEntity e) throws Exception {
+	public LoginResponse updateLoginAppUser(LoginEntity e) throws Exception {
 		LoginResponse loginResponse = null;
 
 		if (StringUtils.isNotEmpty(e.getPassword()) && StringUtils.isNotEmpty(e.getPhone())) {
@@ -127,7 +127,7 @@ public class AppuserService {
 	
 	
 	
-	
+	// need to be done
 	public CheckThoughtRes checkThought(CheckThoughtAction r) throws Exception {
 
 		CheckThoughtRes rs=null;
@@ -142,8 +142,8 @@ public class AppuserService {
 			Element o	=CacheUtil.getCacheObject(r.getThought_idthougth(),  "phone_thoughtid");
 			if(o!=null){
 				ThoughtEntity thoughtEntity=	getThoughtFromCache((String)o.getObjectValue());
-				rs.setImage_url(thoughtEntity.getVedio_url());
-				rs.setVideo_url(thoughtEntity.getImage_url());
+//				rs.setImage_url(thoughtEntity.getVedio_url());
+//				rs.setVideo_url(thoughtEntity.getImage_url());
 				rs.setStatus(1);
 				
 			}
@@ -175,14 +175,14 @@ public class AppuserService {
 	
 	
 	
-	public AddThoughtsRes addThought(AddThoughtAction r) throws Exception {
+	public AddBananaRes saveBanana(AddThoughtAction r) throws Exception {
 
 //		List<Resident> residents = null;
 //		if (getPhoneByTokenFromCache(r.getUser_token()) != null) {
 //			LocationRangeEntity l = LatLonUtil.getInstance().getDefaultAround(r.getGeo_lat(), r.getGet_lng());
 //			residents = (List<Resident>) dao.findForObject("WebappuserMapper.searchResident", l);
 //		}
-		AddThoughtsRes residents= new AddThoughtsRes() ;
+		AddBananaRes residents= new AddBananaRes() ;
 		String phone = getPhoneByTokenFromCache(r.getUser_token());
 		if(phone==null){
 			residents.setError_msg("please login again");
@@ -190,8 +190,8 @@ public class AppuserService {
 		}
 		int userid = checkPhone( phone);
 		ThoughtEntity t= r.getThought();
-		t.setUserid(userid);
-		t.getKeyInfo();
+//		t.setUserid(userid);
+//		t.getKeyInfo();
 		dao.save("WebappuserMapper.saveThought", t);
 		CacheUtil.cacheSave(phone, t, "myThought");
 		CacheUtil.cacheSave(t.getId(), phone, "phone_thoughtid");

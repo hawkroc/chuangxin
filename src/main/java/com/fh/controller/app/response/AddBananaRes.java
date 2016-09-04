@@ -1,6 +1,6 @@
 package com.fh.controller.app.response;
 
-public class AddThoughtsRes {
+public class AddBananaRes {
 	
 //	
 //	 “status”: int,
