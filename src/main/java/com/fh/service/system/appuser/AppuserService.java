@@ -111,11 +111,14 @@ public class AppuserService {
 			//residents.setError_msg("please login again");
 			return residents;
 		}else{
-			LocationRangeEntity l = LatLonUtil.getInstance().getDefaultAround(r.getGeo_lat(), r.getGet_lng());
-		     residents = (List<Resident>) dao.findForObject("WebappuserMapper.searchResident", l);		
-			for (Resident resident : residents) {
-				resident.setThought(getThoughtFromCache(resident.getPhone()));
-			}
+			LocationRangeEntity l = LatLonUtil.getInstance().getDefaultAround(r.getCurrent_lat(), r.getCurrent_lng());
+		     residents = (List<Resident>) dao.findForList("WebappuserMapper.searchResident", l);	
+		     if(residents!=null){
+		    	 for (Resident resident : residents) {
+		 			//	resident.setThought(getThoughtFromCache(resident.getPhone()));
+		 			}
+		     }
+			
 		}
 		
 		return residents;

@@ -22,19 +22,20 @@ public class ResidentEntity {
 	private String user_token;
 	
 	
-	public double getGeo_lat() {
-		return geo_lat;
+
+	public double getCurrent_lat() {
+		return current_lat;
 	}
-	public void setGeo_lat(double geo_lat) {
-		this.geo_lat = geo_lat;
+	public void setCurrent_lat(double current_lat) {
+		this.current_lat = current_lat;
 	}
-	public double getGet_lng() {
-		return get_lng;
+	public double getCurrent_lng() {
+		return current_lng;
 	}
-	public void setGet_lng(double get_lng) {
-		this.get_lng = get_lng;
+	public void setCurrent_lng(double current_lng) {
+		this.current_lng = current_lng;
 	}
 
-	private double geo_lat;
-	private double get_lng;
+	private double current_lat;
+	private double current_lng;
 }

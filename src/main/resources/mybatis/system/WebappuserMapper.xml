@@ -2,8 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="WebappuserMapper">
-
-
+<!--  select u.phone, u.id ,u.type   -->
+	<resultMap type="resident" id="residentMap">
+		<id column="id" property="user_id"/>
+		<result column="phone" property="phone"/>
+		<result column="lon" property="lon"/>
+			<result column="lat" property="lat"/>
+	</resultMap>
 
 
 	<!-- 新增app用户 -->
@@ -75,8 +80,8 @@
 
 
 
-	<select id="searchResident" parameterType="locatRan" resultType="resident">
- select u.phone, u.id ,u.type  from webapp_user u
+	<select id="searchResident" parameterType="locatRan" resultMap="residentMap">
+ select u.phone, u.id ,u.type ,u.lon, u.lat from webapp_user u
 		where
 		u.lat between #{minLat} and #{maxLat} 
 		and

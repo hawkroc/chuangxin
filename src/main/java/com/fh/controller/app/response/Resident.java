@@ -30,22 +30,26 @@ public class Resident {
 	public void setThought(ThoughtEntity thought) {
 		this.thought = thought;
 	}
-	public double getGeo_lat() {
-		return geo_lat;
-	}
-	public void setGeo_lat(double geo_lat) {
-		this.geo_lat = geo_lat;
-	}
-	public double getGet_lng() {
-		return get_lng;
-	}
-	public void setGet_lng(double get_lng) {
-		this.get_lng = get_lng;
-	}
+	
+	
 	private String phone;
 	private ThoughtEntity thought;
-	private double geo_lat;
-	private double get_lng;
+	public double getLat() {
+		return lat;
+	}
+	public void setLat(double lat) {
+		this.lat = lat;
+	}
+	public double getLon() {
+		return lon;
+	}
+	public void setLon(double lon) {
+		this.lon = lon;
+	}
+
+
+	private double lat;
+	private double lon;
 	//private double distance;
 	//private String distance_unit;
 	

@@ -75,8 +75,8 @@ public static LatLonUtil getInstance() {
 		// 获取最大经度
 		Double maxLng = longitude + radiusLng;
 		
-		System.out.println("jingdu" + minLat + "weidu" + minLng + "zuidajingdu"
-				+ maxLat + "zuidaweidu" + maxLng);
+		System.out.println("jingdu " + minLat + "weidu " + minLng + "zuidajingdu "
+				+ maxLat + "zuidaweidu " + maxLng);
 
 		return new LocationRangeEntity(minLat, minLng, maxLat, maxLng);
 	}
