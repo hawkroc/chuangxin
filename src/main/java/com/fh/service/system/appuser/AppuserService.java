@@ -140,13 +140,14 @@ public class AppuserService {
 		}else{
 			//r.getThought_idthougth();
 			rs=new CheckThoughtRes();
-			r.getThought_idthougth();
-			Element o	=CacheUtil.getCacheObject(r.getThought_idthougth(),  "phone_thoughtid");
+		//	r.getThought_idthougth();
+			Element o	=CacheUtil.getCacheObject(r.getTopic()+r.getKey_word(),  "topickeywords_banana");
 			if(o!=null){
-				ThoughtEntity thoughtEntity=	getThoughtFromCache((String)o.getObjectValue());
+				BananaEntity b=	getBananaFromCache((int)o.getObjectValue());
 //				rs.setImage_url(thoughtEntity.getVedio_url());
 //				rs.setVideo_url(thoughtEntity.getImage_url());
 				rs.setStatus(1);
+				rs.setVideo_url(b.getVideo_url());
 				
 			}
 			
@@ -163,11 +164,11 @@ public class AppuserService {
 	 * @param phone
 	 * @return
 	 */
-	private ThoughtEntity getThoughtFromCache(String phone) {
-		Element o = CacheUtil.getCacheObject(phone, "myThought");
-		ThoughtEntity rs=null;
+	private BananaEntity getBananaFromCache(int userid) {
+		Element o = CacheUtil.getCacheObject(userid, "myThought");
+		BananaEntity rs=null;
 		if (o != null) {
-			rs = (ThoughtEntity) o.getObjectValue();
+			rs = (BananaEntity) o.getObjectValue();
 		}
 		return rs;
 	}
@@ -206,8 +207,8 @@ public class AppuserService {
 		banana.setProductId(product.getId());
 		banana.setThoughtId(t.getId());
 		dao.save("WebappuserMapper.saveBanana", banana);
-		CacheUtil.cacheSave(phone, banana, "myThought");
-		CacheUtil.cacheSave(t.getId(), phone, "phone_thoughtid");
+		CacheUtil.cacheSave(userid, banana, "myThought");
+		CacheUtil.cacheSave(t.getTopic()+t.getKey_word(), userid, "topickeywords_banana");
 		residents.setStatus(0);
 		residents.setThought_id(t.getId());		
 		return residents;

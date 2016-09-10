@@ -11,11 +11,24 @@ public class CheckThoughtAction {
 	public void setUser_token(String user_token) {
 		this.user_token = user_token;
 	}
-	public long getThought_idthougth() {
-		return thought_idthougth;
+//	public long getThought_idthougth() {
+//		return thought_idthougth;
+//	}
+//	public void setThought_idthougth(long thought_idthougth) {
+//		this.thought_idthougth = thought_idthougth;
+//	}
+	private String topic;
+	public String getTopic() {
+		return topic;
 	}
-	public void setThought_idthougth(long thought_idthougth) {
-		this.thought_idthougth = thought_idthougth;
+	public void setTopic(String topic) {
+		this.topic = topic;
 	}
-	private long thought_idthougth;
+	public String getKey_word() {
+		return key_word;
+	}
+	public void setKey_word(String key_word) {
+		this.key_word = key_word;
+	}
+	private String key_word;
 }

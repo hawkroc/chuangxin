@@ -153,7 +153,7 @@ public class IntAppuserController extends BaseController {
 	// Check thought
 
 	/**
-	 * 
+	 * http://api.sosxsos.com/checkThought
 	 * @param p
 	 * @return
 	 */
