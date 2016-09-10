@@ -17,9 +17,11 @@ import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.Resident;
 import com.fh.dao.DaoSupport;
+import com.fh.entity.BananaEntity;
 import com.fh.entity.LocationRangeEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.Page;
+import com.fh.entity.ProductEntity;
 import com.fh.entity.ResidentEntity;
 import com.fh.entity.SignUpEntity;
 import com.fh.entity.ThoughtEntity;
@@ -189,14 +191,21 @@ public class AppuserService {
 			return residents;
 		}
 		int userid = checkPhone( phone);
-		ThoughtEntity t= r.getThought();
+		BananaEntity banana=r.getBanana();
+		banana.setUserid(userid);
+		//System.out.println(banana.toString());
+		ThoughtEntity t= r.getBanana().getThought();
+		//System.out.println(t.toString());
+		ProductEntity product=r.getBanana().getProduct();
+		//System.out.println(product.toString());
+		
 //		t.setUserid(userid);
 //		t.getKeyInfo();
-		dao.save("WebappuserMapper.saveThought", t);
-		CacheUtil.cacheSave(phone, t, "myThought");
-		CacheUtil.cacheSave(t.getId(), phone, "phone_thoughtid");
-		residents.setStatus(0);
-		residents.setThought_id(t.getId());		
+//		dao.save("WebappuserMapper.saveThought", t);
+//		CacheUtil.cacheSave(phone, t, "myThought");
+//		CacheUtil.cacheSave(t.getId(), phone, "phone_thoughtid");
+//		residents.setStatus(0);
+//		residents.setThought_id(t.getId());		
 		return residents;
 
 	}

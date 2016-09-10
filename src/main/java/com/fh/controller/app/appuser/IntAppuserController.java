@@ -130,7 +130,7 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/addThought", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@RequestMapping(value = "/addBanana", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 
 	public Object addThought(@RequestBody AddBananaReq p) {
@@ -138,9 +138,10 @@ public class IntAppuserController extends BaseController {
 		if (!StringUtils.isNotBlank(p.getAction().getUser_token())) {
 			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
 		}
+		System.out.println(p.getAction().toString());
 		AddBananaRes t = null;
 		try {
-			// t= appuserService.(p.getAction());
+			 t= appuserService.saveBanana(p.getAction());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

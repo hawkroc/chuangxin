@@ -1,46 +1,39 @@
 package com.fh.controller.app.request;
 
-import com.fh.entity.ThoughtEntity;
+import com.fh.entity.BananaEntity;
+
 //hkhkhu
 public class AddBananaAction {
-/**
- * 
-“action”: {
-     “user_token”: string,
-     “timestamp”: long，
-     “action_type”: int,
-     “thought”: {
-            “topic”: string,
-            “moment”: string,
-            “vedio_url”: string,
-            “image_url”: string,
-            “selling_reason”: int,
-            “product_info”: {
-                   “name”: string,
-                   “desc”: string,
-                   “price”: double
-             },
-             “tags”: [
-                    {
-                         tag: int,
-                         value1: string,
-                         value2: string,
-                         desc: string.
-                    },
-                    {
-                         tag: int,
-                         value1: string,
-                         value2: string,
-                         desc: string.
-                    }
-             ]
-       }
-}
-   0 - share a banana
-     1 - request a banana
-
- */
-	
+//	“action”: {
+//    “user_token”: string,
+//    “action_type”: int,
+//    “banana”: {
+//          “thought”: {
+//                 “topic”: string,
+//                 “key_word”: string
+//           }
+//          “video_url”: string,
+//          “product: {
+//                “image_url”: string,
+//                “selling_reason”: int,
+//                “item_info”: {
+//                       “name”: string,
+//                        “desc”: string,
+//                        “price”: double
+//                  },
+//                  “tags”: [{
+//                        “tag”: int,
+//                        “value”: string,
+//                        “desc”: string
+//                    },
+//                    {
+//                        “tag”: int,
+//                        “value”: string,
+//                        “desc”: string
+//                    }]
+//             }
+//      }
+//}
 	
 	private String user_token;
 	public String getUser_token() {
@@ -61,15 +54,17 @@ public int getAction_type() {
 public void setAction_type(int action_type) {
 	this.action_type = action_type;
 }
-public ThoughtEntity getThought() {
-	return thought;
-}
-public void setThought(ThoughtEntity thought) {
-	this.thought = thought;
-}
+
 	private long timestamp;
 	private int action_type;
-	private ThoughtEntity thought;
+	public BananaEntity getBanana() {
+		return banana;
+	}
+	public void setBanana(BananaEntity banana) {
+		this.banana = banana;
+	}
+
+	private BananaEntity banana;
 	
 	
 }
