@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.springframework.stereotype.Service;
 
-import com.fh.controller.app.request.AddThoughtAction;
+import com.fh.controller.app.request.AddBananaAction;
 import com.fh.controller.app.request.CheckThoughtAction;
 
 import com.fh.controller.app.response.AddBananaRes;
@@ -175,7 +175,7 @@ public class AppuserService {
 	
 	
 	
-	public AddBananaRes saveBanana(AddThoughtAction r) throws Exception {
+	public AddBananaRes saveBanana(AddBananaAction r) throws Exception {
 
 //		List<Resident> residents = null;
 //		if (getPhoneByTokenFromCache(r.getUser_token()) != null) {

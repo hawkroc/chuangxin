@@ -2,7 +2,7 @@ package com.fh.controller.app.request;
 
 import com.fh.entity.ThoughtEntity;
 //hkhkhu
-public class AddThoughtAction {
+public class AddBananaAction {
 /**
  * 
 “action”: {
