@@ -29,19 +29,50 @@
 		insert into
 		webapp_thought (
 		userid,
-		thought,
-		moment,
-		topic,
-		sellingreason
+		keywords,
+		topic
 		) values (
 		#{userid},
-		#{keyInfo},
-		#{moment},
-		#{topic},
-		#{selling_reason}
+		#{key_word},
+		#{topic}
 		)
 	</insert>
 
+
+	<!-- 新增product -->
+
+	<insert id="saveProduct" parameterType="product" useGeneratedKeys="true"
+    keyProperty="id">
+		insert into
+		webapp_product (
+			image_url,
+		selling_reason,
+		product_info,
+		tags
+		) values (
+		#{image_url},
+		#{selling_reason},
+		#{productInfoByJson},
+		#{tagsByJson}
+		)
+	</insert>
+<!-- add banana -->
+	<insert id="saveBanana" parameterType="banana" useGeneratedKeys="true"
+    keyProperty="id">
+		insert into
+		webapp_banana (
+			userid,
+				video_url,
+			thought_id,
+			product_id
+	
+		) values (
+		#{userid},
+		#{video_url},
+		#{thoughtId},
+		#{productId}
+		)
+	</insert>
 
 
 

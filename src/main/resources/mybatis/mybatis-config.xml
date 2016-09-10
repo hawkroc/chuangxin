@@ -28,6 +28,9 @@
 		
 		<typeAlias type="com.fh.controller.app.response.Resident" alias="resident"/>
 			<typeAlias type="com.fh.entity.ThoughtEntity" alias="thought"/>
+				<typeAlias type="com.fh.entity.ProductEntity" alias="product"/>
+				
+					<typeAlias type="com.fh.entity.BananaEntity" alias="banana"/>
 			
 		
 	</typeAliases>

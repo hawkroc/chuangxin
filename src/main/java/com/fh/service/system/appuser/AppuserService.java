@@ -103,7 +103,7 @@ public class AppuserService {
 		return loginResponse;
 
 	}
-/// need to be done
+
 	@SuppressWarnings("unchecked")
 	public List<Resident> getResidentList(ResidentEntity r) throws Exception {
 
@@ -195,17 +195,21 @@ public class AppuserService {
 		banana.setUserid(userid);
 		//System.out.println(banana.toString());
 		ThoughtEntity t= r.getBanana().getThought();
+		t.setUserid(userid);
 		//System.out.println(t.toString());
 		ProductEntity product=r.getBanana().getProduct();
 		//System.out.println(product.toString());
-		
-//		t.setUserid(userid);
+		t.setUserid(userid);
 //		t.getKeyInfo();
-//		dao.save("WebappuserMapper.saveThought", t);
-//		CacheUtil.cacheSave(phone, t, "myThought");
-//		CacheUtil.cacheSave(t.getId(), phone, "phone_thoughtid");
-//		residents.setStatus(0);
-//		residents.setThought_id(t.getId());		
+		dao.save("WebappuserMapper.saveThought", t);
+		dao.save("WebappuserMapper.saveProduct", product);
+		banana.setProductId(product.getId());
+		banana.setThoughtId(t.getId());
+		dao.save("WebappuserMapper.saveBanana", banana);
+		CacheUtil.cacheSave(phone, banana, "myThought");
+		CacheUtil.cacheSave(t.getId(), phone, "phone_thoughtid");
+		residents.setStatus(0);
+		residents.setThought_id(t.getId());		
 		return residents;
 
 	}
