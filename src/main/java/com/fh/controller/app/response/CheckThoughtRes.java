@@ -1,6 +1,6 @@
 package com.fh.controller.app.response;
 
-public class CheckThoughtRes {
+public class CheckThoughtRes  {
 //	“status”: int,
 //    “image_url”: string,
 //   “video_url”: string

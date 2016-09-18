@@ -11,15 +11,18 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-
+import org.apache.http.HttpResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,18 +37,20 @@ import com.fh.controller.app.request.AddBananaReq;
 import com.fh.controller.app.request.CheckThoughtReq;
 import com.fh.controller.app.request.LoginRequest;
 import com.fh.controller.app.request.ResidentListRequest;
-import com.fh.controller.app.request.SignUpRequest;
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
+import com.fh.controller.app.response.ResBase;
 import com.fh.controller.app.response.Resident;
 import com.fh.controller.app.response.ResidentsListResponse;
 import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.base.BaseController;
 import com.fh.controller.base.ResponseData;
+import com.fh.entity.LoginEntity;
+import com.fh.entity.SignUpEntity;
 import com.fh.entity.TestEntity;
 import com.fh.service.system.appuser.AppuserService;
-
+import com.fh.util.Const;
 import com.fh.util.MD5;
 import com.fh.util.PageData;
 
@@ -54,43 +59,143 @@ import com.fh.util.Tools;
 /**
  * 会员-接口类
  * 
- * 相关参数协议： 00 请求失败 01 请求成功 02 返回空值 03 请求协议参数不完整 04 用户名或密码错误 05 FKEY验证失败
+ * 
  */
 @Controller
 @RequestMapping(value = "/appuser")
 @SessionAttributes("test")
 public class IntAppuserController extends BaseController {
-
+	@Autowired
+	private HttpServletRequest request;
 	@Resource(name = "appuserService")
 	private AppuserService appuserService;
 
 	/**
-	 * 根据用户名获取会员信息
+	 * 
+	 * @param p
+	 * @return
 	 */
-	@RequestMapping(value = "/getAppuserByUm")
+	// @RequestMapping(value = "/version", method = RequestMethod.GET)
+	@RequestMapping(value = { "/version", "/versiontest" }, method = RequestMethod.GET)
 	@ResponseBody
-	public Object getAppuserByUsernmae() {
-		logBefore(logger, "根据用户名获取会员信息");
-		Map<String, Object> map = new HashMap<String, Object>();
-		PageData pd = new PageData();
-		pd = this.getPageData();
-		String result = "00";
 
+	public Object getCurrentVersion() {
+
+		return new ResBase() {
+		};
+
+	}
+
+	@RequestMapping(value = { "/sign_up", "/verification_code","/forgot" }, method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object signUp(@RequestBody SignUpEntity p, HttpServletResponse response) {
+
+		SignUpResponse rs = new SignUpResponse();
+		HttpSession s = this.getRequest().getSession();
+		String token = request.getHeader("Bearer");
+        boolean istype=StringUtils.isEmpty(p.getType());
 		try {
 
-			pd = appuserService.findByUId(pd);
+			if (appuserService.checkPhone(p.getPhone()) != null&&istype) {
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-			map.put("pd", pd);
-			result = (null == pd) ? "02" : "01";
+			} else if (StringUtils.isEmpty((p.getVerification_code()))
+					|| s.getAttribute("Verification_code_time") == null) {
+				String Verification_code = String.valueOf(Tools.getRandomNum());
+				rs.setVerification_code(Verification_code);
+				s.setAttribute("Verification_code", Verification_code);
+				s.setAttribute("Verification_code_time", System.currentTimeMillis());
+			} else {
 
+				long sec = ((System.currentTimeMillis()) - (long) s.getAttribute("Verification_code_time")) / 1000;
+
+				if (p.getVerification_code().equalsIgnoreCase((String) s.getAttribute("Verification_code"))
+						&& sec < Const.secEx) {
+					if(!istype){
+					
+						if (!StringUtils.isEmpty(token) && appuserService.getPhoneByTokenFromCache(token) != null) {
+							if(appuserService.getPhoneByTokenFromCache(token).equalsIgnoreCase(p.getPhone())){
+								rs.setUser_token(appuserService.updateAppUserPassword(p));
+								response.setStatus(HttpServletResponse.SC_CREATED);
+								return rs;
+							}
+						}									
+						response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+						return rs;					
+					}else {
+						rs.setUser_token(appuserService.saveAppUser(p));
+						response.setStatus(HttpServletResponse.SC_CREATED);
+					}
+				} else {
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+				}
+
+			}
 		} catch (Exception e) {
-			logger.error(e.toString(), e);
-		} finally {
-			map.put("result", result);
-			logAfter(logger);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
-		return map;
+		return rs;
+
+	}
+
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object login(@RequestBody LoginEntity p, HttpServletResponse response) {
+
+		LoginResponse t = null;
+
+		try {
+			if (appuserService.checkPhone(p.getPhone()) == null && StringUtils.isEmpty(p.getUser_token())) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				return t;
+			}
+			t = appuserService.updateLoginAppUser(p);
+			if (t != null) {
+				HttpSession s = this.getRequest().getSession();
+				s.setAttribute("LoginResponse", t);
+			} else {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return t;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return t;
+
+	}
+
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object logout(@RequestBody LoginEntity p, HttpServletResponse response) {
+		LoginResponse t = null;
+		String token = request.getHeader("Bearer");
+		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
+
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return t;
+
+		}
+		appuserService.logout(token);
+		return t;
+
 	}
 
 	/**
@@ -102,7 +207,8 @@ public class IntAppuserController extends BaseController {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
 
-	public Object residentList(@RequestBody ResidentListRequest p) {
+	public Object residentList(@RequestBody ResidentListRequest p,
+			@RequestHeader(value = "User-Agent") String userAgent) {
 
 		if (StringUtils.isNotBlank(p.getAction().getUser_id())) {
 			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
@@ -133,7 +239,7 @@ public class IntAppuserController extends BaseController {
 	@RequestMapping(value = "/addBanana", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 
-	public Object addThought(@RequestBody AddBananaReq p) {
+	public Object addThought(@RequestBody AddBananaReq p, @RequestHeader(value = "User-Agent") String userAgent) {
 
 		if (!StringUtils.isNotBlank(p.getAction().getUser_token())) {
 			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
@@ -141,7 +247,7 @@ public class IntAppuserController extends BaseController {
 		System.out.println(p.getAction().toString());
 		AddBananaRes t = null;
 		try {
-			 t= appuserService.saveBanana(p.getAction());
+			t = appuserService.saveBanana(p.getAction());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -154,6 +260,7 @@ public class IntAppuserController extends BaseController {
 
 	/**
 	 * http://api.sosxsos.com/checkThought
+	 * 
 	 * @param p
 	 * @return
 	 */
@@ -161,7 +268,7 @@ public class IntAppuserController extends BaseController {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
 
-	public Object CheckThought(@RequestBody CheckThoughtReq p) {
+	public Object CheckThought(@RequestBody CheckThoughtReq p, @RequestHeader(value = "User-Agent") String userAgent) {
 
 		if (!StringUtils.isNotBlank(p.getAction().getUser_token())) {
 			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
@@ -178,104 +285,6 @@ public class IntAppuserController extends BaseController {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * 
-	 * @param p
-	 * @return
-	 */
-	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
-	@ResponseBody
-
-	public Object logout(@RequestBody LoginRequest p) {
-		LoginResponse t = null;
-		try {
-			t = appuserService.logout(p.getAction());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return ResponseData.creatResponseWithSuccessMessage(null, t);
-
-	}
-
-	/**
-	 * 
-	 * @param p
-	 * @return
-	 */
-	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
-	@ResponseBody
-
-	public Object login(@RequestBody LoginRequest p) {
-
-		LoginResponse t = null;
-
-		try {
-			if (appuserService.checkPhone(p.getAction().getPhone()) == null
-					&& StringUtils.isEmpty(p.getAction().getUser_token())) {
-				return ResponseData.creatResponseWithFailMessage(1, 1, "there are no this user", "Rf");
-			}
-			t = appuserService.updateLoginAppUser(p.getAction());
-			if (t != null) {
-				HttpSession s = this.getRequest().getSession();
-				s.setAttribute("LoginResponse", t);
-				t.setStatus("1");
-			} else {
-				// t.setStattus("faild");
-				return ResponseData.creatResponseWithFailMessage(1, 1, "password or user_token is error", "Rf");
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return ResponseData.creatResponseWithSuccessMessage(null, t);
-
-	}
-
-	@RequestMapping(value = "/signup", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
-	@ResponseBody
-
-	public Object signUp(@RequestBody SignUpRequest p) {
-
-		SignUpResponse rs = new SignUpResponse();
-		HttpSession s = this.getRequest().getSession();
-
-		try {
-
-			if (appuserService.checkPhone(p.getAction().getPhone()) != null) {
-				rs.setStatus("you already sigup please login");
-			} else if (StringUtils.isEmpty((p.getAction().getVerification_code()))
-					|| s.getAttribute("Verification_code_time") == null) {
-				rs.setStatus("pending");
-				String Verification_code = String.valueOf(Tools.getRandomNum());
-				rs.setVerification_code(Verification_code);
-				s.setAttribute("Verification_code", Verification_code);
-				logBefore(logger, "RandomNum is " + Verification_code);
-				s.setAttribute("Verification_code_time", System.currentTimeMillis());
-			} else {
-
-				long sec = ((System.currentTimeMillis()) - (long) s.getAttribute("Verification_code_time")) / 1000;
-				// long temp =()->
-				if (p.getAction().getVerification_code().equalsIgnoreCase((String) s.getAttribute("Verification_code"))
-						&& sec < 90) {
-					appuserService.saveAppUser(p.getAction());
-					rs.setStatus("success");
-
-					rs.setUser_id(String.valueOf(appuserService.checkPhone(p.getAction().getPhone()).intValue()));
-				} else {
-					rs.setStatus("verify_failed");
-				}
-
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return ResponseData.creatResponseWithSuccessMessage(null, rs);
-
-	}
 
 	/**
 	 * 
@@ -352,7 +361,8 @@ public class IntAppuserController extends BaseController {
 	 * @throws IOException
 	 */
 	@RequestMapping("springUpload")
-	public String springUpload(HttpServletRequest request) throws IllegalStateException, IOException {
+	public String springUpload(HttpServletRequest request, @RequestHeader(value = "User-Agent") String userAgent)
+			throws IllegalStateException, IOException {
 		long startTime = System.currentTimeMillis();
 		// 将当前上下文初始化给 CommonsMutipartResolver （多部分解析器）
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
@@ -399,6 +409,35 @@ public class IntAppuserController extends BaseController {
 		long endTime = System.currentTimeMillis();
 		System.out.println("方法二的运行时间：" + String.valueOf(endTime - startTime) + "ms");
 		return "/success";
+	}
+
+	/**
+	 * 根据用户名获取会员信息
+	 */
+	@RequestMapping(value = "/getAppuserByUm")
+	@ResponseBody
+	public Object getAppuserByUsernmae() {
+		logBefore(logger, "根据用户名获取会员信息");
+		Map<String, Object> map = new HashMap<String, Object>();
+		PageData pd = new PageData();
+		pd = this.getPageData();
+		String result = "00";
+
+		try {
+
+			pd = appuserService.findByUId(pd);
+
+			map.put("pd", pd);
+			result = (null == pd) ? "02" : "01";
+
+		} catch (Exception e) {
+			logger.error(e.toString(), e);
+		} finally {
+			map.put("result", result);
+			logAfter(logger);
+		}
+
+		return map;
 	}
 
 }

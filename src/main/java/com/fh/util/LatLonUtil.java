@@ -13,7 +13,7 @@ public  class LatLonUtil {
 	private  static LatLonUtil la=null;
 	private static double rad(double d)
 	{
-	   return d * Math.PI / 180.0;
+	   return d * RAD;
 	}
 	public static double GetDistance(double lat1, double lng1, double lat2, double lng2)
 	{

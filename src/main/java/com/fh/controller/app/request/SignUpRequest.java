@@ -1,10 +1,10 @@
 package com.fh.controller.app.request;
 
-import com.fh.controller.base.RequestData;
+
 import com.fh.entity.SignUpEntity;
 
 
-public class SignUpRequest  extends RequestData { 
+public class SignUpRequest  { 
 	/**
 	 * “phone”: string,
      “password”: string,

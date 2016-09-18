@@ -2,7 +2,7 @@ package com.fh.controller.app.response;
 
 import java.util.List;
 
-public class ResidentsListResponse {
+public class ResidentsListResponse implements ResBase {
 private int residents;
 
 public int getResidents() {

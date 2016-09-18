@@ -3,6 +3,7 @@ package com.fh.controller.base;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,6 +16,8 @@ import com.fh.util.PageData;
 import com.fh.util.UuidUtil;
 
 public class BaseController {
+
+
 	
 	protected Logger logger = Logger.getLogger(this.getClass());
 

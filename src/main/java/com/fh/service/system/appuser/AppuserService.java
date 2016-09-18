@@ -81,12 +81,9 @@ public class AppuserService {
 
 		if (StringUtils.isNotEmpty(e.getPassword()) && StringUtils.isNotEmpty(e.getPhone())) {
 			loginResponse = (LoginResponse) dao.findForObject("WebappuserMapper.login", e);
-			if (loginResponse != null) {
-				loginResponse.setUser_token(MD5.md5((e.getPhone() + System.currentTimeMillis())));
+			if (loginResponse != null) {				
 				dao.findForObject("WebappuserMapper.saveLocation", e);
-
-				CacheUtil.cacheSave(loginResponse.getUser_token(), loginResponse.getPhone(), "userCache");
-
+				loginResponse.setUser_token(getUserTokenAndPutCache(e.getPhone()));
 			}
 
 		} else if (StringUtils.isNotEmpty(e.getUser_token())) {
@@ -102,6 +99,40 @@ public class AppuserService {
 
 		return loginResponse;
 
+	}
+	
+	
+	/**
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public String getPhoneByTokenFromCache(String token) {
+		Element o = CacheUtil.getCacheObject(token, "userCache");
+		String phone = null;
+		if (o != null) {
+			phone = (String) o.getObjectValue();
+		}
+		return phone;
+	}
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param phone
+	 * @return
+	 */
+	private String getUserTokenAndPutCache(String phone) {
+	String token=	MD5.md5((phone + System.currentTimeMillis()));
+		CacheUtil.cacheSave(token, phone, "userCache");
+		return token;
+
+	}
+	
+	private void removeUserCache(String token){
+		CacheUtil.removeCache(token, "userCache");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -216,45 +247,27 @@ public class AppuserService {
 	}
 	
 
-	/**
-	 * 
-	 * @param token
-	 * @return
-	 */
-	private String getPhoneByTokenFromCache(String token) {
-		Element o = CacheUtil.getCacheObject(token, "userCache");
-		String phone = null;
-		if (o != null) {
-			phone = (String) o.getObjectValue();
-		}
-		return phone;
-	}
-	
+
 
 	/**
 	 * 
 	 * @param e
 	 */
-	public LoginResponse logout(LoginEntity e) throws Exception {
-		Element o = CacheUtil.getCacheObject(e.getUser_token(), "userCache");
-		LoginResponse loginResponse = null;
-		if (o != null) {
-			String phone = (String) o.getObjectValue();
-			dao.findForObject("WebappuserMapper.logout", phone);
-			e.setPhone(phone);
-			loginResponse = (LoginResponse) dao.findForObject("WebappuserMapper.loginByToken", phone);
-			CacheUtil.removeCache(e.getUser_token(), "userCache");
-		}
-
-		return loginResponse;
-
+	public void logout(String token) {
+		CacheUtil.removeCache(token, "userCache");
 	}
 
 	/*
 	 * 保存webapp用户
 	 */
-	public void saveAppUser(SignUpEntity p) throws Exception {
+	public String saveAppUser(SignUpEntity p) throws Exception {
 		dao.save("WebappuserMapper.saveU", p);
+		return this.getUserTokenAndPutCache(p.getPhone());
+	}
+	
+	public String updateAppUserPassword(SignUpEntity p) throws Exception {
+		dao.save("WebappuserMapper.updatePassword", p);
+		return this.getUserTokenAndPutCache(p.getPhone());
 	}
 
 	/*

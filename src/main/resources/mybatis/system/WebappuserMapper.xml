@@ -21,6 +21,21 @@
 		#{phone}
 		)
 	</insert>
+	
+	
+	
+	<!-- update password -->
+	<update id="updatePassword" parameterType="SignUp">
+		update webapp_user
+		set
+		PASSWORD = #{password}	
+		where
+		phone= #{phone}
+
+	</update>
+	
+	
+	
 
 	<!-- 新增thought -->
 

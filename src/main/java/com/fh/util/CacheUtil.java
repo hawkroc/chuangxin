@@ -8,7 +8,7 @@ public class CacheUtil {
 	public static void cacheSave(Object key,Object o,String cache_name){
 
 		getCache(cache_name).put(new Element(key,o));	
-	       
+	
 		 
 		 
 	}

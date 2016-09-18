@@ -25,4 +25,11 @@ private String phone;
 	}
 	private String password;
 	private String verification_code;
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	private String type;
 }
