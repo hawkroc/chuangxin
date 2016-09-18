@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -35,7 +34,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.fh.controller.app.request.AddBananaReq;
 import com.fh.controller.app.request.CheckThoughtReq;
-import com.fh.controller.app.request.LoginRequest;
 import com.fh.controller.app.request.ResidentListRequest;
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
