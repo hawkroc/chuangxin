@@ -200,9 +200,12 @@ public class IntAppuserController extends BaseController {
 
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
+		}else{
+			p.setPhone(appuserService.getPhoneByTokenFromCache(token));
 		}
 
 		try {
+			
 			appuserService.udateUserLocation(p);
 			
 		} catch (Exception e) {
