@@ -46,6 +46,7 @@ import com.fh.controller.app.response.ResidentsListResponse;
 import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.base.BaseController;
 import com.fh.controller.base.ResponseData;
+import com.fh.entity.LocationEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.SignUpEntity;
 import com.fh.entity.TestEntity;
@@ -86,7 +87,7 @@ public class IntAppuserController extends BaseController {
 
 	}
 
-	@RequestMapping(value = { "/sign_up", "/verification_code","/forgot" }, method = RequestMethod.POST, produces = {
+	@RequestMapping(value = { "/sign_up", "/verification_code", "/forgot" }, method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
 
@@ -95,10 +96,10 @@ public class IntAppuserController extends BaseController {
 		SignUpResponse rs = new SignUpResponse();
 		HttpSession s = this.getRequest().getSession();
 		String token = request.getHeader("Bearer");
-        boolean istype=StringUtils.isEmpty(p.getType());
+		boolean istype = StringUtils.isEmpty(p.getType());
 		try {
 
-			if (appuserService.checkPhone(p.getPhone()) != null&&istype) {
+			if (appuserService.checkPhone(p.getPhone()) != null && istype) {
 				response.setStatus(HttpServletResponse.SC_CONFLICT);
 
 			} else if (StringUtils.isEmpty((p.getVerification_code()))
@@ -113,20 +114,20 @@ public class IntAppuserController extends BaseController {
 
 				if (p.getVerification_code().equalsIgnoreCase((String) s.getAttribute("Verification_code"))
 						&& sec < Const.secEx) {
-					
-					if(!istype){
-					
+
+					if (!istype) {
+
 						if (!StringUtils.isEmpty(token) && appuserService.getPhoneByTokenFromCache(token) != null) {
-							if(appuserService.getPhoneByTokenFromCache(token).equalsIgnoreCase(p.getPhone())){
-								
+							if (appuserService.getPhoneByTokenFromCache(token).equalsIgnoreCase(p.getPhone())) {
+
 								rs.setUser_token(appuserService.updateAppUserPassword(p));
 								response.setStatus(HttpServletResponse.SC_CREATED);
 								return rs;
 							}
-						}									
+						}
 						response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-						return rs;					
-					}else {
+						return rs;
+					} else {
 						rs.setUser_token(appuserService.saveAppUser(p));
 						response.setStatus(HttpServletResponse.SC_CREATED);
 					}
@@ -166,7 +167,7 @@ public class IntAppuserController extends BaseController {
 			if (t != null) {
 				HttpSession s = this.getRequest().getSession();
 				s.setAttribute("LoginResponse", t);
-				
+
 			} else {
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				return t;
@@ -178,6 +179,43 @@ public class IntAppuserController extends BaseController {
 		return t;
 
 	}
+	
+	
+	
+	
+
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/current_locations", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object updateLocation(@RequestBody LocationEntity p, HttpServletResponse response) {
+
+
+		String token = request.getHeader("Bearer");
+		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
+
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		}
+
+		try {
+			appuserService.udateUserLocation(p);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	
+	
+	
+	
 
 	/**
 	 * 
@@ -187,7 +225,7 @@ public class IntAppuserController extends BaseController {
 	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 
-	public Object logout( HttpServletResponse response) {
+	public Object logout(HttpServletResponse response) {
 		LoginResponse t = null;
 		String token = request.getHeader("Bearer");
 		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
@@ -200,7 +238,7 @@ public class IntAppuserController extends BaseController {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
+
 		return t;
 
 	}

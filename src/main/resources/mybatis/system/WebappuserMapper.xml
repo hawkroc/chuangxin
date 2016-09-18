@@ -137,11 +137,11 @@
 
 
 	<!-- 存入location -->
-	<update id="saveLocation" parameterType="Login">
+	<update id="saveLocation" parameterType="location">
 		update webapp_user
 		set
-		lon = #{current_lng},
-		lat= #{current_lat},
+		lon = #{longitude},
+		lat= #{latitude},
 		status=1
 		where
 		phone= #{phone}

@@ -18,6 +18,7 @@ import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.Resident;
 import com.fh.dao.DaoSupport;
 import com.fh.entity.BananaEntity;
+import com.fh.entity.LocationEntity;
 import com.fh.entity.LocationRangeEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.Page;
@@ -29,6 +30,8 @@ import com.fh.util.CacheUtil;
 import com.fh.util.LatLonUtil;
 import com.fh.util.MD5;
 import com.fh.util.PageData;
+import com.sun.xml.internal.bind.v2.runtime.Location;
+
 import net.sf.ehcache.Element;
 
 @Service("appuserService")
@@ -85,7 +88,7 @@ public class AppuserService {
 			
 			if (id != null) {	
 				loginResponse=new LoginResponse();
-				dao.findForObject("WebappuserMapper.saveLocation", e);
+				//dao.update("WebappuserMapper.saveLocation", e);
 				loginResponse.setUser_token(getUserTokenAndPutCache(e.getPhone()));
 			}
 
@@ -95,13 +98,18 @@ public class AppuserService {
 				e.setPhone(phone);
 				loginResponse=new LoginResponse();
 				loginResponse = (LoginResponse) dao.findForObject("WebappuserMapper.loginByToken", phone);
-				dao.findForObject("WebappuserMapper.saveLocation", e);
+				//dao.update("WebappuserMapper.saveLocation", e);
 			}
 
 		}
 		
 		return loginResponse;
 
+	}
+	
+	public void udateUserLocation(LocationEntity e)throws Exception{
+		
+		dao.update("WebappuserMapper.saveLocation", e);
 	}
 	
 	
