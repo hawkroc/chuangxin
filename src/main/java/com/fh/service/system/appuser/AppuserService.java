@@ -80,8 +80,11 @@ public class AppuserService {
 		LoginResponse loginResponse = null;
 
 		if (StringUtils.isNotEmpty(e.getPassword()) && StringUtils.isNotEmpty(e.getPhone())) {
-			loginResponse = (LoginResponse) dao.findForObject("WebappuserMapper.login", e);
-			if (loginResponse != null) {				
+		
+			Integer id = (int) dao.findForObject("WebappuserMapper.login", e);
+			
+			if (id != null) {	
+				loginResponse=new LoginResponse();
 				dao.findForObject("WebappuserMapper.saveLocation", e);
 				loginResponse.setUser_token(getUserTokenAndPutCache(e.getPhone()));
 			}
@@ -90,13 +93,13 @@ public class AppuserService {
 			String phone = getPhoneByTokenFromCache(e.getUser_token());
 			if (phone != null) {
 				e.setPhone(phone);
-
+				loginResponse=new LoginResponse();
 				loginResponse = (LoginResponse) dao.findForObject("WebappuserMapper.loginByToken", phone);
 				dao.findForObject("WebappuserMapper.saveLocation", e);
 			}
 
 		}
-
+		
 		return loginResponse;
 
 	}
@@ -253,7 +256,9 @@ public class AppuserService {
 	 * 
 	 * @param e
 	 */
-	public void logout(String token) {
+	public void updateLogout(String token) throws Exception{
+		
+		dao.update("WebappuserMapper.logout", getPhoneByTokenFromCache(token));
 		CacheUtil.removeCache(token, "userCache");
 	}
 

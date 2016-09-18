@@ -113,10 +113,12 @@ public class IntAppuserController extends BaseController {
 
 				if (p.getVerification_code().equalsIgnoreCase((String) s.getAttribute("Verification_code"))
 						&& sec < Const.secEx) {
+					
 					if(!istype){
 					
 						if (!StringUtils.isEmpty(token) && appuserService.getPhoneByTokenFromCache(token) != null) {
 							if(appuserService.getPhoneByTokenFromCache(token).equalsIgnoreCase(p.getPhone())){
+								
 								rs.setUser_token(appuserService.updateAppUserPassword(p));
 								response.setStatus(HttpServletResponse.SC_CREATED);
 								return rs;
@@ -164,6 +166,7 @@ public class IntAppuserController extends BaseController {
 			if (t != null) {
 				HttpSession s = this.getRequest().getSession();
 				s.setAttribute("LoginResponse", t);
+				
 			} else {
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				return t;
@@ -184,16 +187,20 @@ public class IntAppuserController extends BaseController {
 	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 
-	public Object logout(@RequestBody LoginEntity p, HttpServletResponse response) {
+	public Object logout( HttpServletResponse response) {
 		LoginResponse t = null;
 		String token = request.getHeader("Bearer");
 		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
 
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return t;
-
 		}
-		appuserService.logout(token);
+		try {
+			appuserService.updateLogout(token);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 		return t;
 
 	}

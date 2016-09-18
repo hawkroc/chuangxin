@@ -1,6 +1,8 @@
 package com.fh.controller.app.response;
 
-public class LoginResponse implements ResBase {
+import com.fh.entity.ThoughtEntity;
+
+public class LoginResponse  {
 
 //	//private int id;
 //	public int getId() {
@@ -23,14 +25,16 @@ public class LoginResponse implements ResBase {
 //	public void setType(String type) {
 //		this.type = type;
 //	}
-	public String getThought() {
+//	
+	
+	public ThoughtEntity getThought() {
 		return thought;
 	}
-	public void setThought(String thought) {
+	public void setThought(ThoughtEntity thought) {
 		this.thought = thought;
 	}
 //	private String type;
-	private String thought;
+	private ThoughtEntity thought;
 	public String getUser_token() {
 		return user_token;
 	}
@@ -44,7 +48,7 @@ public class LoginResponse implements ResBase {
 //	public void setPhone(String phone) {
 //		this.phone = phone;
 //	}
-	//private String phone;
+//	private String phone;
 	
 	
 	
