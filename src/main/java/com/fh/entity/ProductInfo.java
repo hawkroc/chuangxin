@@ -4,6 +4,7 @@ public class ProductInfo {
 //	 “name”: string,
 //     “desc”: string,
 //     “price”: double
+	//    currencty string  人民币	CNY 美元	USD  新西兰元	NZD 澳大利亚元	AUD
 	
 	private String name;
 	public String getName() {
@@ -26,4 +27,11 @@ public class ProductInfo {
 	}
 	private String desc;
 	private double price;
+	public String getCurrency() {
+		return currency;
+	}
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+	private String  currency;
 }

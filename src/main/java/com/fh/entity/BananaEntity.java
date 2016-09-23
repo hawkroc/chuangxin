@@ -2,7 +2,7 @@ package com.fh.entity;
 
 public class BananaEntity extends BaseEntity{
 /**
-	 * 
+	 * clientsService
 	 */
 	private static final long serialVersionUID = 1L;
 private int id;
