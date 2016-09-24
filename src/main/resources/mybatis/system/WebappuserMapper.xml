@@ -39,15 +39,19 @@
 
 	<!-- 新增thought -->
 
-	<insert id="saveThought" parameterType="thought" useGeneratedKeys="true"
+	<insert id="saveThought" parameterType="com.fh.entity.BubbleEntity" useGeneratedKeys="true"
     keyProperty="id">
 		insert into
-		webapp_thought (
+		webapp_bubble (
 		userid,
+		video_url,
+		image_url,
 		keywords,
 		topic
 		) values (
-		#{userid},
+		#{userid},	
+		#{video_url},
+		#{image_url},		
 		#{key_word},
 		#{topic}
 		)
@@ -60,12 +64,14 @@
     keyProperty="id">
 		insert into
 		webapp_product (
-			image_url,
+		name,
+		price,
 		selling_reason,
 		product_info,
 		tags
 		) values (
-		#{image_url},
+		#{name},
+		#{price},
 		#{selling_reason},
 		#{productInfoByJson},
 		#{tagsByJson}
@@ -77,13 +83,11 @@
 		insert into
 		webapp_banana (
 			userid,
-				video_url,
-			thought_id,
+			bubble_id,
 			product_id
 	
 		) values (
 		#{userid},
-		#{video_url},
 		#{thoughtId},
 		#{productId}
 		)

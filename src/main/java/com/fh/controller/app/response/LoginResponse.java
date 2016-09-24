@@ -1,6 +1,6 @@
 package com.fh.controller.app.response;
 
-import com.fh.entity.ThoughtEntity;
+import com.fh.entity.BubbleEntity;
 
 public class LoginResponse  {
 
@@ -27,14 +27,14 @@ public class LoginResponse  {
 //	}
 //	
 	
-	public ThoughtEntity getThought() {
+	public BubbleEntity getThought() {
 		return thought;
 	}
-	public void setThought(ThoughtEntity thought) {
+	public void setThought(BubbleEntity thought) {
 		this.thought = thought;
 	}
 //	private String type;
-	private ThoughtEntity thought;
+	private BubbleEntity thought;
 	public String getUser_token() {
 		return user_token;
 	}

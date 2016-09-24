@@ -2,22 +2,18 @@ package com.fh.controller.app.response;
 
 public class AddBananaRes {
 	
-//	
-//	 “status”: int,
-//	    “error_msg”: string,
-//	    “thought_id”: long,
+
+//	{
+//	    “banana_id”: long,
 //	    “num_zones”: int,
-//	    “num_reason”: int
+//	    “num_reason”: int，
+//	    ”video_url“:string,
+//	    “image_url”:string
+//	}
+//	
 	
 	
-	
-	private int status;
-	public int getStatus() {
-		return status;
-	}
-	public void setStatus(int status) {
-		this.status = status;
-	}
+
 	public int getNum_zones() {
 		return num_zones;
 	}
@@ -30,22 +26,37 @@ public class AddBananaRes {
 	public void setNum_reason(int num_reason) {
 		this.num_reason = num_reason;
 	}
-	public long getThought_id() {
-		return thought_id;
-	}
-	public void setThought_id(long thought_id) {
-		this.thought_id = thought_id;
-	}
-	public String getError_msg() {
-		return error_msg;
-	}
-	public void setError_msg(String error_msg) {
-		this.error_msg = error_msg;
-	}
+	
+	
 	private int num_zones;
 	private int num_reason;
-	private long thought_id;
-	private String error_msg;
+	private long banana_id;
+	
+//    ”video_url“:string,
+//    “image_url”:string
+	private String video_url;
+	public long getBanana_id() {
+		return banana_id;
+	}
+	public void setBanana_id(long banana_id) {
+		this.banana_id = banana_id;
+	}
+	public String getVideo_url() {
+		return video_url;
+	}
+	public void setVideo_url(String video_url) {
+		this.video_url = video_url;
+	}
+	public String getImage_url() {
+		return image_url;
+	}
+	public void setImage_url(String image_url) {
+		this.image_url = image_url;
+	}
+
+
+	private String image_url;
+	
 
 
 }

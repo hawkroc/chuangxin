@@ -31,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+
+import com.fh.controller.app.request.AddBananaAction;
 import com.fh.controller.app.request.AddBananaReq;
 import com.fh.controller.app.request.CheckThoughtReq;
 import com.fh.controller.app.request.ResidentListRequest;
@@ -69,7 +71,7 @@ public class IntAppuserController extends BaseController {
 	private AppuserService appuserService;
 
 	/**
-	 * 
+	 * 1.Current version 
 	 * @param p
 	 * @return
 	 */
@@ -83,11 +85,85 @@ public class IntAppuserController extends BaseController {
 		};
 
 	}
+	
+	
+	
+	
+	
+	
 
+	/**
+	 * 2.1 login 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object login(@RequestBody LoginEntity p, HttpServletResponse response) {
+
+		LoginResponse t = null;
+
+		try {
+			if (appuserService.checkPhone(p.getPhone()) == null && StringUtils.isEmpty(p.getUser_token())) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				return t;
+			}
+			t = appuserService.updateLoginAppUser(p);
+			if (t != null) {
+				HttpSession s = this.getRequest().getSession();
+				s.setAttribute("LoginResponse", t);
+
+			} else {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				return t;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return t;
+
+	}
+	
+	
+
+	/**
+	 * 2.2 logout
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object logout(HttpServletResponse response) {
+		LoginResponse t = null;
+		String token = request.getHeader("Bearer");
+		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
+
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return t;
+		}
+		try {
+			appuserService.updateLogout(token);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return t;
+
+	}
+	
+	
+    /**
+     * //2.3 sign up
+     * @param p
+     * @param response
+     * @return
+     */
 	@RequestMapping(value = { "/sign_up", "/verification_code", "/forgot" }, method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
-
 	public Object signUp(@RequestBody SignUpEntity p, HttpServletResponse response) {
 
 		SignUpResponse rs = new SignUpResponse();
@@ -144,45 +220,7 @@ public class IntAppuserController extends BaseController {
 	}
 
 	/**
-	 * 
-	 * @param p
-	 * @return
-	 */
-	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
-	@ResponseBody
-
-	public Object login(@RequestBody LoginEntity p, HttpServletResponse response) {
-
-		LoginResponse t = null;
-
-		try {
-			if (appuserService.checkPhone(p.getPhone()) == null && StringUtils.isEmpty(p.getUser_token())) {
-				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-				return t;
-			}
-			t = appuserService.updateLoginAppUser(p);
-			if (t != null) {
-				HttpSession s = this.getRequest().getSession();
-				s.setAttribute("LoginResponse", t);
-
-			} else {
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				return t;
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return t;
-
-	}
-	
-	
-	
-	
-
-	/**
-	 * 
+	 * 3.2 Report current user location  
 	 * @param p
 	 * @return
 	 */
@@ -212,43 +250,53 @@ public class IntAppuserController extends BaseController {
 		return null;
 
 	}
-	
-	
-	
-	
 
 	/**
-	 * 
+	 * 4.2 @critical Add a banana 
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@RequestMapping(value = "/bananas", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 
-	public Object logout(HttpServletResponse response) {
-		LoginResponse t = null;
+	public Object addBanana(@RequestBody AddBananaAction p,  HttpServletResponse response) {
+
 		String token = request.getHeader("Bearer");
-		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
-
+		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return t;
+			return null;
 		}
+		
+		AddBananaRes t = null;
+		System.out.println("test             "+p.getBanana().getProduct().getProductInfoByJson());
 		try {
-			appuserService.updateLogout(token);
+			t = appuserService.saveBanana(p.getBanana(),token);
 		} catch (Exception e) {
-			// TODO: handle exception
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
 		return t;
 
 	}
+	
+	private boolean checkToken(){
+		String token = request.getHeader("Bearer");
+	 boolean rs=false;
+		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
+            rs= true;
+		}
+		
+		return rs;
+	}
+
+/////////////////////////////////////////////////////////////////////	
 
 	/**
-	 * 
+	 *  3.1 @high Get nearby residents
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/resident_list", method = RequestMethod.POST, produces = {
+	@RequestMapping(value = "/residents", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
 
@@ -276,40 +324,16 @@ public class IntAppuserController extends BaseController {
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * 
-	 * @param p
-	 * @return
-	 */
-	@RequestMapping(value = "/addBanana", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
-	@ResponseBody
+	
 
-	public Object addThought(@RequestBody AddBananaReq p, @RequestHeader(value = "User-Agent") String userAgent) {
 
-		if (!StringUtils.isNotBlank(p.getAction().getUser_token())) {
-			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
-		}
-		System.out.println(p.getAction().toString());
-		AddBananaRes t = null;
-		try {
-			t = appuserService.saveBanana(p.getAction());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return ResponseData.creatResponseWithSuccessMessage(null, t);
-
-	}
-
-	// Check thought
-
-	/**
+	/** 	// 4.1 @high Check bubbles 
 	 * http://api.sosxsos.com/checkThought
 	 * 
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/checkThought", method = RequestMethod.POST, produces = {
+	@RequestMapping(value = "/bubbles", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
 

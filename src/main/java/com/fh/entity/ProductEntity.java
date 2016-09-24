@@ -6,14 +6,20 @@ import java.util.List;
 import com.fh.util.JsonUtil;
 
 public class ProductEntity {
-private ProductInfo product_info;
+private Iteminfo Item_info;
 
+public Iteminfo getItem_info() {
+	return Item_info;
+}
+public void setItem_info(Iteminfo item_info) {
+	Item_info = item_info;
+}
 private String productInfoByJson;
 
 public String getProductInfoByJson() {
 	String json=null;
-	if(this.product_info!=null){
-	json= JsonUtil.beanToJson(this.product_info);
+	if(this.Item_info!=null){
+	json= JsonUtil.beanToJson(this.Item_info);
 	}
 return json;
 	
@@ -55,12 +61,7 @@ public int getId() {
 public void setId(int id) {
 	this.id = id;
 }
-public ProductInfo getProduct_info() {
-	return product_info;
-}
-public void setProduct_info(ProductInfo product_info) {
-	this.product_info = product_info;
-}
+
 public List<Tag> getTags() {
 	return tags;
 }
@@ -82,6 +83,20 @@ public void setSelling_reason(int selling_reason) {
 private List<Tag> tags;
 private String image_url;
 private int selling_reason;
+private String name;
+public String getName() {
+	return name;
+}
+public void setName(String name) {
+	this.name = name;
+}
+public double getPrice() {
+	return price;
+}
+public void setPrice(double price) {
+	this.price = price;
+}
+private double price;
 
 
 }

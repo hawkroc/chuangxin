@@ -1,6 +1,6 @@
 package com.fh.entity;
 
-public class ProductInfo {
+public class Iteminfo {
 //	 “name”: string,
 //     “desc”: string,
 //     “price”: double

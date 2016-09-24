@@ -2,7 +2,34 @@ package com.fh.entity;
 
 public class BananaEntity extends BaseEntity{
 /**
-	 * clientsService
+	 * {
+      “action_type”: int,
+      “banana”: {
+            “bubble”: {
+                   “topic”: int,
+                   “key_word”: string
+             }  
+            “product: {
+                  “selling_reason”: int,
+                  “item_info”: {
+                         “name”: string,
+                          “desc”: string,
+                          “price”: double,
+                          “currency”:string
+                    },
+                    “tags”: [{
+                          “tag”: int,
+                          “value”: string,
+                          “desc”: string
+                      },
+                      {
+                          “tag”: int,
+                          “value”: string,
+                          “desc”: string
+                      }]
+               }
+        }
+}
 	 */
 	private static final long serialVersionUID = 1L;
 private int id;
@@ -24,15 +51,17 @@ public ProductEntity getProduct() {
 public void setProduct(ProductEntity product) {
 	this.product = product;
 }
-public ThoughtEntity getThought() {
-	return thought;
-}
-public void setThought(ThoughtEntity thought) {
-	this.thought = thought;
-}
+
 private String video_url;
 private ProductEntity product;
-private ThoughtEntity thought;
+private BubbleEntity bubble;
+public BubbleEntity getBubble() {
+	return bubble;
+}
+public void setBubble(BubbleEntity bubble) {
+	this.bubble = bubble;
+}
+
 private int thoughtId;
 public int getThoughtId() {
 	return thoughtId;

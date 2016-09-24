@@ -43,6 +43,13 @@ public class LoginEntity {
 		this.user_token = user_token;
 	}
 	private String user_token;
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	private int id;
 	private double current_lat;
 	private double current_lng;
 

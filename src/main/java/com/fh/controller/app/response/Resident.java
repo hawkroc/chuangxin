@@ -1,6 +1,6 @@
 package com.fh.controller.app.response;
 
-import com.fh.entity.ThoughtEntity;
+import com.fh.entity.BubbleEntity;
 
 public class Resident {
 //	  “user_id”: string,
@@ -24,16 +24,16 @@ public class Resident {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public ThoughtEntity getThought() {
+	public BubbleEntity getThought() {
 		return thought;
 	}
-	public void setThought(ThoughtEntity thought) {
+	public void setThought(BubbleEntity thought) {
 		this.thought = thought;
 	}
 	
 	
 	private String phone;
-	private ThoughtEntity thought;
+	private BubbleEntity thought;
 	public double getLat() {
 		return lat;
 	}

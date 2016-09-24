@@ -5,7 +5,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.fh.entity.ProductInfo;
+import com.fh.entity.Iteminfo;
 public class JsonUtil {
 	
 	public static String beanToJson(Object bean)  {
@@ -22,7 +22,7 @@ public class JsonUtil {
 	
 	public static void main(String[] args) throws JsonGenerationException, JsonMappingException, IOException {
 		// TODO Auto-generated method stub
-		ProductInfo p = new ProductInfo();
+		Iteminfo p = new Iteminfo();
 		p.setDesc("dsfdsfdsf");
 		p.setName("name");
 		p.setPrice(45.0);
