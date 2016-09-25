@@ -36,6 +36,7 @@ import com.fh.controller.app.request.AddBananaAction;
 import com.fh.controller.app.request.AddBananaReq;
 import com.fh.controller.app.request.CheckThoughtReq;
 import com.fh.controller.app.request.ResidentListRequest;
+import com.fh.controller.app.request.VerifyCode;
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
@@ -60,7 +61,7 @@ import com.fh.util.Tools;
  * 会员-接口类
  * 
  * 
- */
+ */ 
 @Controller
 @RequestMapping(value = "/appuser")
 @SessionAttributes("test")
@@ -156,6 +157,43 @@ public class IntAppuserController extends BaseController {
 
 	}
 	
+    /**
+     * //2.3 verification_code
+     * @param p
+     * @param response
+     * @return
+     */
+	@RequestMapping(value = {  "/verification_code", "/forgot" }, method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ResponseBody
+	public Object verifyCodeByPhone(@RequestBody SignUpEntity p, HttpServletResponse response) {
+
+		SignUpResponse rs=null;
+		HttpSession s = this.getRequest().getSession();
+		System.out.println("tst");
+		//String token = request.getHeader("Bearer");
+		//boolean istype = StringUtils.isEmpty(p.getType());
+		try {
+
+			if (appuserService.checkPhone(p.getPhone()) == null) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+			} else   {
+				rs = new SignUpResponse();
+				String Verification_code = String.valueOf(Tools.getRandomNum());
+				rs.setVerification_code(Verification_code);
+				s.setAttribute("Verification_code", Verification_code);
+				s.setAttribute("Verification_code_time", System.currentTimeMillis());
+			
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return rs;
+
+	}
 	
     /**
      * //2.3 sign up
@@ -163,7 +201,7 @@ public class IntAppuserController extends BaseController {
      * @param response
      * @return
      */
-	@RequestMapping(value = { "/sign_up", "/verification_code", "/forgot" }, method = RequestMethod.POST, produces = {
+	@RequestMapping(value = { "/sign_up", "/forgot" }, method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
 	public Object signUp(@RequestBody SignUpEntity p, HttpServletResponse response) {
