@@ -50,7 +50,7 @@ public class Const {
 	
 	//App version
 	 
-	public static final Double VERSION=0.5;
+	public static final Integer VERSION= 5000;
 	public static final int secEx=90;
 //Response
 	
