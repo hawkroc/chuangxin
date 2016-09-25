@@ -1,6 +1,6 @@
 package com.fh.controller.app.response;
 
-import com.fh.entity.BubbleEntity;
+import com.fh.entity.BananaEntity;
 
 public class Resident {
 //	  “user_id”: string,
@@ -24,16 +24,22 @@ public class Resident {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public BubbleEntity getThought() {
-		return thought;
-	}
-	public void setThought(BubbleEntity thought) {
-		this.thought = thought;
-	}
 	
 	
 	private String phone;
-	private BubbleEntity thought;
+	public BananaEntity getBanana() {
+		return banana;
+	}
+	public void setBanana(BananaEntity banana) {
+		this.banana = banana;
+	}
+
+
+	private BananaEntity banana;
+	
+	
+	
+	
 	public double getLat() {
 		return lat;
 	}

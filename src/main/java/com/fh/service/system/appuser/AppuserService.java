@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.ObjectUtils.Null;
 import org.apache.commons.lang.StringUtils;
 //import org.apache.ibatis.javassist.bytecode.annotation.IntegerMemberValue;
 
@@ -83,8 +84,11 @@ public class AppuserService {
 		LoginResponse loginResponse = null;
 
 		if (StringUtils.isNotEmpty(e.getPassword()) && StringUtils.isNotEmpty(e.getPhone())) {
-
-			Integer id = (int) dao.findForObject("WebappuserMapper.login", e);
+             Object temp= dao.findForObject("WebappuserMapper.login", e);
+             if(temp==null){
+            	 return loginResponse;
+             }
+			Integer id = (int) temp;
 
 			if (id != null) {
 				loginResponse = new LoginResponse();
@@ -143,50 +147,37 @@ public class AppuserService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Resident> getResidentList(ResidentEntity r) throws Exception {
+	public List<Resident> getResidentList(double latitude,double longitude,double accuracy) throws Exception {
 
 		List<Resident> residents = null;
-		String phone = getPhoneByTokenFromCache(r.getUser_token());
-		if (phone == null) {
-			// residents.setError_msg("please login again");
-			return residents;
-		} else {
-			LocationRangeEntity l = LatLonUtil.getInstance().getDefaultAround(r.getCurrent_lat(), r.getCurrent_lng());
+		
+			LocationRangeEntity l = LatLonUtil.getInstance().getDefaultAround(latitude, longitude);
 			residents = (List<Resident>) dao.findForList("WebappuserMapper.searchResident", l);
 			if (residents != null) {
 				for (Resident resident : residents) {
-					// resident.setThought(getThoughtFromCache(resident.getPhone()));
+					 resident.setBanana(getBananaFromCache(resident.getPhone()));
 				}
 			}
-
-		}
 
 		return residents;
 
 	}
 
 	// need to be done
-	public CheckThoughtRes checkThought(CheckThoughtAction r) throws Exception {
+	public CheckThoughtRes checkBubbles(String topic ,String keyword) throws Exception {
 
 		CheckThoughtRes rs = null;
-		String phone = getPhoneByTokenFromCache(r.getUser_token());
-		if (phone == null) {
-			// residents.setError_msg("please login again");
-			return rs;
-		} else {
+		
 			// r.getThought_idthougth();
 			rs = new CheckThoughtRes();
 			// r.getThought_idthougth();
-			Element o = CacheUtil.getCacheObject(r.getTopic() + r.getKey_word(), "topickeywords_banana");
+			Element o = CacheUtil.getCacheObject(topic + keyword, "topickeywords_banana");
 			if (o != null) {
-				BananaEntity b = getBananaFromCache((int) o.getObjectValue());
+				BananaEntity b = getBananaFromCache((String) o.getObjectValue());
 				// rs.setImage_url(thoughtEntity.getVedio_url());
 				// rs.setVideo_url(thoughtEntity.getImage_url());
-				rs.setStatus(1);
-				rs.setVideo_url(b.getVideo_url());
-
-			}
-
+				
+				rs.setVideo_url(b.getBubble().getVideo_url());
 		}
 
 		return rs;
@@ -198,8 +189,8 @@ public class AppuserService {
 	 * @param phone
 	 * @return
 	 */
-	private BananaEntity getBananaFromCache(int userid) {
-		Element o = CacheUtil.getCacheObject(userid, "myThought");
+	private BananaEntity getBananaFromCache(String phone) {
+		Element o = CacheUtil.getCacheObject(phone, "myThought");
 		BananaEntity rs = null;
 		if (o != null) {
 			rs = (BananaEntity) o.getObjectValue();
@@ -240,8 +231,8 @@ public class AppuserService {
 		banana.setProductId(product.getId());
 		banana.setThoughtId(t.getId());
 		dao.save("WebappuserMapper.saveBanana", banana);
-		CacheUtil.cacheSave(userid, banana, "myThought");
-		CacheUtil.cacheSave(t.getTopic() + t.getKey_word(), userid, "topickeywords_banana");
+		CacheUtil.cacheSave(phone, banana, "myThought");
+		CacheUtil.cacheSave(t.getTopic() + t.getKey_word(), phone, "topickeywords_banana");
 		// residents.setStatus(0);
 		// residents.setThought_id(t.getId());
 		residents.setBanana_id(banana.getId());

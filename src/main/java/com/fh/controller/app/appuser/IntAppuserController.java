@@ -110,12 +110,14 @@ public class IntAppuserController extends BaseController {
 				return t;
 			}
 			t = appuserService.updateLoginAppUser(p);
+	
 			if (t != null) {
+				System.out.println("dsfdsfdsf1");
 				HttpSession s = this.getRequest().getSession();
 				s.setAttribute("LoginResponse", t);
 
-			} else {
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			} else  {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return t;
 			}
 		} catch (Exception e) {
@@ -139,9 +141,9 @@ public class IntAppuserController extends BaseController {
 	public Object logout(HttpServletResponse response) {
 		LoginResponse t = null;
 		String token = request.getHeader("Bearer");
-		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
+		if ( (checkToken())) {
 
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return t;
 		}
 		try {
@@ -289,40 +291,7 @@ public class IntAppuserController extends BaseController {
 		return rs;
 	}
 
-/////////////////////////////////////////////////////////////////////	
 
-	/**
-	 *  3.1 @high Get nearby residents
-	 * @param p
-	 * @return
-	 */
-	@RequestMapping(value = "/residents", method = RequestMethod.POST, produces = {
-			"application/json;charset=UTF-8" })
-	@ResponseBody
-
-	public Object residentList(@RequestBody ResidentListRequest p,
-			@RequestHeader(value = "User-Agent") String userAgent) {
-
-		if (StringUtils.isNotBlank(p.getAction().getUser_id())) {
-			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
-		}
-		ResidentsListResponse t = new ResidentsListResponse();
-		try {
-			List<Resident> list = appuserService.getResidentList(p.getAction());
-			if (list != null) {
-				t.setResidents(list.size());
-				t.setList(list);
-			}
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return ResponseData.creatResponseWithSuccessMessage(null, t);
-
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////
 
 	
 
@@ -333,26 +302,96 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/bubbles", method = RequestMethod.POST, produces = {
-			"application/json;charset=UTF-8" })
+//	@RequestMapping("/userGrid", 
+//			params = {"_search", "nd", "rows", "page", "sidx", "sort"})
+	@RequestMapping(value = "/bubbles",params = {"topic", "key_word"}, method = RequestMethod.GET)
 	@ResponseBody
 
-	public Object CheckThought(@RequestBody CheckThoughtReq p, @RequestHeader(value = "User-Agent") String userAgent) {
+	public Object checkBubbles(@RequestParam(value = "topic") String topic, @RequestParam(value = "key_word") String key_word, HttpServletResponse response) {
 
-		if (!StringUtils.isNotBlank(p.getAction().getUser_token())) {
-			return ResponseData.creatResponseWithFailMessage(1, 1, "please login first", null);
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
 		}
 		CheckThoughtRes t = null;
+		System.out.println("topic: "+topic+" key_word: "+key_word);
 		try {
-			t = appuserService.checkThought(p.getAction());
+			t = appuserService.checkBubbles(topic.trim(),key_word.trim());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ResponseData.creatResponseWithSuccessMessage(null, t);
+		if(t==null){
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		}
+		return t;
+
+	}
+	
+	////////////////
+	
+	/**
+	 *  3.1 @high Get nearby residents
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/residents", method = RequestMethod.GET, produces = {
+			"application/json;charset=UTF-8" })
+	@ResponseBody
+
+	public Object residentList(@RequestParam(value = "latitude") Double latitude, @RequestParam(value = "longitude") Double longitude,@RequestParam(value = "accuracy") Double accuracy, HttpServletResponse response) {
+
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		}
+		
+		List<Resident> list  = null;
+		try {
+		     list = appuserService.getResidentList(latitude,longitude,accuracy);
+//			if (list != null) {
+//				t.setResidents(list.size());
+//				t.setList(list);
+//			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list;
 
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////
+	//http://www.jianshu.com/p/ad70e81a19ec
+//	@ResponseBody
+//	@RequestMapping(value="/source/{resourceId}", method=RequestMethod.GET)
+//	    public Map<String, Object> dowloadFiles(@PathVariable(value="resourceId") Long resourceId,
+//	            HttpServletResponse response,@RequestHeader(value="Bearer") String token) {
+//	        try {
+//	         //  log.info("========>abc:"+resourceId);
+//	          //  log.info("========>loginUserId:"+loginUserId);
+//	            Resource res = resourcesService.findOne(resourceId);
+//	            if(null==res){
+//	                return this.getFailedMap("请求的资源不存在");
+//	            }
+//	            
+//	            
+//	            
+//	            
+//	            
+//	            
+//	            String projectId = "/936/";
+//	            response.setHeader("Content-Disposition", "attachment; filename="+res.getName());
+//	            response.setHeader("Content-Type","application/octet-stream");
+//	            response.setHeader("X-Accel-Redirect","/javadown"+projectId+res.getName());
+//	        //    log.info("=======>资源下载路径："+"/javadown"+projectId+res.getName());
+//	            return this.getSuccessMap(projectId+res.getName());
+//	        } catch (Exception e) {
+//	            e.printStackTrace();
+//	        //    return this.getFailedMap(e.getMessage());
+//	        }
+//	    }
 	/////////////////////////////////////////////////////////////////////////////////////////
 
 	/**

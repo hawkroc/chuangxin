@@ -4,14 +4,7 @@ public class CheckThoughtRes  {
 //	“status”: int,
 //    “image_url”: string,
 //   “video_url”: string
-	
-	private int status;
-	public int getStatus() {
-		return status;
-	}
-	public void setStatus(int status) {
-		this.status = status;
-	}
+
 //	public String getImage_url() {
 //		return image_url;
 //	}
