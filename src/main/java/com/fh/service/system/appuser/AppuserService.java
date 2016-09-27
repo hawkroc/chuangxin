@@ -200,7 +200,7 @@ public class AppuserService {
 
 	// add throuts
 
-	public AddBananaRes saveBanana(BananaEntity banana, String token) throws Exception {
+	public AddBananaRes saveBanana(BananaEntity banana, String token,String Imagepath,String Videopath) throws Exception {
 
 		// List<Resident> residents = null;
 		// if (getPhoneByTokenFromCache(r.getUser_token()) != null) {
@@ -220,7 +220,10 @@ public class AppuserService {
 		banana.setUserid(userid);
 		System.out.println(banana.toString());
 		BubbleEntity t = banana.getBubble();
+		
 		t.setUserid(userid);
+		t.setImage_url(Imagepath);
+		t.setVideo_url(Videopath);
 		System.out.println(t.toString());
 		ProductEntity product = banana.getProduct();
 		System.out.println(product.toString());

@@ -13,20 +13,22 @@ public class Tag extends BaseEntity{
 	public void setTag(int tag) {
 		this.tag = tag;
 	}
-	public String getValue1() {
-		return value1;
+	
+	public String getValue() {
+		return value;
 	}
-	public void setValue1(String value1) {
-		this.value1 = value1;
+	public void setValue(String value) {
+		this.value = value;
 	}
-	public String getValue2() {
-		return value2;
+	public String getDesc() {
+		return desc;
 	}
-	public void setValue2(String value2) {
-		this.value2 = value2;
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
-	private String value1 ;
-	private String value2 ;
+
+	private String value ;
+	private String desc ;
 	
 	
 

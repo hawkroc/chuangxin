@@ -2,6 +2,7 @@ package com.fh.controller.app.appuser;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,9 +30,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fh.controller.app.request.AddBananaAction;
 import com.fh.controller.app.request.AddBananaReq;
 import com.fh.controller.app.request.CheckThoughtReq;
@@ -46,6 +49,7 @@ import com.fh.controller.app.response.ResidentsListResponse;
 import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.base.BaseController;
 import com.fh.controller.base.ResponseData;
+import com.fh.entity.BananaEntity;
 import com.fh.entity.LocationEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.SignUpEntity;
@@ -61,7 +65,7 @@ import com.fh.util.Tools;
  * 会员-接口类
  * 
  * 
- */ 
+ */
 @Controller
 @RequestMapping(value = "/appuser")
 @SessionAttributes("test")
@@ -70,9 +74,12 @@ public class IntAppuserController extends BaseController {
 	private HttpServletRequest request;
 	@Resource(name = "appuserService")
 	private AppuserService appuserService;
-
+	private enum include{
+		MP4, JPG, PNG, BMP, GIF;
+	}
 	/**
-	 * 1.Current version 
+	 * 1.Current version
+	 * 
 	 * @param p
 	 * @return
 	 */
@@ -86,15 +93,10 @@ public class IntAppuserController extends BaseController {
 		};
 
 	}
-	
-	
-	
-	
-	
-	
 
 	/**
-	 * 2.1 login 
+	 * 2.1 login
+	 * 
 	 * @param p
 	 * @return
 	 */
@@ -111,13 +113,13 @@ public class IntAppuserController extends BaseController {
 				return t;
 			}
 			t = appuserService.updateLoginAppUser(p);
-	
+
 			if (t != null) {
-				System.out.println("dsfdsfdsf1");
+
 				HttpSession s = this.getRequest().getSession();
 				s.setAttribute("LoginResponse", t);
 
-			} else  {
+			} else {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return t;
 			}
@@ -128,11 +130,10 @@ public class IntAppuserController extends BaseController {
 		return t;
 
 	}
-	
-	
 
 	/**
 	 * 2.2 logout
+	 * 
 	 * @param p
 	 * @return
 	 */
@@ -142,7 +143,7 @@ public class IntAppuserController extends BaseController {
 	public Object logout(HttpServletResponse response) {
 		LoginResponse t = null;
 		String token = request.getHeader("Bearer");
-		if ( (checkToken())) {
+		if ((checkToken())) {
 
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return t;
@@ -156,35 +157,36 @@ public class IntAppuserController extends BaseController {
 		return t;
 
 	}
-	
-    /**
-     * //2.3 verification_code
-     * @param p
-     * @param response
-     * @return
-     */
-	@RequestMapping(value = {  "/verification_code", "/forgot" }, method = RequestMethod.POST, produces = {
+
+	/**
+	 * //2.3 verification_code
+	 * 
+	 * @param p
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = { "/verification_code", "/forgot" }, method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
 	public Object verifyCodeByPhone(@RequestBody SignUpEntity p, HttpServletResponse response) {
 
-		SignUpResponse rs=null;
+		SignUpResponse rs = null;
 		HttpSession s = this.getRequest().getSession();
 		System.out.println("tst");
-		//String token = request.getHeader("Bearer");
-		//boolean istype = StringUtils.isEmpty(p.getType());
+		// String token = request.getHeader("Bearer");
+		// boolean istype = StringUtils.isEmpty(p.getType());
 		try {
 
 			if (appuserService.checkPhone(p.getPhone()) == null) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
-			} else   {
+			} else {
 				rs = new SignUpResponse();
 				String Verification_code = String.valueOf(Tools.getRandomNum());
 				rs.setVerification_code(Verification_code);
 				s.setAttribute("Verification_code", Verification_code);
 				s.setAttribute("Verification_code_time", System.currentTimeMillis());
-			
+
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -194,13 +196,14 @@ public class IntAppuserController extends BaseController {
 		return rs;
 
 	}
-	
-    /**
-     * //2.3 sign up
-     * @param p
-     * @param response
-     * @return
-     */
+
+	/**
+	 * //2.3 sign up
+	 * 
+	 * @param p
+	 * @param response
+	 * @return
+	 */
 	@RequestMapping(value = { "/sign_up", "/forgot" }, method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
@@ -260,29 +263,30 @@ public class IntAppuserController extends BaseController {
 	}
 
 	/**
-	 * 3.2 Report current user location  
+	 * 3.2 Report current user location
+	 * 
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/current_locations", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@RequestMapping(value = "/current_locations", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
 	@ResponseBody
 
 	public Object updateLocation(@RequestBody LocationEntity p, HttpServletResponse response) {
-
 
 		String token = request.getHeader("Bearer");
 		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
 
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
-		}else{
+		} else {
 			p.setPhone(appuserService.getPhoneByTokenFromCache(token));
 		}
 
 		try {
-			
+
 			appuserService.udateUserLocation(p);
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -292,25 +296,25 @@ public class IntAppuserController extends BaseController {
 	}
 
 	/**
-	 * 4.2 @critical Add a banana 
+	 * 4.2 @critical Add a banana
+	 * 
 	 * @param p
-	 * @return
+	 * @return MultipartHttpServletRequest request
 	 */
-	@RequestMapping(value = "/bananas", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@RequestMapping(value = "/bananas1", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 
-	public Object addBanana(@RequestBody AddBananaAction p,  HttpServletResponse response) {
+	public Object addBanana(@RequestBody AddBananaAction p, HttpServletResponse response) {
 
 		String token = request.getHeader("Bearer");
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
-		
 		AddBananaRes t = null;
-		System.out.println("test             "+p.getBanana().getProduct().getProductInfoByJson());
+	
 		try {
-			t = appuserService.saveBanana(p.getBanana(),token);
+			t = appuserService.saveBanana(p.getBanana(), token,null,null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -318,79 +322,124 @@ public class IntAppuserController extends BaseController {
 		return t;
 
 	}
-	
-	private boolean checkToken(){
+
+	private boolean checkToken() {
 		String token = request.getHeader("Bearer");
-	 boolean rs=false;
+		boolean rs = false;
 		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
-            rs= true;
+			rs = true;
 		}
-		
+
 		return rs;
 	}
 
+	/**
+	 * 4.2 @critical Add a banana
+	 * 
+	 * @param p
+	 * @return MultipartHttpServletRequest request
+	 */
+	@RequestMapping(value = "/bananas", method = RequestMethod.POST)
+	@ResponseBody
 
+	public Object addBanana( @RequestParam("video") CommonsMultipartFile video, @RequestParam("image") CommonsMultipartFile image,@RequestParam("json") String json,
+			HttpServletResponse response) {
+		AddBananaRes t = null;
+		String token = request.getHeader("Bearer");
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		}
+           	long l=new Date().getTime();
+           	String videoname=l + video.getOriginalFilename();
+           	
+        	String imagename=l + image.getOriginalFilename();
+           	
+		String Imagepath = Const.Imagepath+ imagename;	
+		String Videopath = Const.Videopath +l + videoname;
+		String v=Const.IPAddress+"video/"+videoname;
+		String i=Const.IPAddress+"image/"+imagename;
+		
+		ObjectMapper mapper = new ObjectMapper();
+		File newVideo = new File(Videopath);
+		File newImage = new File(Imagepath);
+		// 通过CommonsMultipartFile的方法直接写文件（注意这个时候）
+		try {
+			video.transferTo(newVideo);
+			image.transferTo(newImage);
+			
+			AddBananaAction addBananaAction= mapper.readValue(json, AddBananaAction.class);
+			System.out.println("test key word:   "+addBananaAction.getBanana().getBubble().getKey_word());
+			t = appuserService.saveBanana(addBananaAction.getBanana(), token,i,v);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		    
+		return t;
 
-	
+	}
 
-
-	/** 	// 4.1 @high Check bubbles 
-	 * http://api.sosxsos.com/checkThought
+	/**
+	 * // 4.1 @high Check bubbles http://api.sosxsos.com/checkThought
 	 * 
 	 * @param p
 	 * @return
 	 */
-//	@RequestMapping("/userGrid", 
-//			params = {"_search", "nd", "rows", "page", "sidx", "sort"})
-	@RequestMapping(value = "/bubbles",params = {"topic", "key_word"}, method = RequestMethod.GET)
+	// @RequestMapping("/userGrid",
+	// params = {"_search", "nd", "rows", "page", "sidx", "sort"})
+	@RequestMapping(value = "/bubbles", params = { "topic", "key_word" }, method = RequestMethod.GET)
 	@ResponseBody
 
-	public Object checkBubbles(@RequestParam(value = "topic") String topic, @RequestParam(value = "key_word") String key_word, HttpServletResponse response) {
+	public Object checkBubbles(@RequestParam(value = "topic") String topic,
+			@RequestParam(value = "key_word") String key_word, HttpServletResponse response) {
 
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
 		CheckThoughtRes t = null;
-		System.out.println("topic: "+topic+" key_word: "+key_word);
+		System.out.println("topic: " + topic + " key_word: " + key_word);
 		try {
-			t = appuserService.checkBubbles(topic.trim(),key_word.trim());
+			t = appuserService.checkBubbles(topic.trim(), key_word.trim());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(t==null){
+		if (t == null) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 		return t;
 
 	}
-	
+
 	////////////////
-	
+
 	/**
-	 *  3.1 @high Get nearby residents
+	 * 3.1 @high Get nearby residents
+	 * 
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/residents", method = RequestMethod.GET, produces = {
-			"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/residents", method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })
 	@ResponseBody
 
-	public Object residentList(@RequestParam(value = "latitude") Double latitude, @RequestParam(value = "longitude") Double longitude,@RequestParam(value = "accuracy") Double accuracy, HttpServletResponse response) {
+	public Object residentList(@RequestParam(value = "latitude") Double latitude,
+			@RequestParam(value = "longitude") Double longitude, @RequestParam(value = "accuracy") Double accuracy,
+			HttpServletResponse response) {
 
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
-		
-		List<Resident> list  = null;
+
+		List<Resident> list = null;
 		try {
-		     list = appuserService.getResidentList(latitude,longitude,accuracy);
-//			if (list != null) {
-//				t.setResidents(list.size());
-//				t.setList(list);
-//			}
+			list = appuserService.getResidentList(latitude, longitude, accuracy);
+			// if (list != null) {
+			// t.setResidents(list.size());
+			// t.setList(list);
+			// }
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -401,35 +450,38 @@ public class IntAppuserController extends BaseController {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
-	//http://www.jianshu.com/p/ad70e81a19ec
-//	@ResponseBody
-//	@RequestMapping(value="/source/{resourceId}", method=RequestMethod.GET)
-//	    public Map<String, Object> dowloadFiles(@PathVariable(value="resourceId") Long resourceId,
-//	            HttpServletResponse response,@RequestHeader(value="Bearer") String token) {
-//	        try {
-//	         //  log.info("========>abc:"+resourceId);
-//	          //  log.info("========>loginUserId:"+loginUserId);
-//	            Resource res = resourcesService.findOne(resourceId);
-//	            if(null==res){
-//	                return this.getFailedMap("请求的资源不存在");
-//	            }
-//	            
-//	            
-//	            
-//	            
-//	            
-//	            
-//	            String projectId = "/936/";
-//	            response.setHeader("Content-Disposition", "attachment; filename="+res.getName());
-//	            response.setHeader("Content-Type","application/octet-stream");
-//	            response.setHeader("X-Accel-Redirect","/javadown"+projectId+res.getName());
-//	        //    log.info("=======>资源下载路径："+"/javadown"+projectId+res.getName());
-//	            return this.getSuccessMap(projectId+res.getName());
-//	        } catch (Exception e) {
-//	            e.printStackTrace();
-//	        //    return this.getFailedMap(e.getMessage());
-//	        }
-//	    }
+	// http://www.jianshu.com/p/ad70e81a19ec
+	// @ResponseBody
+	// @RequestMapping(value="/source/{resourceId}", method=RequestMethod.GET)
+	// public Map<String, Object> dowloadFiles(@PathVariable(value="resourceId")
+	// Long resourceId,
+	// HttpServletResponse response,@RequestHeader(value="Bearer") String token)
+	// {
+	// try {
+	// // log.info("========>abc:"+resourceId);
+	// // log.info("========>loginUserId:"+loginUserId);
+	// Resource res = resourcesService.findOne(resourceId);
+	// if(null==res){
+	// return this.getFailedMap("请求的资源不存在");
+	// }
+	//
+	//
+	//
+	//
+	//
+	//
+	// String projectId = "/936/";
+	// response.setHeader("Content-Disposition", "attachment;
+	// filename="+res.getName());
+	// response.setHeader("Content-Type","application/octet-stream");
+	// response.setHeader("X-Accel-Redirect","/javadown"+projectId+res.getName());
+	// // log.info("=======>资源下载路径："+"/javadown"+projectId+res.getName());
+	// return this.getSuccessMap(projectId+res.getName());
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// // return this.getFailedMap(e.getMessage());
+	// }
+	// }
 	/////////////////////////////////////////////////////////////////////////////////////////
 
 	/**

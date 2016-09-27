@@ -63,6 +63,9 @@ public class Const {
       public static final int Method_Not_Allowed=405;  
       public static final int Bad_Reques=400;   
       public static final int Not_Found=404;  
+      public static final String Imagepath = "/usr/share/nginx/html/image/";//"C:/" + new Date().getTime() + video.getOriginalFilename();	
+      public static final String Videopath = "/usr/share/nginx/html/video/";
+      public static final String IPAddress ="http://52.62.217.230/";
  
 /*
  * 100	Continue	继续。客户端应继续其请求

@@ -1,5 +1,7 @@
 package com.fh.controller.app.request;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.fh.entity.BananaEntity;
 
 //hkhkhu
@@ -33,7 +35,25 @@ public class AddBananaAction {
 //	        }
 //	}
 	
+	 private MultipartFile video;
+	 
 
+	 public MultipartFile getVideo() {
+		return video;
+	}
+	public void setVideo(MultipartFile video) {
+		this.video = video;
+	}
+	public MultipartFile getImage() {
+		return image;
+	}
+	public void setImage(MultipartFile image) {
+		this.image = image;
+	}
+
+	private MultipartFile image;
+	 
+	 
 public int getAction_type() {
 	return action_type;
 }
