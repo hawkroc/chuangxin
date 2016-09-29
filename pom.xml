@@ -15,9 +15,18 @@
 		<spring.version>4.3.2.RELEASE</spring.version>
 		<json.version>2.4.4</json.version>
 		<mysql-connector-java.version>5.1.38</mysql-connector-java.version>
+		<quartz.version>2.2.1</quartz.version>
 	</properties>
 
 	<dependencies>
+	
+	
+	    <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
+        </dependency>
+        
 <dependency>
     <groupId>org.springframework.data</groupId>
     <artifactId>spring-data-redis</artifactId>

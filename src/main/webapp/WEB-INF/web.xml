@@ -9,6 +9,7 @@
 		<param-value>
 		classpath:spring/ApplicationContext.xml
 		classpath:spring/ApplicationContext-cache.xml
+	    classpath:spring/ApplicationContext-quatz.xml
 		
 		</param-value>
 		
