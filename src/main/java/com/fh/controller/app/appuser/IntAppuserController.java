@@ -2,15 +2,10 @@ package com.fh.controller.app.appuser;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -18,47 +13,29 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fh.controller.app.request.AddBananaAction;
-import com.fh.controller.app.request.AddBananaReq;
-import com.fh.controller.app.request.CheckThoughtReq;
-import com.fh.controller.app.request.ResidentListRequest;
-import com.fh.controller.app.request.VerifyCode;
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.ResBase;
 import com.fh.controller.app.response.Resident;
-import com.fh.controller.app.response.ResidentsListResponse;
 import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.base.BaseController;
-import com.fh.controller.base.ResponseData;
-import com.fh.entity.BananaEntity;
 import com.fh.entity.LocationEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.SignUpEntity;
-import com.fh.entity.TestEntity;
 import com.fh.service.system.appuser.AppuserService;
 import com.fh.util.Const;
-import com.fh.util.MD5;
-import com.fh.util.PageData;
-
+import com.fh.util.FileUtil;
 import com.fh.util.Tools;
 
 /**
@@ -74,9 +51,7 @@ public class IntAppuserController extends BaseController {
 	private HttpServletRequest request;
 	@Resource(name = "appuserService")
 	private AppuserService appuserService;
-	private enum include{
-		MP4, JPG, PNG, BMP, GIF;
-	}
+	
 	/**
 	 * 1.Current version
 	 * 
@@ -332,6 +307,12 @@ public class IntAppuserController extends BaseController {
 
 		return rs;
 	}
+	
+//	
+//	private boolean checkFile(String filename){
+//		
+//		
+//	}
 
 	/**
 	 * 4.2 @critical Add a banana
@@ -349,14 +330,29 @@ public class IntAppuserController extends BaseController {
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
-		}
+		}		
+		String vidoname= video.getOriginalFilename();
+		String imgname= image.getOriginalFilename();
+		
+	if(FileUtil.checkFileType(vidoname, Const.vidoType)||FileUtil.checkFileType(imgname,Const.imageType)){
+		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		return null;
+	}
+		
+		
+		
+		
            	long l=new Date().getTime();
-           	String videoname=l + video.getOriginalFilename();
+           
+           	String videoname=l + vidoname;
            	
-        	String imagename=l + image.getOriginalFilename();
+        	String imagename=l + imgname;
            	
-		String Imagepath = Const.Imagepath+ imagename;	
-		String Videopath = Const.Videopath +l + videoname;
+//		String Imagepath = Const.Imagepath+ imagename;	
+//		String Videopath = Const.Videopath  + videoname;
+		String Imagepath = Const.testImagepath+ imagename;	
+		String Videopath = Const.testVideopath + videoname;
+		
 		String v=Const.IPAddress+"video/"+videoname;
 		String i=Const.IPAddress+"image/"+imagename;
 		
@@ -449,145 +445,6 @@ public class IntAppuserController extends BaseController {
 
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////
-	// http://www.jianshu.com/p/ad70e81a19ec
-	// @ResponseBody
-	// @RequestMapping(value="/source/{resourceId}", method=RequestMethod.GET)
-	// public Map<String, Object> dowloadFiles(@PathVariable(value="resourceId")
-	// Long resourceId,
-	// HttpServletResponse response,@RequestHeader(value="Bearer") String token)
-	// {
-	// try {
-	// // log.info("========>abc:"+resourceId);
-	// // log.info("========>loginUserId:"+loginUserId);
-	// Resource res = resourcesService.findOne(resourceId);
-	// if(null==res){
-	// return this.getFailedMap("请求的资源不存在");
-	// }
-	//
-	//
-	//
-	//
-	//
-	//
-	// String projectId = "/936/";
-	// response.setHeader("Content-Disposition", "attachment;
-	// filename="+res.getName());
-	// response.setHeader("Content-Type","application/octet-stream");
-	// response.setHeader("X-Accel-Redirect","/javadown"+projectId+res.getName());
-	// // log.info("=======>资源下载路径："+"/javadown"+projectId+res.getName());
-	// return this.getSuccessMap(projectId+res.getName());
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// // return this.getFailedMap(e.getMessage());
-	// }
-	// }
-	/////////////////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * 
-	 * @param p
-	 * @return
-	 */
-	@RequestMapping(value = "/getTest", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
-	@ResponseBody
-
-	public Object getAppuserAll(@RequestBody TestEntity p) {
-		logBefore(logger, "TEST @RequestBody");
-
-		return ResponseData.buildSuccessResponseWithMeg("" + p.getName() + p.getRole());
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	@RequestMapping(value = "/getTest5/{id}", method = RequestMethod.POST)
-	@ResponseBody
-
-	public Object getAppuserAllByCache(@PathVariable String id) {
-		logBefore(logger, "TEST cache");
-
-		String s = MD5.md5(id);
-		System.out.println(s);
-		return ResponseData.buildSuccessResponseWithMeg(s);
-
-	}
-
-	/**
-	 * Restful API
-	 * 
-	 * @param name
-	 * @param role
-	 * @param phone
-	 * @param p
-	 * @return
-	 */
-	@RequestMapping(value = "/getTest2/{name}/{role}", method = RequestMethod.POST, produces = {
-			"application/json;charset=UTF-8" })
-	@ResponseBody
-	public Object getAppuserAll2(@PathVariable String name, @PathVariable String role) {
-		logBefore(logger, "testAPI");
-		return ResponseData.buildSuccessResponseWithMeg("" + name + role);
-		/// return AppUtil.returnObject(new PageData(), map);
-	}
-
-	/**
-	 * 
-	 * @param phone
-	 * @param p
-	 * @return
-	 */
-
-	@RequestMapping(value = "/getTest3", method = RequestMethod.GET)
-	@ResponseBody
-
-	public Object getAppuserAll3(@CookieValue(value = "userPhone", required = false) String phone,
-			@ModelAttribute("test") TestEntity p) {
-		logBefore(logger, "TEST2");
-		return ResponseData.buildSuccessResponseWithMeg("" + phone);
-		/// return AppUtil.returnObject(new PageData(), map);
-	}
-
-	/**
-	 * 
-	 * @param request
-	 * @return
-	 * @throws IllegalStateException
-	 * @throws IOException
-	 */
-	@RequestMapping("springUpload")
-	public String springUpload(HttpServletRequest request, @RequestHeader(value = "User-Agent") String userAgent)
-			throws IllegalStateException, IOException {
-		long startTime = System.currentTimeMillis();
-		// 将当前上下文初始化给 CommonsMutipartResolver （多部分解析器）
-		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
-				request.getSession().getServletContext());
-		// 检查form中是否有enctype="multipart/form-data"
-		if (multipartResolver.isMultipart(request)) {
-			// 将request变成多部分request
-			MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-			// 获取multiRequest 中所有的文件名
-			Iterator iter = multiRequest.getFileNames();
-
-			while (iter.hasNext()) {
-				// 一次遍历所有文件
-				MultipartFile file = multiRequest.getFile(iter.next().toString());
-				if (file != null) {
-					String path = "E:/springUpload" + file.getOriginalFilename();
-					// 上传
-					file.transferTo(new File(path));
-				}
-
-			}
-
-		}
-		long endTime = System.currentTimeMillis();
-		System.out.println("方法三的运行时间：" + String.valueOf(endTime - startTime) + "ms");
-		return "/success";
-	}
 
 	/**
 	 * 
@@ -595,11 +452,11 @@ public class IntAppuserController extends BaseController {
 	 * @return
 	 * @throws IOException
 	 */
-	@RequestMapping("fileUpload2")
-	public String fileUpload2(@RequestParam("file") CommonsMultipartFile file) throws IOException {
+	@RequestMapping("/fileUpload2")
+	public String fileUpload2(@RequestParam("video") CommonsMultipartFile file) throws IOException {
 		long startTime = System.currentTimeMillis();
 		System.out.println("fileName：" + file.getOriginalFilename());
-		String path = "E:/" + new Date().getTime() + file.getOriginalFilename();
+		String path = "c:/" + new Date().getTime() + file.getOriginalFilename();
 
 		File newFile = new File(path);
 		// 通过CommonsMultipartFile的方法直接写文件（注意这个时候）
@@ -609,33 +466,5 @@ public class IntAppuserController extends BaseController {
 		return "/success";
 	}
 
-	/**
-	 * 根据用户名获取会员信息
-	 */
-	@RequestMapping(value = "/getAppuserByUm")
-	@ResponseBody
-	public Object getAppuserByUsernmae() {
-		logBefore(logger, "根据用户名获取会员信息");
-		Map<String, Object> map = new HashMap<String, Object>();
-		PageData pd = new PageData();
-		pd = this.getPageData();
-		String result = "00";
-
-		try {
-
-			pd = appuserService.findByUId(pd);
-
-			map.put("pd", pd);
-			result = (null == pd) ? "02" : "01";
-
-		} catch (Exception e) {
-			logger.error(e.toString(), e);
-		} finally {
-			map.put("result", result);
-			logAfter(logger);
-		}
-
-		return map;
-	}
-
+	
 }

@@ -210,5 +210,48 @@ public class FileUtil {
 			}
 		}
 	}
-
+	/* 
+	 * Java文件操作 获取文件扩展名 
+	 * 
+	 *  Created on:
+	 *      Author: blueeagle 
+	 */  
+	    public static String getExtensionName(String filename) {   
+	        if ((filename != null) && (filename.length() > 0)) {   
+	            int dot = filename.lastIndexOf('.');   
+	            if ((dot >-1) && (dot < (filename.length() - 1))) {   
+	                return filename.substring(dot + 1);   
+	            }   
+	        }   
+	        return filename;   
+	    }   
+	    
+	    /**
+	     * 
+	     * @param filename
+	     * @param checkname
+	     * @return
+	     */
+	    public static boolean checkFileType(String filename,String checkname) {
+	    	boolean rs=false;
+	    	if(getExtensionName(filename).equalsIgnoreCase(checkname)){
+	    	rs=true;
+	    	}
+			return rs;
+		}
+	/* 
+	 * Java文件操作 获取不带扩展名的文件名 
+	 * 
+	 *  Created on: 
+	 *      Author: blueeagle 
+	 */  
+	    public static String getFileNameNoEx(String filename) {   
+	        if ((filename != null) && (filename.length() > 0)) {   
+	            int dot = filename.lastIndexOf('.');   
+	            if ((dot >-1) && (dot < (filename.length()))) {   
+	                return filename.substring(0, dot);   
+	            }   
+	        }   
+	        return filename;   
+	    }   
 }

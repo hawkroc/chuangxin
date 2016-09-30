@@ -65,7 +65,17 @@ public class Const {
       public static final int Not_Found=404;  
       public static final String Imagepath = "/usr/share/nginx/html/image/";//"C:/" + new Date().getTime() + video.getOriginalFilename();	
       public static final String Videopath = "/usr/share/nginx/html/video/";
+      
+      public static final String testImagepath = "C:/image/";//"C:/" + new Date().getTime() + video.getOriginalFilename();	
+      public static final String testVideopath = "C:/video/";
+      
       public static final String IPAddress ="http://52.62.217.230/";
+      
+      public static final String vidoType="MP4";
+      public static final String imageType="JPEG";
+//      private enum include{
+//  		MP4, JPG, PNG, BMP, GIF;
+//  	}
  
 /*
  * 100	Continue	继续。客户端应继续其请求

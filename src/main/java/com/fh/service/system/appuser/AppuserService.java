@@ -4,14 +4,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.ObjectUtils.Null;
 import org.apache.commons.lang.StringUtils;
 //import org.apache.ibatis.javassist.bytecode.annotation.IntegerMemberValue;
-
 import org.springframework.stereotype.Service;
-
-import com.fh.controller.app.request.AddBananaAction;
-import com.fh.controller.app.request.CheckThoughtAction;
 
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
@@ -19,19 +14,17 @@ import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.Resident;
 import com.fh.dao.DaoSupport;
 import com.fh.entity.BananaEntity;
+import com.fh.entity.BubbleEntity;
 import com.fh.entity.LocationEntity;
 import com.fh.entity.LocationRangeEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.Page;
 import com.fh.entity.ProductEntity;
-import com.fh.entity.ResidentEntity;
 import com.fh.entity.SignUpEntity;
-import com.fh.entity.BubbleEntity;
 import com.fh.util.CacheUtil;
 import com.fh.util.LatLonUtil;
 import com.fh.util.MD5;
 import com.fh.util.PageData;
-import com.sun.xml.internal.bind.v2.runtime.Location;
 
 import net.sf.ehcache.Element;
 
@@ -212,6 +205,8 @@ public class AppuserService {
 		// }
 		AddBananaRes residents = new AddBananaRes();
 		String phone = getPhoneByTokenFromCache(token);
+		//for test
+		phone="123456";
 		if (phone == null) {
 			return residents;
 		}
@@ -239,8 +234,8 @@ public class AppuserService {
 		// residents.setStatus(0);
 		// residents.setThought_id(t.getId());
 		residents.setBanana_id(banana.getId());
-		residents.setVideo_url("testVido_url");
-		residents.setImage_url("testImg_url");
+		residents.setVideo_url(Videopath);
+		residents.setImage_url(Imagepath);
 		return residents;
 
 	}
