@@ -353,8 +353,8 @@ public class IntAppuserController extends BaseController {
 		String Imagepath = Const.testImagepath+ imagename;	
 		String Videopath = Const.testVideopath + videoname;
 		
-		String v=Const.IPAddress+"video/"+videoname;
-		String i=Const.IPAddress+"image/"+imagename;
+		String v="video/"+videoname;
+		String i="image/"+imagename;
 		
 		ObjectMapper mapper = new ObjectMapper();
 		File newVideo = new File(Videopath);
