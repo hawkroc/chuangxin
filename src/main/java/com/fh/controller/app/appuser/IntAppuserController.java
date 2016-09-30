@@ -51,7 +51,7 @@ public class IntAppuserController extends BaseController {
 	private HttpServletRequest request;
 	@Resource(name = "appuserService")
 	private AppuserService appuserService;
-	
+
 	/**
 	 * 1.Current version
 	 * 
@@ -287,9 +287,9 @@ public class IntAppuserController extends BaseController {
 			return null;
 		}
 		AddBananaRes t = null;
-	
+
 		try {
-			t = appuserService.saveBanana(p.getBanana(), token,null,null);
+			t = appuserService.saveBanana(p.getBanana(), token, null, null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -307,12 +307,12 @@ public class IntAppuserController extends BaseController {
 
 		return rs;
 	}
-	
-//	
-//	private boolean checkFile(String filename){
-//		
-//		
-//	}
+
+	//
+	// private boolean checkFile(String filename){
+	//
+	//
+	// }
 
 	/**
 	 * 4.2 @critical Add a banana
@@ -323,39 +323,37 @@ public class IntAppuserController extends BaseController {
 	@RequestMapping(value = "/bananas", method = RequestMethod.POST)
 	@ResponseBody
 
-	public Object addBanana( @RequestParam("video") CommonsMultipartFile video, @RequestParam("image") CommonsMultipartFile image,@RequestParam("json") String json,
+	public Object addBanana(@RequestParam("video") CommonsMultipartFile video,
+			@RequestParam("image") CommonsMultipartFile image, @RequestParam("json") String json,
 			HttpServletResponse response) {
 		AddBananaRes t = null;
 		String token = request.getHeader("Bearer");
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
-		}		
-		String vidoname= video.getOriginalFilename();
-		String imgname= image.getOriginalFilename();
-		
-	if(FileUtil.checkFileType(vidoname, Const.vidoType)||FileUtil.checkFileType(imgname,Const.imageType)){
-		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		return null;
-	}
-		
-		
-		
-		
-           	long l=new Date().getTime();
-           
-           	String videoname=l + vidoname;
-           	
-        	String imagename=l + imgname;
-           	
-//		String Imagepath = Const.Imagepath+ imagename;	
-//		String Videopath = Const.Videopath  + videoname;
-		String Imagepath = Const.testImagepath+ imagename;	
-		String Videopath = Const.testVideopath + videoname;
-		
-		String v="video/"+videoname;
-		String i="image/"+imagename;
-		
+		}
+		String vidoname = video.getOriginalFilename();
+		String imgname = image.getOriginalFilename();
+        System.out.println(vidoname);
+		if (!FileUtil.checkFileType(vidoname, Const.vidoType) || !FileUtil.checkFileType(imgname, Const.imageType)) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return null;
+		}
+		  System.out.println("UUUUU"+vidoname);
+		long l = new Date().getTime();
+
+		String videoname = l + vidoname;
+
+		String imagename = l + imgname;
+
+		 String Imagepath = Const.Imagepath+ imagename;
+		 String Videopath = Const.Videopath + videoname;
+//		String Imagepath = Const.testImagepath + imagename;
+//		String Videopath = Const.testVideopath + videoname;
+
+		String v = "video/" + videoname;
+		String i = "image/" + imagename;
+
 		ObjectMapper mapper = new ObjectMapper();
 		File newVideo = new File(Videopath);
 		File newImage = new File(Imagepath);
@@ -363,15 +361,15 @@ public class IntAppuserController extends BaseController {
 		try {
 			video.transferTo(newVideo);
 			image.transferTo(newImage);
-			
-			AddBananaAction addBananaAction= mapper.readValue(json, AddBananaAction.class);
-			System.out.println("test key word:   "+addBananaAction.getBanana().getBubble().getKey_word());
-			t = appuserService.saveBanana(addBananaAction.getBanana(), token,i,v);
+
+			AddBananaAction addBananaAction = mapper.readValue(json, AddBananaAction.class);
+			System.out.println("test key word:   " + addBananaAction.getBanana().getBubble().getKey_word());
+			t = appuserService.saveBanana(addBananaAction.getBanana(), token, i, v);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		    
+
 		return t;
 
 	}
@@ -445,7 +443,6 @@ public class IntAppuserController extends BaseController {
 
 	}
 
-
 	/**
 	 * 
 	 * @param file
@@ -466,5 +463,4 @@ public class IntAppuserController extends BaseController {
 		return "/success";
 	}
 
-	
 }

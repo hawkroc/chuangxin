@@ -206,7 +206,9 @@ public class AppuserService {
 		AddBananaRes residents = new AddBananaRes();
 		String phone = getPhoneByTokenFromCache(token);
 		//for test
-		phone="123456";
+	//	phone="334455";
+		//phone="123456";
+		
 		if (phone == null) {
 			return residents;
 		}
