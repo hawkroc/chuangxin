@@ -18,6 +18,7 @@ import com.fh.entity.BubbleEntity;
 import com.fh.entity.LocationEntity;
 import com.fh.entity.LocationRangeEntity;
 import com.fh.entity.LoginEntity;
+import com.fh.entity.MediaEntity;
 import com.fh.entity.Page;
 import com.fh.entity.ProductEntity;
 import com.fh.entity.SignUpEntity;
@@ -230,7 +231,12 @@ public class AppuserService {
 		dao.save("WebappuserMapper.saveProduct", product);
 		banana.setProductId(product.getId());
 		banana.setThoughtId(t.getId());
+		
 		dao.save("WebappuserMapper.saveBanana", banana);
+		MediaEntity mediaEntity=new MediaEntity();
+		mediaEntity.setImage_url(Imagepath);
+		mediaEntity.setVideo_url(Videopath);
+		banana.setMedia((mediaEntity));
 		CacheUtil.cacheSave(phone, banana, "myThought");
 		CacheUtil.cacheSave(t.getTopic() + t.getKey_word(), phone, "topickeywords_banana");
 		// residents.setStatus(0);

@@ -38,6 +38,15 @@ public class BananaEntity extends BaseEntity {
 	private String video_url;
 	private ProductEntity product;
 	private BubbleEntity bubble;
+	private MediaEntity media;
+
+	public MediaEntity getMedia() {
+		return media;
+	}
+
+	public void setMedia(MediaEntity media) {
+		this.media = media;
+	}
 
 	public BubbleEntity getBubble() {
 		return bubble;

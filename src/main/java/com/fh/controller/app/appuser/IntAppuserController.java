@@ -327,6 +327,7 @@ public class IntAppuserController extends BaseController {
 			@RequestParam("image") CommonsMultipartFile image, @RequestParam("json") String json,
 			HttpServletResponse response) {
 		AddBananaRes t = null;
+		System.out.println("dsafsdaf"+json);
 		String token = request.getHeader("Bearer");
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -339,7 +340,7 @@ public class IntAppuserController extends BaseController {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
-		  System.out.println("UUUUU"+vidoname);
+		  
 		long l = new Date().getTime();
 
 		String videoname = l + vidoname;
