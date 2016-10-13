@@ -103,6 +103,21 @@
 		where
 		phone = #{phone}
 	</select>
+	
+	
+	
+		<select id="queryUser" parameterType="String" resultType="com.fh.entity.UserEntity">
+		select
+		*
+		from webapp_user
+		where
+		phone = #{phone}
+	</select>
+	
+	
+	
+	
+	
 
 
 

@@ -70,7 +70,9 @@ public class AppuserController extends BaseController {
 		pd.put("PASSWORD", MD5.md5(pd.getString("PASSWORD")));
 		
 		if(null == appuserService.findByUId(pd)){
-			if(Jurisdiction.buttonJurisdiction(menuUrl, "add")){appuserService.saveU(pd);} //判断新增权限
+			if(Jurisdiction.buttonJurisdiction(menuUrl, "add")){
+				//appuserService.saveU(pd);
+				} //判断新增权限
 			mv.addObject("msg","success");
 		}else{
 			mv.addObject("msg","failed");
@@ -117,47 +119,7 @@ public class AppuserController extends BaseController {
 		return AppUtil.returnObject(new PageData(), map);
 	}
 	
-	/**
-	 * 判断邮箱是否存在
-	 */
-	@RequestMapping(value="/hasE")
-	@ResponseBody
-	public Object hasE(){
-		Map<String,String> map = new HashMap<String,String>();
-		String errInfo = "success";
-		PageData pd = new PageData();
-		try{
-			pd = this.getPageData();
-			if(appuserService.findByUE(pd) != null){
-				errInfo = "error";
-			}
-		} catch(Exception e){
-			logger.error(e.toString(), e);
-		}
-		map.put("result", errInfo);				//返回结果
-		return AppUtil.returnObject(new PageData(), map);
-	}
-	
-	/**
-	 * 判断编码是否存在
-	 */
-	@RequestMapping(value="/hasN")
-	@ResponseBody
-	public Object hasN(){
-		Map<String,String> map = new HashMap<String,String>();
-		String errInfo = "success";
-		PageData pd = new PageData();
-		try{
-			pd = this.getPageData();
-			if(appuserService.findByUN(pd) != null){
-				errInfo = "error";
-			}
-		} catch(Exception e){
-			logger.error(e.toString(), e);
-		}
-		map.put("result", errInfo);				//返回结果
-		return AppUtil.returnObject(new PageData(), map);
-	}
+
 	
 	/**
 	 * 去修改用户页面

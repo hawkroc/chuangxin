@@ -22,6 +22,7 @@ import com.fh.entity.MediaEntity;
 import com.fh.entity.Page;
 import com.fh.entity.ProductEntity;
 import com.fh.entity.SignUpEntity;
+import com.fh.entity.UserEntity;
 import com.fh.util.CacheUtil;
 import com.fh.util.LatLonUtil;
 import com.fh.util.MD5;
@@ -91,8 +92,10 @@ public class AppuserService {
 			}
 
 		} else if (StringUtils.isNotEmpty(e.getUser_token())) {
-			String phone = getPhoneByTokenFromCache(e.getUser_token());
-			if (phone != null) {
+			//String phone = getPhoneByTokenFromCache(e.getUser_token());
+		    UserEntity user =getUserByTokenFromCache(e.getUser_token());
+			if (user != null) {
+				String phone =user.getPhone();
 				e.setPhone(phone);
 				loginResponse = new LoginResponse();
 				loginResponse = (LoginResponse) dao.findForObject("WebappuserMapper.loginByToken", phone);
@@ -123,21 +126,40 @@ public class AppuserService {
 		}
 		return phone;
 	}
+	
+	
+	/**
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public UserEntity getUserByTokenFromCache(String token) {
+		Element o = CacheUtil.getCacheObject(token, "userCacheEntity");
+		UserEntity user = null;
+		if (o != null) {
+			user = (UserEntity) o.getObjectValue();
+		}
+		return user;
+	}
 
 	/**
 	 * 
 	 * @param phone
 	 * @return
+	 * @throws Exception 
 	 */
-	private String getUserTokenAndPutCache(String phone) {
+	private String getUserTokenAndPutCache(String phone) throws Exception {
 		String token = MD5.md5((phone + System.currentTimeMillis()));
 		CacheUtil.cacheSave(token, phone, "userCache");
+		UserEntity use=(UserEntity)	dao.findForObject("WebappuserMapper.queryUser", phone);
+		CacheUtil.cacheSave(token, use, "userCacheEntity");
 		return token;
 
 	}
 
 	private void removeUserCache(String token) {
 		CacheUtil.removeCache(token, "userCache");
+		CacheUtil.removeCache(token, "userCacheEntity");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -205,15 +227,18 @@ public class AppuserService {
 		// dao.findForObject("WebappuserMapper.searchResident", l);
 		// }
 		AddBananaRes residents = new AddBananaRes();
-		String phone = getPhoneByTokenFromCache(token);
-		//for test
-	//	phone="334455";
-		//phone="123456";
+//		String phone = getPhoneByTokenFromCache(token);
+//		//for test
+//	//	phone="334455";
+//		//phone="123456";
+//		
+//		if (phone == null) {
+//			return residents;
+//		}
+		UserEntity userEntity=getUserByTokenFromCache(token);
+		int userid = userEntity.getId();
+		String phone =userEntity.getPhone();
 		
-		if (phone == null) {
-			return residents;
-		}
-		int userid = checkPhone(phone);
 
 		banana.setUserid(userid);
 		System.out.println(banana.toString());
@@ -253,9 +278,9 @@ public class AppuserService {
 	 * @param e
 	 */
 	public void updateLogout(String token) throws Exception {
-
-		dao.update("WebappuserMapper.logout", getPhoneByTokenFromCache(token));
-		CacheUtil.removeCache(token, "userCache");
+          UserEntity userEntity= getUserByTokenFromCache(token);
+		dao.update("WebappuserMapper.logout",userEntity.getPhone());
+		removeUserCache(token);
 	}
 
 	/*
@@ -270,28 +295,6 @@ public class AppuserService {
 		dao.save("WebappuserMapper.updatePassword", p);
 		return this.getUserTokenAndPutCache(p.getPhone());
 	}
-
-	/*
-	 * 通过邮箱获取数据
-	 */
-	public PageData findByUE(PageData pd) throws Exception {
-		return (PageData) dao.findForObject("AppuserMapper.findByUE", pd);
-	}
-
-	/*
-	 * 通过编号获取数据
-	 */
-	public PageData findByUN(PageData pd) throws Exception {
-		return (PageData) dao.findForObject("AppuserMapper.findByUN", pd);
-	}
-
-	/*
-	 * 保存用户
-	 */
-	public void saveU(PageData pd) throws Exception {
-		dao.save("AppuserMapper.saveU", pd);
-	}
-
 	/*
 	 * 修改用户
 	 */
@@ -341,12 +344,6 @@ public class AppuserService {
 		return (PageData) dao.findForObject("AppuserMapper.getUserInfo", pd);
 	}
 
-	/*
-	 * 跟新登录时间
-	 */
-	public void updateLastLogin(PageData pd) throws Exception {
-		dao.update("AppuserMapper.updateLastLogin", pd);
-	}
-	// ======================================================================================
 
+	
 }
