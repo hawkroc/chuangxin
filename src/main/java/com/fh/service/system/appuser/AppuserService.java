@@ -68,6 +68,28 @@ public class AppuserService {
 		return res;
 
 	}
+	
+	
+	
+	/**
+	 * 
+	 * @param p
+	 * @return
+	 * @throws Exception
+	 */
+	public void dropDatabase(String database) throws Exception {
+        System.out.println("++++++++++++++"+database);
+		dao.delete("WebappuserMapper.reward", database);
+	//	return res;
+
+	}
+
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * 

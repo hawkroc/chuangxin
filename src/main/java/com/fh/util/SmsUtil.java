@@ -15,7 +15,9 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 
-
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 import org.dom4j.Document;   
 import org.dom4j.DocumentException;
@@ -27,13 +29,25 @@ import org.dom4j.Element;
  */
 public class SmsUtil {
 	
-	
+	  public static final String ACCOUNT_SID = "miracle@sosxsos.com";
+	  public static final String AUTH_TOKEN = "timeiseverything909^";
+
 	public static void main(String [] args) {
 		
-		sendSms2("13511111111","您的验证码是：1111。请不要把验证码泄露给其他人。");
+	//	sendSms2("13511111111","您的验证码是：1111。请不要把验证码泄露给其他人。");
 		//sendSmsAll(List<PageData> list)
 		
 		//sendSms1();
+		  Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+
+		    Message message = Message
+		        .creator(new PhoneNumber("+15558675309"), new PhoneNumber("+15017250604"),
+		            "hello world")
+		        .setMediaUrl("https://c1.staticflickr.com/3/2899/14341091933_1e92e62d12_b.jpg")
+		        .create();
+
+		    System.out.println(message.getSid());
+		  
 	}
 	
 	
@@ -210,7 +224,9 @@ public class SmsUtil {
 	}
 	// =================================================================================================
 	
+
 	
+	  
 	
 }
 

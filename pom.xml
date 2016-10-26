@@ -32,7 +32,11 @@
     <artifactId>spring-data-redis</artifactId>
     <version>1.7.2.RELEASE</version>
 </dependency>
-
+<dependency>
+  <groupId>com.twilio.sdk</groupId>
+  <artifactId>twilio</artifactId>
+  <version>(7.0,7.9)</version>
+</dependency>
 		<!-- spring start -->
 		<dependency>
 			<groupId>org.springframework</groupId>
