@@ -14,16 +14,17 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 public class EmailService {
+private static	String domain="mail.sosxsos.com";
 	
 	public static ClientResponse SendSimpleMessage() {
 	       Client client = Client.create();
 	       client.addFilter(new HTTPBasicAuthFilter("api",
 	                       "YOUR_API_KEY"));
 	       WebResource webResource =
-	               client.resource("https://api.mailgun.net/v3/YOUR_DOMAIN_NAME" +
+	               client.resource("https://api.mailgun.net/v3/"+domain +
 	                               "/messages");
 	       MultivaluedMapImpl formData = new MultivaluedMapImpl();
-	       formData.add("from", "Excited User <mailgun@YOUR_DOMAIN_NAME>");
+	       formData.add("from", "Excited User <mailgun@mail.sosxsos.com>");
 	       formData.add("to", "bar@example.com");
 	       formData.add("to", "YOU@YOUR_DOMAIN_NAME");
 	       formData.add("subject", "Hello");
@@ -40,8 +41,8 @@ public class EmailService {
 	       client.addFilter(new HTTPBasicAuthFilter("api",
 	                       "YOUR_API_KEY"));
 	       WebResource webResource =
-	               client.resource("https://api.mailgun.net/v3/YOUR_DOMAIN_NAME/" +
-	                               "messages");
+	               client.resource("https://api.mailgun.net/v3/"+domain +
+	                               "/messages");
 	       FormDataMultiPart form = new FormDataMultiPart();
 	       form.field("from", "Excited User <YOU@YOUR_DOMAIN_NAME>");
 	       form.field("to", "foo@example.com");
@@ -72,7 +73,7 @@ public class EmailService {
 	       client.addFilter(new HTTPBasicAuthFilter("api",
 	                       "YOUR_API_KEY"));
 	       WebResource webResource =
-	               client.resource("https://api.mailgun.net/v3/YOUR_DOMAIN_NAME" +
+	               client.resource("https://api.mailgun.net/v3/"+domain +
 	                               "/messages.mime");
 	       FormDataMultiPart form = new FormDataMultiPart();
 	       form.field("to", "bar@example.com");
