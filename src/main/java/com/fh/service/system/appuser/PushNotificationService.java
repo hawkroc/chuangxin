@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 
 import org.springframework.stereotype.Service;
 
+import com.fh.util.Const;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -21,32 +22,30 @@ public class PushNotificationService {
 
 	PushNotificationService() throws FileNotFoundException {
 
-		options = new FirebaseOptions.Builder()
-				.setServiceAccount(new FileInputStream("D:/sosxsos-28d204f26a95.json"))
+		options = new FirebaseOptions.Builder().setServiceAccount(new FileInputStream(Const.jsonKey))
 				.setDatabaseUrl("https://sosxsos-c0363.firebaseio.com/").build();
 
 		FirebaseApp.initializeApp(options);
 	}
-	
-	public void operateFireBase(){
-		// As an admin, the app has access to read and write all data, regardless of Security Rules
-		DatabaseReference ref = FirebaseDatabase
-		    .getInstance()
-		    .getReference("restricted_access/secret_document");
+    /**
+     * 
+     */
+	public void operateFireBase() {
+		// As an admin, the app has access to read and write all data,
+		// regardless of Security Rules
+		DatabaseReference ref = FirebaseDatabase.getInstance().getReference("restricted_access/secret_document");
 		ref.addListenerForSingleValueEvent(new ValueEventListener() {
-		  
-		    public void onDataChange(DataSnapshot dataSnapshot) {
-		        Object document = dataSnapshot.getValue();
-		        System.out.println(document);
-		    }
 
-		
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				Object document = dataSnapshot.getValue();
+				System.out.println(document);
+			}
+
 			public void onCancelled(DatabaseError arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 	}
-	
 
 }

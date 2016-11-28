@@ -53,7 +53,7 @@ public class Const {
 	public static final Integer VERSION= 5000;
 	public static final int secEx=90;
 //Response
-	
+	public static final String jsonKey="D:/sosxsos-28d204f26a95.json";
 
                                  
       public static final int SERVER_ERROR=500;       
