@@ -13,6 +13,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -46,8 +48,10 @@ public class PushNotificationService {
 	 * @throws UnirestException
 	 */
 	public void pushMessage() throws UnirestException {
-		Unirest.post("https://fcm.googleapis.com/fcm/send").basicAuth("key", "0GBYzPu7Udno5aA")
+		HttpResponse<JsonNode> response=	Unirest.post("https://fcm.googleapis.com/fcm/send").basicAuth("key", "0GBYzPu7Udno5aA")
 		  .asJson();
+		
+		System.out.println(response.getBody().getArray().toString());
 		
 		
 	}
