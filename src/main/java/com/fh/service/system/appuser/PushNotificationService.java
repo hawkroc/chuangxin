@@ -24,13 +24,13 @@ public class PushNotificationService {
 	FirebaseOptions options = null;
 	//
 
-	PushNotificationService() throws FileNotFoundException {
-
-		options = new FirebaseOptions.Builder().setServiceAccount(new FileInputStream(Const.jsonKey))
-				.setDatabaseUrl("https://sosxsos-c0363.firebaseio.com/").build();
-
-		FirebaseApp.initializeApp(options);
-	}
+//	PushNotificationService() throws FileNotFoundException {
+//
+//		options = new FirebaseOptions.Builder().setServiceAccount(new FileInputStream(Const.jsonKey))
+//				.setDatabaseUrl("https://sosxsos-c0363.firebaseio.com/").build();
+//
+//		FirebaseApp.initializeApp(options);
+//	}
    
 //	
 //	https://fcm.googleapis.com/fcm/send
@@ -56,28 +56,5 @@ public class PushNotificationService {
 		
 	}
 	
-	
-	public void operateFireBase() {
-		// As an admin, the app has access to read and write all data,
-		// regardless of Security Rules
-		DatabaseReference ref = FirebaseDatabase.getInstance().getReference("restricted_access/secret_document");
-		
-		
-		
-		
-		
-		ref.addListenerForSingleValueEvent(new ValueEventListener() {
-
-			public void onDataChange(DataSnapshot dataSnapshot) {
-				Object document = dataSnapshot.getValue();
-				System.out.println(document);
-			}
-
-			public void onCancelled(DatabaseError arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-	}
 
 }

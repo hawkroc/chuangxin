@@ -1,7 +1,6 @@
 package com.fh.controller.app.appuser;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -24,15 +23,18 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fh.controller.app.request.AddBananaAction;
+import com.fh.controller.app.request.CommonRequst;
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.ResBase;
+import com.fh.controller.app.response.ResCommon;
 import com.fh.controller.app.response.Resident;
 import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.base.BaseController;
 import com.fh.entity.LocationEntity;
 import com.fh.entity.LoginEntity;
+import com.fh.entity.PushBean;
 import com.fh.entity.SignUpEntity;
 import com.fh.service.system.appuser.AppuserService;
 import com.fh.util.Const;
@@ -69,9 +71,7 @@ public class IntAppuserController extends BaseController {
 		};
 
 	}
-	
-	
-	
+
 	/**
 	 * 1.Current version
 	 * 
@@ -83,7 +83,7 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public Object dropDatabase(@PathVariable String database) {
-		//String database=;
+		// String database=;
 		try {
 			appuserService.dropDatabase(database);
 		} catch (Exception e) {
@@ -94,7 +94,6 @@ public class IntAppuserController extends BaseController {
 		};
 
 	}
-
 
 	/**
 	 * 2.1 login
@@ -265,6 +264,95 @@ public class IntAppuserController extends BaseController {
 	}
 
 	/**
+	 * 2.5 Create cross reference https://api.sosxsos.com/v1/cross_references
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/cross_references", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+
+	public void create_cross_reference(@RequestBody PushBean p, HttpServletResponse response) {
+		// String token = request.getHeader("Bearer");
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			// return null;
+		}
+		LoginResponse t = null;
+
+		try {
+			// to be done
+			// Saved push_token
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// return t;
+
+	}
+
+	/**
+	 * 2.6 Verify email address https://api.sosxsos.com/v1/verification/codes
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/verification/codes", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	public void get_verification_code(CommonRequst email, HttpServletResponse response) {
+		// String token = request.getHeader("Bearer");
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+		} else {
+			// send email
+
+		}
+
+	}
+
+	/**
+	 * 2.6.1 Verify email address https://api.sosxsos.com/v1/verification/codes
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "verification/emails", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	public void verify_email(CommonRequst code, HttpServletResponse response) {
+		// String token = request.getHeader("Bearer");
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+		} else {
+			// Verify mail
+
+		}
+
+	}
+
+	/**
+	 * 2.7 Upload ID photos
+	 * https://api.sosxsos.com/v1/verification/identifications
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "verification/identifications", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	public void identifications(@RequestParam("image") CommonsMultipartFile image, HttpServletResponse response) {
+		// String token = request.getHeader("Bearer");
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+		} else {
+			// Verify mail
+
+		}
+
+	}
+
+	/**
 	 * 3.2 Report current user location
 	 * 
 	 * @param p
@@ -297,34 +385,6 @@ public class IntAppuserController extends BaseController {
 
 	}
 
-	/**
-	 * 4.2 @critical Add a banana
-	 * 
-	 * @param p
-	 * @return MultipartHttpServletRequest request
-	 */
-	@RequestMapping(value = "/bananas1", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
-	@ResponseBody
-
-	public Object addBanana(@RequestBody AddBananaAction p, HttpServletResponse response) {
-
-		String token = request.getHeader("Bearer");
-		if (checkToken()) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return null;
-		}
-		AddBananaRes t = null;
-
-		try {
-			t = appuserService.saveBanana(p.getBanana(), token, null, null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return t;
-
-	}
-
 	private boolean checkToken() {
 		String token = request.getHeader("Bearer");
 		boolean rs = false;
@@ -334,12 +394,6 @@ public class IntAppuserController extends BaseController {
 
 		return rs;
 	}
-
-	//
-	// private boolean checkFile(String filename){
-	//
-	//
-	// }
 
 	/**
 	 * 4.2 @critical Add a banana
@@ -354,7 +408,7 @@ public class IntAppuserController extends BaseController {
 			@RequestParam("image") CommonsMultipartFile image, @RequestParam("json") String json,
 			HttpServletResponse response) {
 		AddBananaRes t = null;
-		System.out.println("dsafsdaf"+json);
+		System.out.println("dsafsdaf" + json);
 		String token = request.getHeader("Bearer");
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -362,22 +416,22 @@ public class IntAppuserController extends BaseController {
 		}
 		String vidoname = video.getOriginalFilename();
 		String imgname = image.getOriginalFilename();
-        System.out.println(vidoname);
+		System.out.println(vidoname);
 		if (!FileUtil.checkFileType(vidoname, Const.vidoType) || !FileUtil.checkFileType(imgname, Const.imageType)) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
-		  
+
 		long l = new Date().getTime();
 
 		String videoname = l + vidoname;
 
 		String imagename = l + imgname;
 
-		 String Imagepath = Const.Imagepath+ imagename;
-		 String Videopath = Const.Videopath + videoname;
-//		String Imagepath = Const.testImagepath + imagename;
-//		String Videopath = Const.testVideopath + videoname;
+		String Imagepath = Const.Imagepath + imagename;
+		String Videopath = Const.Videopath + videoname;
+		// String Imagepath = Const.testImagepath + imagename;
+		// String Videopath = Const.testVideopath + videoname;
 
 		String v = "video/" + videoname;
 		String i = "image/" + imagename;
@@ -458,10 +512,6 @@ public class IntAppuserController extends BaseController {
 		List<Resident> list = null;
 		try {
 			list = appuserService.getResidentList(latitude, longitude, accuracy);
-			// if (list != null) {
-			// t.setResidents(list.size());
-			// t.setList(list);
-			// }
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -470,27 +520,100 @@ public class IntAppuserController extends BaseController {
 		return list;
 
 	}
-	
 
+	// 5.1 Start Transaction & Zoning
 
 	/**
+	 * //5.1.1 Start Transaction & Zoning
 	 * 
-	 * @param file
+	 * @param p
 	 * @return
-	 * @throws IOException
 	 */
-	@RequestMapping("/fileUpload2")
-	public String fileUpload2(@RequestParam("video") CommonsMultipartFile file) throws IOException {
-		long startTime = System.currentTimeMillis();
-		System.out.println("fileName：" + file.getOriginalFilename());
-		String path = "c:/" + new Date().getTime() + file.getOriginalFilename();
+	@RequestMapping(value = "/transactions/{state}", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	public ResCommon startTransaction(@RequestBody CommonRequst common, HttpServletResponse response) {
+		// 5.1.1 Start Transaction & Zoning
+		//// 5.2 Threading https://api.sosxsos.com/v1/transactions/#/threading
+		// 5.3 Finish the transaction
+		// * //5.4 Cancel the transaction
+		// *https://api.sosxsos.com/v1/transactions/#/cancellation
+		System.out.println(common.getBanana_id());
+		ResCommon result = new ResCommon();
 
-		File newFile = new File(path);
-		// 通过CommonsMultipartFile的方法直接写文件（注意这个时候）
-		file.transferTo(newFile);
-		long endTime = System.currentTimeMillis();
-		System.out.println("方法二的运行时间：" + String.valueOf(endTime - startTime) + "ms");
-		return "/success";
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+		} else {
+			// generate transaction_id
+
+		}
+		return result;
+
+	}
+
+	/**
+	 * 7.1 Get all active transactions 7.2 Get transaction details
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = { "/transactions/{number}" }, method = RequestMethod.GET)
+	@ResponseBody
+
+	public Object queryTransaction(@PathVariable String number, HttpServletResponse response) {
+		System.out.println("this number is " + number);
+		// System.out.println(test);
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+		} else {
+			// generate transaction_id
+
+		}
+		return new ResBase() {
+		};
+
+	}
+	// Get active threadings
+
+	// https://api.sosxsos.com/v1/threadings
+	// 8.1 Get active threadings
+	@RequestMapping(value = { "/threadings" }, method = RequestMethod.GET)
+	@ResponseBody
+
+	public Object getThreadings(HttpServletResponse response) {
+
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+		} else {
+			// generate transaction_id
+
+		}
+		return new ResBase() {
+		};
+
+	}
+
+	// Get active zoning requests
+
+	// https://api.sosxsos.com/v1/zoning_requests
+	// 8.2 Get active zoning requests
+	@RequestMapping(value = { "/zoning_requests" }, method = RequestMethod.GET)
+	@ResponseBody
+
+	public Object getZoning_requests(HttpServletResponse response) {
+
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+		} else {
+			// generate transaction_id
+
+		}
+		return new ResBase() {
+		};
+
 	}
 
 }
