@@ -47,7 +47,7 @@
             
             
                
-            <cache name="myThought"         
+            <cache name="UserBanana"         
         maxElementsInMemory="50000"
         maxElementsOnDisk="0" 
         eternal="false" 

@@ -277,17 +277,22 @@ public class IntAppuserController extends BaseController {
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			// return null;
+		}else{
+			try {
+				
+				String token = request.getHeader("Bearer");
+				appuserService.updatePushTacken(token, p);	
+				
+				// to be done
+				// Saved push_token
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// return t;
 		}
-		LoginResponse t = null;
-
-		try {
-			// to be done
-			// Saved push_token
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// return t;
+		
+		
 
 	}
 
@@ -297,7 +302,7 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/verification/codes", method = RequestMethod.POST, produces = {
+	@RequestMapping(value = "/verification/{type}", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	public void get_verification_code(CommonRequst email, HttpServletResponse response) {
 		// String token = request.getHeader("Bearer");
@@ -311,25 +316,25 @@ public class IntAppuserController extends BaseController {
 
 	}
 
-	/**
-	 * 2.6.1 Verify email address https://api.sosxsos.com/v1/verification/codes
-	 * 
-	 * @param p
-	 * @return
-	 */
-	@RequestMapping(value = "verification/emails", method = RequestMethod.POST, produces = {
-			"application/json;charset=UTF-8" })
-	public void verify_email(CommonRequst code, HttpServletResponse response) {
-		// String token = request.getHeader("Bearer");
-		if (checkToken()) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-		} else {
-			// Verify mail
-
-		}
-
-	}
+//	/**
+//	 * 2.6.1 Verify email address https://api.sosxsos.com/v1/verification/codes
+//	 * 
+//	 * @param p
+//	 * @return
+//	 */
+//	@RequestMapping(value = "verification/emails", method = RequestMethod.POST, produces = {
+//			"application/json;charset=UTF-8" })
+//	public void verify_email(CommonRequst code, HttpServletResponse response) {
+//		// String token = request.getHeader("Bearer");
+//		if (checkToken()) {
+//			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//
+//		} else {
+//			// Verify mail
+//
+//		}
+//
+//	}
 
 	/**
 	 * 2.7 Upload ID photos

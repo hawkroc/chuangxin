@@ -46,6 +46,20 @@ public class UserEntity {
 	private double lon;
 	private double 	lat;
 	private int status;
+	private int push_type;
+	public int getPush_type() {
+		return push_type;
+	}
+	public void setPush_type(int push_type) {
+		this.push_type = push_type;
+	}
+	public String getPush_token() {
+		return push_token;
+	}
+	public void setPush_token(String push_token) {
+		this.push_token = push_token;
+	}
+	private String push_token;
 	
 	
 	

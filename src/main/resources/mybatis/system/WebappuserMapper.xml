@@ -173,6 +173,23 @@
 	</update>
 
 
+	<!-- 存入pushToken -->
+	<update id="savePushToken" parameterType="pd">
+		update webapp_user
+		set
+		push_type = #{type},
+		push_token= #{token},
+		status=2
+		where
+		phone= #{phone}
+
+	</update>
+
+
+
+
+
+
 
 	<!-- update status -->
 	<update id="logout" parameterType="String">

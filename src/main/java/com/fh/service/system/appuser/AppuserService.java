@@ -21,6 +21,7 @@ import com.fh.entity.LoginEntity;
 import com.fh.entity.MediaEntity;
 import com.fh.entity.Page;
 import com.fh.entity.ProductEntity;
+import com.fh.entity.PushBean;
 import com.fh.entity.SignUpEntity;
 import com.fh.entity.UserEntity;
 import com.fh.util.CacheUtil;
@@ -84,12 +85,6 @@ public class AppuserService {
 
 	}
 
-	
-	
-	
-	
-	
-	
 
 	/**
 	 * 
@@ -178,6 +173,28 @@ public class AppuserService {
 		return token;
 
 	}
+	/**
+	 * 
+	 * @param token
+	 * @param push
+	 * @throws Exception 
+	 */
+	public void updatePushTacken(String token,PushBean push ) throws Exception{
+	UserEntity userEntity=	getUserByTokenFromCache(token);
+	userEntity.setPush_type(push.getPush_system());
+	userEntity.setPush_token(push.getPush_token());
+	CacheUtil.cacheSave(token, userEntity, "userCacheEntity");
+	PageData pageData=new PageData();
+	pageData.put("type",userEntity.getPush_type() );
+	pageData.put("token", userEntity.getPush_token());
+	pageData.put("phone", userEntity.getPhone());
+	dao.update("WebappuserMapper.savePushToken", pageData);
+		
+		
+	}
+	
+	
+	
 
 	private void removeUserCache(String token) {
 		CacheUtil.removeCache(token, "userCache");
@@ -228,7 +245,7 @@ public class AppuserService {
 	 * @return
 	 */
 	private BananaEntity getBananaFromCache(String phone) {
-		Element o = CacheUtil.getCacheObject(phone, "myThought");
+		Element o = CacheUtil.getCacheObject(phone, "UserBanana");
 		BananaEntity rs = null;
 		if (o != null) {
 			rs = (BananaEntity) o.getObjectValue();
@@ -284,7 +301,7 @@ public class AppuserService {
 		mediaEntity.setImage_url(Imagepath);
 		mediaEntity.setVideo_url(Videopath);
 		banana.setMedia((mediaEntity));
-		CacheUtil.cacheSave(phone, banana, "myThought");
+		CacheUtil.cacheSave(phone, banana, "UserBanana");
 		CacheUtil.cacheSave(t.getTopic() + t.getKey_word(), phone, "topickeywords_banana");
 		// residents.setStatus(0);
 		// residents.setThought_id(t.getId());
