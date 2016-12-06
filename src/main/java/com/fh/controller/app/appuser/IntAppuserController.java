@@ -36,6 +36,7 @@ import com.fh.entity.LocationEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.PushBean;
 import com.fh.entity.SignUpEntity;
+import com.fh.entity.UserEntity;
 import com.fh.service.system.appuser.AppuserService;
 import com.fh.util.Const;
 import com.fh.util.FileUtil;
@@ -399,6 +400,13 @@ public class IntAppuserController extends BaseController {
 
 		return rs;
 	}
+	
+	private UserEntity getUserFromCache() {
+		String token = request.getHeader("Bearer");
+		
+		return appuserService.getUserByTokenFromCache(token);
+	}
+	
 
 	/**
 	 * 4.2 @critical Add a banana
@@ -544,12 +552,19 @@ public class IntAppuserController extends BaseController {
 		// *https://api.sosxsos.com/v1/transactions/#/cancellation
 		System.out.println(common.getBanana_id());
 		ResCommon result = new ResCommon();
-
-		if (checkToken()) {
+		UserEntity u =getUserFromCache();
+		if (u==null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
 		} else {
 			// generate transaction_id
+			
+			try {
+				appuserService.generateTransactionsBeans(u, common.getBanana_id());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		}
 		return result;

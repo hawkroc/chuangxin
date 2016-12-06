@@ -23,11 +23,13 @@ import com.fh.entity.Page;
 import com.fh.entity.ProductEntity;
 import com.fh.entity.PushBean;
 import com.fh.entity.SignUpEntity;
+import com.fh.entity.TransactionsBeans;
 import com.fh.entity.UserEntity;
 import com.fh.util.CacheUtil;
 import com.fh.util.LatLonUtil;
 import com.fh.util.MD5;
 import com.fh.util.PageData;
+import com.sun.org.apache.regexp.internal.recompile;
 
 import net.sf.ehcache.Element;
 
@@ -142,6 +144,43 @@ public class AppuserService {
 			phone = (String) o.getObjectValue();
 		}
 		return phone;
+	}
+	
+	/**
+	 * 
+	 * @param user
+	 * @param banana_id
+	 * @return
+	 * @throws Exception
+	 */
+	public TransactionsBeans generateTransactionsBeans(UserEntity user,long banana_id) throws Exception{
+		
+		
+	long sharesby=(long)	dao.findForObject("WebappuserMapper.queryUserByBanana", banana_id);
+	long getsby=user.getId();
+	TransactionsBeans transactionsBeans= new TransactionsBeans();
+	transactionsBeans.setBanana_id(banana_id);
+	transactionsBeans.setGetsby(getsby);
+	transactionsBeans.setSharesby(sharesby);
+	this.saveAndupdateTransaction(transactionsBeans);
+	return transactionsBeans;
+		//saveAndupdateTransaction
+		
+	}
+	
+	
+	/**
+	 * 
+	 * @param t
+	 * @return
+	 * @throws Exception
+	 */
+	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t) throws Exception{
+		
+		dao.save("WebappuserMapper.saveTransactions", t);
+		CacheUtil.cacheSave(t.getId(), t, "Transactions");
+		return t;
+		
 	}
 	
 	
