@@ -542,7 +542,7 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/transactions/{state}", method = RequestMethod.POST, produces = {
+	@RequestMapping(value = "/transactions/{id}/{state}", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	public ResCommon startTransaction(@RequestBody CommonRequst common, HttpServletResponse response) {
 		// 5.1.1 Start Transaction & Zoning
@@ -577,7 +577,7 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = { "/transactions/{number}" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/transactions/{id}" }, method = RequestMethod.GET)
 	@ResponseBody
 
 	public Object queryTransaction(@PathVariable String number, HttpServletResponse response) {
