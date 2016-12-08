@@ -177,8 +177,21 @@ public class AppuserService {
 	 */
 	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t) throws Exception{
 		
-		dao.save("WebappuserMapper.saveTransactions", t);
+		//dao.save("WebappuserMapper.saveTransactions", t);
 		CacheUtil.cacheSave(t.getId(), t, "Transactions");
+		return t;
+		
+	}
+	/**
+	 * 
+	 * @param t
+	 * @return
+	 * @throws Exception
+	 */
+	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t,int status) throws Exception{
+		
+		dao.save("WebappuserMapper.saveTransactions", t);
+		CacheUtil.cacheSave(t.getId(), t, "TransactionsLong");
 		return t;
 		
 	}
