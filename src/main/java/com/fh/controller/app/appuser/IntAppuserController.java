@@ -278,12 +278,12 @@ public class IntAppuserController extends BaseController {
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			// return null;
-		}else{
+		} else {
 			try {
-				
+
 				String token = request.getHeader("Bearer");
-				appuserService.updatePushTacken(token, p);	
-				
+				appuserService.updatePushTacken(token, p);
+
 				// to be done
 				// Saved push_token
 			} catch (Exception e) {
@@ -292,8 +292,6 @@ public class IntAppuserController extends BaseController {
 			}
 			// return t;
 		}
-		
-		
 
 	}
 
@@ -317,25 +315,28 @@ public class IntAppuserController extends BaseController {
 
 	}
 
-//	/**
-//	 * 2.6.1 Verify email address https://api.sosxsos.com/v1/verification/codes
-//	 * 
-//	 * @param p
-//	 * @return
-//	 */
-//	@RequestMapping(value = "verification/emails", method = RequestMethod.POST, produces = {
-//			"application/json;charset=UTF-8" })
-//	public void verify_email(CommonRequst code, HttpServletResponse response) {
-//		// String token = request.getHeader("Bearer");
-//		if (checkToken()) {
-//			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//
-//		} else {
-//			// Verify mail
-//
-//		}
-//
-//	}
+	// /**
+	// * 2.6.1 Verify email address
+	// https://api.sosxsos.com/v1/verification/codes
+	// *
+	// * @param p
+	// * @return
+	// */
+	// @RequestMapping(value = "verification/emails", method =
+	// RequestMethod.POST, produces = {
+	// "application/json;charset=UTF-8" })
+	// public void verify_email(CommonRequst code, HttpServletResponse response)
+	// {
+	// // String token = request.getHeader("Bearer");
+	// if (checkToken()) {
+	// response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	//
+	// } else {
+	// // Verify mail
+	//
+	// }
+	//
+	// }
 
 	/**
 	 * 2.7 Upload ID photos
@@ -400,13 +401,12 @@ public class IntAppuserController extends BaseController {
 
 		return rs;
 	}
-	
+
 	private UserEntity getUserFromCache() {
 		String token = request.getHeader("Bearer");
-		
+
 		return appuserService.getUserByTokenFromCache(token);
 	}
-	
 
 	/**
 	 * 4.2 @critical Add a banana
@@ -544,7 +544,8 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/transactions/{id}/{state}", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
-	public ResCommon startTransaction(@RequestBody CommonRequst common, HttpServletResponse response) {
+	public ResCommon startTransaction(@RequestBody CommonRequst common, @PathVariable("id") String id,
+			@PathVariable("state") String state, HttpServletResponse response) {
 		// 5.1.1 Start Transaction & Zoning
 		//// 5.2 Threading https://api.sosxsos.com/v1/transactions/#/threading
 		// 5.3 Finish the transaction
@@ -552,13 +553,13 @@ public class IntAppuserController extends BaseController {
 		// *https://api.sosxsos.com/v1/transactions/#/cancellation
 		System.out.println(common.getBanana_id());
 		ResCommon result = new ResCommon();
-		UserEntity u =getUserFromCache();
-		if (u==null) {
+		UserEntity u = getUserFromCache();
+		if (u == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-		} else {
+		} else if(common!=null&& !StringUtils.isNotEmpty(id) ) {
 			// generate transaction_id
-			
+
 			try {
 				appuserService.generateTransactionsBeans(u, common.getBanana_id());
 			} catch (Exception e) {
@@ -566,6 +567,13 @@ public class IntAppuserController extends BaseController {
 				e.printStackTrace();
 			}
 
+		}else if (StringUtils.isNotEmpty(id)&&state.equalsIgnoreCase("zoning")) {
+			if(common.isZone()){
+				
+			}else {
+				
+			}
+			
 		}
 		return result;
 

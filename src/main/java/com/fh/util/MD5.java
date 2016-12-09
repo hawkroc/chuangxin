@@ -2,6 +2,8 @@ package com.fh.util;
 
 import java.security.MessageDigest;
 
+import org.apache.shiro.authc.credential.Md5CredentialsMatcher;
+
 
 public class MD5 {
  
@@ -29,6 +31,13 @@ public class MD5 {
 
 		}
 		return str;
+	}
+	
+	
+	
+	public static  String md5(long n) {
+		return MD5.md5(String.valueOf(n));
+	
 	}
 	public static void main(String[] args) {
 		System.out.println(md5("12345@qq.com"+"123456"));

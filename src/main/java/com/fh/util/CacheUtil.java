@@ -35,4 +35,25 @@ public class CacheUtil {
 		return  CacheManager.getInstance().getCache(cache_name);
 		
 	}
+	
+	
+	
+	public static Object getBananaFromCache(Object key,String cache_name,Class<?>... elementClasses) {
+		Element o = CacheUtil.getCacheObject(key, cache_name);
+		Class<?> rs= null;
+		if (o != null) {
+			rs = (Class<?>) o.getObjectValue();
+		}
+		return rs;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

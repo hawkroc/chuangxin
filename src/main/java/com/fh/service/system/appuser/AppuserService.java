@@ -37,7 +37,8 @@ import net.sf.ehcache.Element;
 public class AppuserService {
 	// private static Cache cache =
 	// CacheManager.getInstance().getCache("myCache");
-
+	@Resource(name = "cacheService")
+	private CacheService cacheService;
 	@Resource(name = "daoSupport")
 	private DaoSupport dao;
 
@@ -156,32 +157,36 @@ public class AppuserService {
 	public TransactionsBeans generateTransactionsBeans(UserEntity user,long banana_id) throws Exception{
 		
 		
-	long sharesby=(long)	dao.findForObject("WebappuserMapper.queryUserByBanana", banana_id);
+	long sharesby=this.getUserIdByBananaId(banana_id);
 	long getsby=user.getId();
 	TransactionsBeans transactionsBeans= new TransactionsBeans();
+	transactionsBeans.setId(MD5.md5(System.currentTimeMillis()+banana_id));
 	transactionsBeans.setBanana_id(banana_id);
 	transactionsBeans.setGetsby(getsby);
 	transactionsBeans.setSharesby(sharesby);
-	this.saveAndupdateTransaction(transactionsBeans);
+	cacheService.saveAndupdateTransaction(transactionsBeans);
 	return transactionsBeans;
 		//saveAndupdateTransaction
 		
 	}
 	
+	private long getUserIdByBananaId( long banana_id) throws Exception{
 	
-	/**
-	 * 
-	 * @param t
-	 * @return
-	 * @throws Exception
-	 */
-	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t) throws Exception{
+		BananaEntity bananaEntity=cacheService.getBananaFromCacheById(banana_id);
+		long sharesby;
+		if(bananaEntity!=null){
+		return	sharesby=bananaEntity.getUserid();	
+		}else{
+			return	 sharesby=(long)	dao.findForObject("WebappuserMapper.queryUserByBanana", banana_id);
+		}
 		
-		//dao.save("WebappuserMapper.saveTransactions", t);
-		CacheUtil.cacheSave(t.getId(), t, "Transactions");
-		return t;
 		
+		//return sharesby;
 	}
+	
+
+		
+	
 	/**
 	 * 
 	 * @param t
@@ -189,9 +194,10 @@ public class AppuserService {
 	 * @throws Exception
 	 */
 	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t,int status) throws Exception{
-		
+		t.setStatus(status);
 		dao.save("WebappuserMapper.saveTransactions", t);
 		CacheUtil.cacheSave(t.getId(), t, "TransactionsLong");
+		CacheUtil.removeCache(t.getId(), "Transactions");
 		return t;
 		
 	}
@@ -354,6 +360,7 @@ public class AppuserService {
 		mediaEntity.setVideo_url(Videopath);
 		banana.setMedia((mediaEntity));
 		CacheUtil.cacheSave(phone, banana, "UserBanana");
+		CacheUtil.cacheSave(banana.getId(), phone, "UserBananaId");
 		CacheUtil.cacheSave(t.getTopic() + t.getKey_word(), phone, "topickeywords_banana");
 		// residents.setStatus(0);
 		// residents.setThought_id(t.getId());

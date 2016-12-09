@@ -12,7 +12,7 @@
 
 	<cache name="userCache" maxElementsInMemory="50000"
 		maxElementsOnDisk="0" eternal="true" overflowToDisk="false"
-		diskPersistent="false" timeToIdleSeconds="120" timeToLiveSeconds="300"
+		diskPersistent="false" timeToIdleSeconds="0" timeToLiveSeconds="7200"
 		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU" />
 
@@ -21,7 +21,7 @@
 
 	<cache name="userCacheEntity" maxElementsInMemory="50000"
 		maxElementsOnDisk="0" eternal="true" overflowToDisk="false"
-		diskPersistent="false" timeToIdleSeconds="120" timeToLiveSeconds="300"
+		diskPersistent="false" timeToIdleSeconds="0" timeToLiveSeconds="7200"
 		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU" />
 
@@ -47,6 +47,12 @@
 		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU" />
 
+
+	<cache name="UserBananaId" maxElementsInMemory="50000"
+		maxElementsOnDisk="0" eternal="false" overflowToDisk="false"
+		diskPersistent="false" timeToIdleSeconds="7200" timeToLiveSeconds="7200"
+		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
+		memoryStoreEvictionPolicy="LFU" />
 
 
 	<cache name="topickeywords_banana" maxElementsInMemory="50000"

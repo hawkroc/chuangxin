@@ -37,15 +37,26 @@
 
 	<!-- 新增transactions -->
 
-	<insert id="saveTransactions" parameterType="com.fh.entity.TransactionsBeans"
-		useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO `webapp_transactions`
-		(`status`, `prev_status`, `ended_time`, `threading`, `getsby`, `sharesbby`,
-		`banana_id`)
+	<insert id="saveTransactions" parameterType="com.fh.entity.TransactionsBeans">
+		INSERT INTO webapp_transactions
+		(id,status, prev_status, ended_time, threading, getsby, sharesbby,
+		banana_id)
 		VALUES
-		(0,0,${ended_time},${jsonFromThreading},${getsby},${sharesbby},${banana_id})
+		( #{id},0,0, #{ended_time}, #{jsonFromThreading}, #{getsby}, #{sharesbby}, #{banana_id})
 	</insert>
 
+
+
+	<!-- update transactions -->
+
+	<update id="updateTransactions" parameterType="com.fh.entity.TransactionsBeans">
+UPDATE webapp_transactions 
+SET 
+status=#{status},
+prev_status=status,
+threading=#{jsonFromThreading},
+WHERE id=#{id}
+	</update>
 
 
 
