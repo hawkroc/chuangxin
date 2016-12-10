@@ -71,7 +71,7 @@ public class CacheService {
 	
 	
 	
-private TransactionsBeans getTransactionFromCache(String id,String Cachename) throws Exception{
+public TransactionsBeans getTransactionFromCache(String id,String Cachename) throws Exception{
 		
 		//dao.save("WebappuserMapper.saveTransactions", t);
 	Element o = CacheUtil.getCacheObject(id, Cachename);

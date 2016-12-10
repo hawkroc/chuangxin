@@ -602,12 +602,49 @@ public class IntAppuserController extends BaseController {
 
 		} else if (StringUtils.isNotEmpty(id)&&state!=null) {
 			
-			try {
-				t=cacheService.getTransactionFromCacheById(id);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		
+			if(state.equalsIgnoreCase("zoning")){
+				if(common.isZone()){
+					try {
+						t=cacheService.getTransactionFromCache(id, "Transactions");
+						if(t==null){
+							
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+						
+					
+					// 11 - zoned
+					t=appuserService.updateZoningTransaction(t.getId(), 11);
+				}else{
+					// 40 - zoning ignored by Sharesby
+				}
+				
 			}
+			
+			
+			if(state.equalsIgnoreCase("threading")){
+				// do somethings
+				
+			}
+			if(state.equalsIgnoreCase("finish")){
+				// do somethings
+				
+			}
+			if(state.equalsIgnoreCase("cancellation")){
+				// do somethings
+				
+			}
+			
+			//
+			
+			
+			
+
+			
+			updateZoningTransaction
 			
 		
 

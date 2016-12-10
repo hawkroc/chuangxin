@@ -194,7 +194,7 @@ public class AppuserService {
 	 * @param status
 	 * @throws Exception
 	 */
-	public TransactionsBeans updateZoningTransaction(String transactions_id, int status) throws Exception {
+	public TransactionsBeans updateZoningTransaction(String transactions_id, int status) throws Exception  {
 		TransactionsBeans transactionsBeans = cacheService.getTransactionFromCache(transactions_id, "Transactions");
 
 		if (transactionsBeans != null) {
@@ -212,27 +212,32 @@ public class AppuserService {
 	// 11 - zoned
 
 	// 20 - threading request sent, this user is waiting for the other party to
-	// respond (push message)
+	//      respond 
 	// 21 - threading request received, this user needs to answer
 
 	// 23 - threaded
+	
+	
 	// 30 - the current user clicked "finish", waiting for the other party to
-	// respond
+	//      respond
 	// 31 - the current user clicked "cancel", waiting for the other party to
-	// respond
+	//      respond
 	// 32 - the other party clicked "cancel", the current user needs to "agree"
-	// or "disagree"
-	// 40 - zoning ignored by Sharesby
+	//      or "disagree"
+	
+	// 40 - zoning ignored by Sharesby	
 	// 41 - zoning 2mins timeout
+	
+	
 	// 42 - banana expired before zoned successfully
 	// 43 - threading negotiation times reached limit
 	
 	// 90 - finished successfully
 	// 91 - dealbreaker
 	// 92 - closed (either: 1. someone canceled and the other party also agrees
-	// 2. transaction timeout)
+	//      2. transaction timeout)
 
-	public TransactionsBeans updateStatusTransaction(String transactions_id)
+	//public TransactionsBeans updateStatusTransaction(String transactions_id)
 
 	/**
 	 * 
@@ -263,7 +268,7 @@ public class AppuserService {
 	 * @return
 	 * @throws Exception
 	 */
-	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t, int status) throws Exception {
+	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t, int status) throws Exception  {
 		t.setStatus(status);
 		dao.save("WebappuserMapper.saveTransactions", t);
 		CacheUtil.cacheSave(t.getId(), t, "TransactionsLong");
