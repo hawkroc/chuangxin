@@ -49,6 +49,7 @@ public void setCode(String code) {
 private String time;
 private String place;
 private boolean agree;
+
 private int cancel_reason;
 private String email;
 public String getEmail() {

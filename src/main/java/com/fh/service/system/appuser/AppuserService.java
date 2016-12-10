@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 //import org.apache.ibatis.javassist.bytecode.annotation.IntegerMemberValue;
 import org.springframework.stereotype.Service;
 
+import com.fh.controller.app.request.CommonRequst;
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
@@ -23,9 +24,11 @@ import com.fh.entity.Page;
 import com.fh.entity.ProductEntity;
 import com.fh.entity.PushBean;
 import com.fh.entity.SignUpEntity;
+import com.fh.entity.Threading;
 import com.fh.entity.TransactionsBeans;
 import com.fh.entity.UserEntity;
 import com.fh.util.CacheUtil;
+import com.fh.util.Const;
 import com.fh.util.LatLonUtil;
 import com.fh.util.MD5;
 import com.fh.util.PageData;
@@ -37,8 +40,12 @@ import net.sf.ehcache.Element;
 public class AppuserService {
 	// private static Cache cache =
 	// CacheManager.getInstance().getCache("myCache");
+	@Resource(name = "pushNotificationService")
+	private PushNotificationService ps;
+
 	@Resource(name = "cacheService")
 	private CacheService cacheService;
+
 	@Resource(name = "daoSupport")
 	private DaoSupport dao;
 
@@ -72,9 +79,7 @@ public class AppuserService {
 		return res;
 
 	}
-	
-	
-	
+
 	/**
 	 * 
 	 * @param p
@@ -82,12 +87,11 @@ public class AppuserService {
 	 * @throws Exception
 	 */
 	public void dropDatabase(String database) throws Exception {
-        System.out.println("++++++++++++++"+database);
+		System.out.println("++++++++++++++" + database);
 		dao.delete("WebappuserMapper.reward", database);
-	//	return res;
+		// return res;
 
 	}
-
 
 	/**
 	 * 
@@ -99,10 +103,10 @@ public class AppuserService {
 		LoginResponse loginResponse = null;
 
 		if (StringUtils.isNotEmpty(e.getPassword()) && StringUtils.isNotEmpty(e.getPhone())) {
-             Object temp= dao.findForObject("WebappuserMapper.login", e);
-             if(temp==null){
-            	 return loginResponse;
-             }
+			Object temp = dao.findForObject("WebappuserMapper.login", e);
+			if (temp == null) {
+				return loginResponse;
+			}
 			Integer id = (int) temp;
 
 			if (id != null) {
@@ -112,10 +116,10 @@ public class AppuserService {
 			}
 
 		} else if (StringUtils.isNotEmpty(e.getUser_token())) {
-			//String phone = getPhoneByTokenFromCache(e.getUser_token());
-		    UserEntity user =getUserByTokenFromCache(e.getUser_token());
+			// String phone = getPhoneByTokenFromCache(e.getUser_token());
+			UserEntity user = cacheService.getUserByTokenFromCache(e.getUser_token());
 			if (user != null) {
-				String phone =user.getPhone();
+				String phone = user.getPhone();
 				e.setPhone(phone);
 				loginResponse = new LoginResponse();
 				loginResponse = (LoginResponse) dao.findForObject("WebappuserMapper.loginByToken", phone);
@@ -146,7 +150,7 @@ public class AppuserService {
 		}
 		return phone;
 	}
-	
+
 	/**
 	 * 
 	 * @param user
@@ -154,166 +158,200 @@ public class AppuserService {
 	 * @return
 	 * @throws Exception
 	 */
-	public TransactionsBeans generateTransactionsBeans(UserEntity user,long banana_id) throws Exception{
-		
-		
-	long sharesby=this.getUserIdByBananaId(banana_id);
-	long getsby=user.getId();
-	TransactionsBeans transactionsBeans= new TransactionsBeans();
-	transactionsBeans.setId(MD5.md5(System.currentTimeMillis()+banana_id));
-	transactionsBeans.setBanana_id(banana_id);
-	transactionsBeans.setGetsby(getsby);
-	transactionsBeans.setSharesby(sharesby);
-	cacheService.saveAndupdateTransaction(transactionsBeans);
-	return transactionsBeans;
-		//saveAndupdateTransaction
-		
-	}
-	
-	private long getUserIdByBananaId( long banana_id) throws Exception{
-	
-		BananaEntity bananaEntity=cacheService.getBananaFromCacheById(banana_id);
-		long sharesby;
-		if(bananaEntity!=null){
-		return	sharesby=bananaEntity.getUserid();	
-		}else{
-			return	 sharesby=(long)	dao.findForObject("WebappuserMapper.queryUserByBanana", banana_id);
-		}
-		
-		
-		//return sharesby;
-	}
-	
+	public TransactionsBeans generateTransactionsBeans(UserEntity getby, long banana_id,UserEntity shareby) throws Exception {
 
-		
+		long sharesby =shareby.getId();// this.getUserIdByBananaId(banana_id);
+		long getsby = getby.getId();
+		TransactionsBeans transactionsBeans = new TransactionsBeans();
+		transactionsBeans.setId(MD5.md5(System.currentTimeMillis() + banana_id));
+		transactionsBeans.setStatus(Const.zoning);
+		transactionsBeans.setBanana_id(banana_id);
+		transactionsBeans.setGetsby(getsby);
+		transactionsBeans.setSharesby(sharesby);
+		cacheService.saveAndupdateTransaction(transactionsBeans);
+		return transactionsBeans;
+		// saveAndupdateTransaction
+
+	}
+
+	private long getUserIdByBananaId(long banana_id) throws Exception {
+
+		BananaEntity bananaEntity = cacheService.getBananaFromCacheById(banana_id);
+		long sharesby;
+		if (bananaEntity != null) {
+			return sharesby = bananaEntity.getUserid();
+		} else {
+			return sharesby = (long) dao.findForObject("WebappuserMapper.queryUserByBanana", banana_id);
+		}
+
+		// return sharesby;
+	}
+
+	/**
+	 * only for zoning
+	 * 
+	 * @param transactions_id
+	 * @param status
+	 * @throws Exception
+	 */
+	public TransactionsBeans updateZoningTransaction(String transactions_id, int status) throws Exception {
+		TransactionsBeans transactionsBeans = cacheService.getTransactionFromCache(transactions_id, "Transactions");
+
+		if (transactionsBeans != null) {
+			transactionsBeans.setPrev_status(transactionsBeans.getStatus());
+			transactionsBeans.setStatus(status);
+			this.saveAndupdateTransaction(transactionsBeans, status);
+		}
+
+		return transactionsBeans;
+	}
+
+	//
+	//
+	// 10 - zoning, waiting for Sharesby to respond
+	// 11 - zoned
+
+	// 20 - threading request sent, this user is waiting for the other party to
+	// respond (push message)
+	// 21 - threading request received, this user needs to answer
+
+	// 23 - threaded
+	// 30 - the current user clicked "finish", waiting for the other party to
+	// respond
+	// 31 - the current user clicked "cancel", waiting for the other party to
+	// respond
+	// 32 - the other party clicked "cancel", the current user needs to "agree"
+	// or "disagree"
+	// 40 - zoning ignored by Sharesby
+	// 41 - zoning 2mins timeout
+	// 42 - banana expired before zoned successfully
+	// 43 - threading negotiation times reached limit
 	
+	// 90 - finished successfully
+	// 91 - dealbreaker
+	// 92 - closed (either: 1. someone canceled and the other party also agrees
+	// 2. transaction timeout)
+
+	public TransactionsBeans updateStatusTransaction(String transactions_id)
+
+	/**
+	 * 
+	 * @param transactions_id
+	 * @param status
+	 * @param t
+	 * @throws Exception
+	 */
+	private TransactionsBeans updateCommonTransaction(TransactionsBeans transactions, int status, Threading t)
+			throws Exception {
+		// TransactionsBeans transactionsBeans=
+		// cacheService.getTransactionFromCache(transactions_id,"TransactionsLong");
+		transactions.setPrev_status(transactions.getStatus());
+		if (t != null) {
+			transactions.setThreading(t);
+		}
+
+		CacheUtil.updateCache(transactions.getId(), transactions, "TransactionsLong");
+		dao.update("WebappuserMapper.updateTransactions", transactions);
+
+		return transactions;
+
+	}
+
 	/**
 	 * 
 	 * @param t
 	 * @return
 	 * @throws Exception
 	 */
-	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t,int status) throws Exception{
+	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t, int status) throws Exception {
 		t.setStatus(status);
 		dao.save("WebappuserMapper.saveTransactions", t);
 		CacheUtil.cacheSave(t.getId(), t, "TransactionsLong");
 		CacheUtil.removeCache(t.getId(), "Transactions");
 		return t;
-		
-	}
-	
-	
-	/**
-	 * 
-	 * @param token
-	 * @return
-	 */
-	public UserEntity getUserByTokenFromCache(String token) {
-		Element o = CacheUtil.getCacheObject(token, "userCacheEntity");
-		UserEntity user = null;
-		if (o != null) {
-			user = (UserEntity) o.getObjectValue();
-		}
-		return user;
+
 	}
 
 	/**
 	 * 
 	 * @param phone
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private String getUserTokenAndPutCache(String phone) throws Exception {
 		String token = MD5.md5((phone + System.currentTimeMillis()));
 		CacheUtil.cacheSave(token, phone, "userCache");
-		UserEntity use=(UserEntity)	dao.findForObject("WebappuserMapper.queryUser", phone);
+		UserEntity use = (UserEntity) dao.findForObject("WebappuserMapper.queryUser", phone);
 		CacheUtil.cacheSave(token, use, "userCacheEntity");
+		CacheUtil.cacheSave(use.getId(), use, "userCacheEntityByid");
 		return token;
 
 	}
+
 	/**
 	 * 
 	 * @param token
 	 * @param push
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public void updatePushTacken(String token,PushBean push ) throws Exception{
-	UserEntity userEntity=	getUserByTokenFromCache(token);
-	userEntity.setPush_type(push.getPush_system());
-	userEntity.setPush_token(push.getPush_token());
-	CacheUtil.cacheSave(token, userEntity, "userCacheEntity");
-	PageData pageData=new PageData();
-	pageData.put("type",userEntity.getPush_type() );
-	pageData.put("token", userEntity.getPush_token());
-	pageData.put("phone", userEntity.getPhone());
-	dao.update("WebappuserMapper.savePushToken", pageData);
-		
-		
-	}
-	
-	
-	
+	public void updatePushTacken(String token, PushBean push) throws Exception {
+		UserEntity userEntity = cacheService.getUserByTokenFromCache(token);
+		userEntity.setPush_type(push.getPush_system());
+		userEntity.setPush_token(push.getPush_token());
+		CacheUtil.updateCache(token, userEntity, "userCacheEntity");
 
-	private void removeUserCache(String token) {
-		CacheUtil.removeCache(token, "userCache");
-		CacheUtil.removeCache(token, "userCacheEntity");
+		CacheUtil.updateCache(userEntity.getId(), userEntity, "userCacheEntityByid");
+
+		PageData pageData = new PageData();
+		pageData.put("type", userEntity.getPush_type());
+		pageData.put("token", userEntity.getPush_token());
+		pageData.put("phone", userEntity.getPhone());
+		dao.update("WebappuserMapper.savePushToken", pageData);
+
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Resident> getResidentList(double latitude,double longitude,double accuracy) throws Exception {
+	public List<Resident> getResidentList(double latitude, double longitude, double accuracy) throws Exception {
 
 		List<Resident> residents = null;
-		
-			LocationRangeEntity l = LatLonUtil.getInstance().getDefaultAround(latitude, longitude);
-			residents = (List<Resident>) dao.findForList("WebappuserMapper.searchResident", l);
-			if (residents != null) {
-				for (Resident resident : residents) {
-					 resident.setBanana(getBananaFromCache(resident.getPhone()));
-				}
+
+		LocationRangeEntity l = LatLonUtil.getInstance().getDefaultAround(latitude, longitude);
+		residents = (List<Resident>) dao.findForList("WebappuserMapper.searchResident", l);
+		if (residents != null) {
+			for (Resident resident : residents) {
+				resident.setBanana(cacheService.getBananaFromCache(resident.getPhone()));
 			}
+		}
 
 		return residents;
 
 	}
 
 	// need to be done
-	public CheckThoughtRes checkBubbles(String topic ,String keyword) throws Exception {
+	public CheckThoughtRes checkBubbles(String topic, String keyword) throws Exception {
 
 		CheckThoughtRes rs = null;
-		
-			// r.getThought_idthougth();
-			rs = new CheckThoughtRes();
-			// r.getThought_idthougth();
-			Element o = CacheUtil.getCacheObject(topic + keyword, "topickeywords_banana");
-			if (o != null) {
-				BananaEntity b = getBananaFromCache((String) o.getObjectValue());
-				// rs.setImage_url(thoughtEntity.getVedio_url());
-				// rs.setVideo_url(thoughtEntity.getImage_url());
-				
-				rs.setVideo_url(b.getBubble().getVideo_url());
-		}
 
-		return rs;
-
-	}
-
-	/**
-	 * 
-	 * @param phone
-	 * @return
-	 */
-	private BananaEntity getBananaFromCache(String phone) {
-		Element o = CacheUtil.getCacheObject(phone, "UserBanana");
-		BananaEntity rs = null;
+		// r.getThought_idthougth();
+		rs = new CheckThoughtRes();
+		// r.getThought_idthougth();
+		Element o = CacheUtil.getCacheObject(topic + keyword, "topickeywords_banana");
 		if (o != null) {
-			rs = (BananaEntity) o.getObjectValue();
+			BananaEntity b = cacheService.getBananaFromCache((String) o.getObjectValue());
+			// rs.setImage_url(thoughtEntity.getVedio_url());
+			// rs.setVideo_url(thoughtEntity.getImage_url());
+
+			rs.setVideo_url(b.getBubble().getVideo_url());
 		}
+
 		return rs;
+
 	}
 
 	// add throuts
 
-	public AddBananaRes saveBanana(BananaEntity banana, String token,String Imagepath,String Videopath) throws Exception {
+	public AddBananaRes saveBanana(BananaEntity banana, String token, String Imagepath, String Videopath)
+			throws Exception {
 
 		// List<Resident> residents = null;
 		// if (getPhoneByTokenFromCache(r.getUser_token()) != null) {
@@ -324,23 +362,22 @@ public class AppuserService {
 		// dao.findForObject("WebappuserMapper.searchResident", l);
 		// }
 		AddBananaRes residents = new AddBananaRes();
-//		String phone = getPhoneByTokenFromCache(token);
-//		//for test
-//	//	phone="334455";
-//		//phone="123456";
-//		
-//		if (phone == null) {
-//			return residents;
-//		}
-		UserEntity userEntity=getUserByTokenFromCache(token);
+		// String phone = getPhoneByTokenFromCache(token);
+		// //for test
+		// // phone="334455";
+		// //phone="123456";
+		//
+		// if (phone == null) {
+		// return residents;
+		// }.
+		UserEntity userEntity = cacheService.getUserByTokenFromCache(token);
 		int userid = userEntity.getId();
-		String phone =userEntity.getPhone();
-		
+		String phone = userEntity.getPhone();
 
 		banana.setUserid(userid);
 		System.out.println(banana.toString());
 		BubbleEntity t = banana.getBubble();
-		
+
 		t.setUserid(userid);
 		t.setImage_url(Imagepath);
 		t.setVideo_url(Videopath);
@@ -353,9 +390,9 @@ public class AppuserService {
 		dao.save("WebappuserMapper.saveProduct", product);
 		banana.setProductId(product.getId());
 		banana.setThoughtId(t.getId());
-		
+
 		dao.save("WebappuserMapper.saveBanana", banana);
-		MediaEntity mediaEntity=new MediaEntity();
+		MediaEntity mediaEntity = new MediaEntity();
 		mediaEntity.setImage_url(Imagepath);
 		mediaEntity.setVideo_url(Videopath);
 		banana.setMedia((mediaEntity));
@@ -376,9 +413,9 @@ public class AppuserService {
 	 * @param e
 	 */
 	public void updateLogout(String token) throws Exception {
-          UserEntity userEntity= getUserByTokenFromCache(token);
-		dao.update("WebappuserMapper.logout",userEntity.getPhone());
-		removeUserCache(token);
+		UserEntity userEntity = cacheService.getUserByTokenFromCache(token);
+		dao.update("WebappuserMapper.logout", userEntity.getPhone());
+		cacheService.removeUserCache(token, userEntity);
 	}
 
 	/*
@@ -393,6 +430,7 @@ public class AppuserService {
 		dao.save("WebappuserMapper.updatePassword", p);
 		return this.getUserTokenAndPutCache(p.getPhone());
 	}
+
 	/*
 	 * 修改用户
 	 */
@@ -442,6 +480,4 @@ public class AppuserService {
 		return (PageData) dao.findForObject("AppuserMapper.getUserInfo", pd);
 	}
 
-
-	
 }

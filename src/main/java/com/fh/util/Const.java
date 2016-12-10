@@ -73,6 +73,42 @@ public class Const {
       
       public static final String vidoType="MP4";
       public static final String imageType="JPEG";
+      public static int zoning=10;
+      public static int zoned=11;
+
+//
+//
+//    prev_status: the previous status, mainly used for timeout, so the app can show the correct transaction history
+//    threading: currently proposed time and place
+//    time_remaining: the number of seconds of the remaining transaction time
+//    zoned_time: the time that was zoned successfully. Must be in ISO8601 format (like "2010-01-01T12:00:00Z")
+//    ended_time: the time that the transaction ended with whatever state (finished, dealbreaker or closed)
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
 //      private enum include{
 //  		MP4, JPG, PNG, BMP, GIF;
 //  	}

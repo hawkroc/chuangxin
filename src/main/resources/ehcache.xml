@@ -9,24 +9,34 @@
 		maxElementsOnDisk="10000000" diskPersistent="false"
 		diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" />
 
-
+<!-- token phone -->
 	<cache name="userCache" maxElementsInMemory="50000"
 		maxElementsOnDisk="0" eternal="true" overflowToDisk="false"
-		diskPersistent="false" timeToIdleSeconds="0" timeToLiveSeconds="7200"
+		diskPersistent="false" timeToIdleSeconds="0" timeToLiveSeconds="72000"
 		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU" />
 
 
 
-
+<!-- token userbean -->
 	<cache name="userCacheEntity" maxElementsInMemory="50000"
 		maxElementsOnDisk="0" eternal="true" overflowToDisk="false"
-		diskPersistent="false" timeToIdleSeconds="0" timeToLiveSeconds="7200"
+		diskPersistent="false" timeToIdleSeconds="0" timeToLiveSeconds="72000"
+		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
+		memoryStoreEvictionPolicy="LFU" />
+		
+		
+		
+
+<!-- id userbean -->
+	<cache name="userCacheEntityByid" maxElementsInMemory="50000"
+		maxElementsOnDisk="0" eternal="true" overflowToDisk="false"
+		diskPersistent="false" timeToIdleSeconds="0" timeToLiveSeconds="72000"
 		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU" />
 
 
-
+<!-- id  Transactionsbean-->
 	<cache name="Transactions" maxElementsInMemory="50000"
 		maxElementsOnDisk="0" eternal="false" overflowToDisk="false"
 		diskPersistent="false" timeToIdleSeconds="120" timeToLiveSeconds="120"
@@ -35,6 +45,7 @@
 		
 		
 		
+<!-- id  TransactionsbeanLong-->
 	<cache name="TransactionsLong" maxElementsInMemory="50000"
 		maxElementsOnDisk="0" eternal="false" overflowToDisk="false"
 		diskPersistent="false" timeToIdleSeconds="7200" timeToLiveSeconds="7200"
@@ -47,7 +58,7 @@
 		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU" />
 
-
+<!-- Id phone-->
 	<cache name="UserBananaId" maxElementsInMemory="50000"
 		maxElementsOnDisk="0" eternal="false" overflowToDisk="false"
 		diskPersistent="false" timeToIdleSeconds="7200" timeToLiveSeconds="7200"
@@ -57,7 +68,7 @@
 
 	<cache name="topickeywords_banana" maxElementsInMemory="50000"
 		maxElementsOnDisk="0" eternal="false" overflowToDisk="false"
-		diskPersistent="false" timeToIdleSeconds="7200" timeToLiveSeconds="7800"
+		diskPersistent="false" timeToIdleSeconds="7200" timeToLiveSeconds="7200"
 		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU" />
 

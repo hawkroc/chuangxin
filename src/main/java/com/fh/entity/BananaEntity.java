@@ -39,6 +39,15 @@ public class BananaEntity extends BaseEntity {
 	private ProductEntity product;
 	private BubbleEntity bubble;
 	private MediaEntity media;
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	private int status;
 
 	public MediaEntity getMedia() {
 		return media;

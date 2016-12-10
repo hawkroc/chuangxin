@@ -1,14 +1,29 @@
 package com.fh.controller.app.response;
 
+/**
+ * @author PENG
+ *
+ */
 public class ResCommon {
-	public long getTransaction_id() {
+	
+
+	public String getTransaction_id() {
 		return transaction_id;
 	}
 
-	public void setTransaction_id(long transaction_id) {
+	public void setTransaction_id(String transaction_id) {
 		this.transaction_id = transaction_id;
 	}
 
-	private long transaction_id;
+	private String transaction_id;
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	private int status;
 
 }

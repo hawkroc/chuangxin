@@ -27,17 +27,22 @@ import com.fh.controller.app.request.CommonRequst;
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
+import com.fh.controller.app.response.ResActiveTran;
 import com.fh.controller.app.response.ResBase;
 import com.fh.controller.app.response.ResCommon;
 import com.fh.controller.app.response.Resident;
 import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.base.BaseController;
+import com.fh.entity.BananaEntity;
 import com.fh.entity.LocationEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.PushBean;
 import com.fh.entity.SignUpEntity;
+import com.fh.entity.Threading;
+import com.fh.entity.TransactionsBeans;
 import com.fh.entity.UserEntity;
 import com.fh.service.system.appuser.AppuserService;
+import com.fh.service.system.appuser.CacheService;
 import com.fh.util.Const;
 import com.fh.util.FileUtil;
 import com.fh.util.Tools;
@@ -55,7 +60,10 @@ public class IntAppuserController extends BaseController {
 	private HttpServletRequest request;
 	@Resource(name = "appuserService")
 	private AppuserService appuserService;
-
+	
+	@Resource(name = "cacheService")
+	private CacheService cacheService;
+	
 	/**
 	 * 1.Current version
 	 * 
@@ -405,7 +413,7 @@ public class IntAppuserController extends BaseController {
 	private UserEntity getUserFromCache() {
 		String token = request.getHeader("Bearer");
 
-		return appuserService.getUserByTokenFromCache(token);
+		return cacheService.getUserByTokenFromCache(token);
 	}
 
 	/**
@@ -551,29 +559,65 @@ public class IntAppuserController extends BaseController {
 		// 5.3 Finish the transaction
 		// * //5.4 Cancel the transaction
 		// *https://api.sosxsos.com/v1/transactions/#/cancellation
-		System.out.println(common.getBanana_id());
 		ResCommon result = new ResCommon();
-		UserEntity u = getUserFromCache();
-		if (u == null) {
+		UserEntity getby = getUserFromCache();
+		UserEntity shareby=null;
+		TransactionsBeans t=null;
+		if (getby == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return result;
 
-		} else if(common!=null&& !StringUtils.isNotEmpty(id) ) {
-			// generate transaction_id
+		} else if(getby.getStatus()<2){
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return result;
+		}
+		
+		
+		else if (common != null && !StringUtils.isNotEmpty(id)&&common.getBanana_id()!=0) {
+			BananaEntity banana=cacheService.getBananaFromCacheById(common.getBanana_id());
+			if(banana==null){
+				response.setStatus(HttpServletResponse.SC_GONE);
+				return result;
+			}
+			if(banana.getStatus()==1){
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
+				return result;
+			}
+			 shareby= cacheService.getUserByTokenFromCache(banana.getUserid());
+			
+			if(shareby.getStatus()<2){
+				response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+				return result;
+			}
 
+      
 			try {
-				appuserService.generateTransactionsBeans(u, common.getBanana_id());
+				 t=	appuserService.generateTransactionsBeans(getby, banana.getId(),shareby);
+				
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-		}else if (StringUtils.isNotEmpty(id)&&state.equalsIgnoreCase("zoning")) {
-			if(common.isZone()){
-				
-			}else {
-				
+		} else if (StringUtils.isNotEmpty(id)&&state!=null) {
+			
+			try {
+				t=cacheService.getTransactionFromCacheById(id);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
+		
+
+			
+
+		}
+		
+		if(t!=null){
+			result.setTransaction_id(t.getId());
+			result.setStatus(t.getStatus());
 		}
 		return result;
 
@@ -588,8 +632,9 @@ public class IntAppuserController extends BaseController {
 	@RequestMapping(value = { "/transactions/{id}" }, method = RequestMethod.GET)
 	@ResponseBody
 
-	public Object queryTransaction(@PathVariable String number, HttpServletResponse response) {
+	public List<ResActiveTran> queryTransaction(@PathVariable String number, HttpServletResponse response) {
 		System.out.println("this number is " + number);
+		List<ResActiveTran> rs=null;
 		// System.out.println(test);
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -598,8 +643,7 @@ public class IntAppuserController extends BaseController {
 			// generate transaction_id
 
 		}
-		return new ResBase() {
-		};
+		return rs;
 
 	}
 	// Get active threadings
