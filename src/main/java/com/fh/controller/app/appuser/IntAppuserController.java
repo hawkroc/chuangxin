@@ -626,7 +626,7 @@ public class IntAppuserController extends BaseController {
 			HttpServletResponse response) {
 		System.out.println("this zoningActive is ");
 		ResCommon rs = null;
-		int status=0;
+		int status = 0;
 		// System.out.println(test);
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -641,24 +641,24 @@ public class IntAppuserController extends BaseController {
 		try {
 			transactionsBeans = cacheService.getTransactionFromCache(id, "Transactions");
 			if (transactionsBeans == null) {
-				status=Const.zoningtimeout;
-				//push notifiction timeout
+				status = Const.zoningtimeout;
+				// push notifiction timeout
 				response.setStatus(HttpServletResponse.SC_GONE);
 				return rs;
 
 			}
 			BananaEntity banana = cacheService.getBananaFromCacheById(transactionsBeans.getBanana_id());
 			if (banana == null) {
-				//push notifiction timeout
-				status=Const.bananaExpired;
+				// push notifiction timeout
+				status = Const.bananaExpired;
 				response.setStatus(HttpServletResponse.SC_GONE);
 				return rs;
 			}
-			
-			 status=transactionsBeans.getStatus();
+
+			status = transactionsBeans.getStatus();
 
 			if (common.isZone()) {
-				status=Const.zoned;
+				status = Const.zoned;
 
 				appuserService.updateZoningTransaction(transactionsBeans, Const.zoned);
 				cacheService.updateBananaFromCacheByid(transactionsBeans.getBanana_id(), 1);
@@ -666,7 +666,7 @@ public class IntAppuserController extends BaseController {
 
 			} else {
 				// push zooing message faild zoning ignored by Sharesby
-				status=Const.Ignored;
+				status = Const.Ignored;
 				cacheService.removeTransactionsFromCache(id);
 			}
 
@@ -678,13 +678,14 @@ public class IntAppuserController extends BaseController {
 		return rs;
 
 	}
-/**
- * 
- * @param id
- * @param common
- * @param response
- * @return
- */
+
+	/**
+	 * 
+	 * @param id
+	 * @param common
+	 * @param response
+	 * @return
+	 */
 	@RequestMapping(value = { "/transactions/{id}/threading" }, method = RequestMethod.POST)
 	@ResponseBody
 
@@ -713,13 +714,13 @@ public class IntAppuserController extends BaseController {
 				return rs;
 
 			}
-			
-			int status=transactionsBeans.getStatus();
+
+			int status = transactionsBeans.getStatus();
 
 			if (transactionsBeans.getSharesby() == user.getId()) {
 				isGetBy = false;
 			}
-			
+
 			Threading threading = transactionsBeans.getThreading();
 
 			if (threading == null) {
@@ -729,10 +730,10 @@ public class IntAppuserController extends BaseController {
 
 			if (common.isAgree()) {
 				// threading
-				status=Const.threaded;
+				status = Const.threaded;
 				appuserService.updateCommonTransaction(transactionsBeans, status, null);
-				
-				//push message threading success
+
+				// push message threading success
 
 			} else {
 				int n = 0;
@@ -740,20 +741,20 @@ public class IntAppuserController extends BaseController {
 					n = threading.getGetByTimes() + 1;
 					if (n > 2) {
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-						status=Const.Threading_limit;
-						//push message 
+						status = Const.Threading_limit;
+						// push message
 						return null;
 					} else {
 						threading.setGetByTimes(n);
 					}
 
-				} else  {
+				} else {
 					n = threading.getShareByTimes() + 1;
 
 					if (n > 1) {
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-						status=Const.Threading_limit;
-						//push message 
+						status = Const.Threading_limit;
+						// push message
 						return null;
 					} else {
 						threading.setShareByTimes(n);
@@ -762,10 +763,9 @@ public class IntAppuserController extends BaseController {
 				}
 				threading.setPlace(common.getPlace());
 				threading.setTime(common.getTime());
-				status=Const.Threading_received;
+				status = Const.Threading_received;
 				appuserService.updateCommonTransaction(transactionsBeans, status, threading);
-				//push message thread request be received
-				
+				// push message thread request be received
 
 			}
 
@@ -777,8 +777,7 @@ public class IntAppuserController extends BaseController {
 		return rs;
 
 	}
-	
-	
+
 	@RequestMapping(value = { "/transactions/{id}/cancellation" }, method = RequestMethod.PUT)
 	@ResponseBody
 
@@ -801,7 +800,7 @@ public class IntAppuserController extends BaseController {
 		TransactionsBeans transactionsBeans = null;
 		try {
 			transactionsBeans = cacheService.getTransactionFromCache(id, "TransactionsLong");
-           
+
 			if (transactionsBeans == null) {
 				response.setStatus(HttpServletResponse.SC_GONE);
 				return rs;
@@ -811,40 +810,40 @@ public class IntAppuserController extends BaseController {
 			if (transactionsBeans.getSharesby() == user.getId()) {
 				isGetBy = false;
 			}
-			int cancle_reason=common.getCancel_reason();
-			 int status=transactionsBeans.getStatus();
-			if(cancle_reason!=0){
-				if(transactionsBeans.getCancle_reason()!=0){
-					
+			int cancle_reason = common.getCancel_reason();
+			int status = transactionsBeans.getStatus();
+			if (cancle_reason != 0) {
+				if (transactionsBeans.getCancle_reason() != 0) {
+
 					response.setStatus(HttpServletResponse.SC_CONFLICT);
 					return rs;
 				}
 				transactionsBeans.setCancle_reason(cancle_reason);
-				//transactionsBeans.setStatus(Const.Cancel_received);
-				status=Const.Cancel_received;
-				//appuserService.updateCommonTransaction(transactionsBeans, Const.Cancel_received, null);
-				
-			
-			}else {
-				
-				if(common.isAgree()&& transactionsBeans.getCancle_reason()!=0){
-					status=Const.Closed;
-					//appuserService.updateCommonTransaction(transactionsBeans, Const.Closed, null);
-				}else{
-					//appuserService.updateCommonTransaction(transactionsBeans, , null);
-					status=Const.Dealbreaker;
-				}
-				
-				cacheService.updateBananaFromCacheByid(transactionsBeans.getBanana_id(), 0);
-				
-			}
-			appuserService.updateCommonTransaction(transactionsBeans,status, null);
-			
-			//common.getCancel_reason()
-			
-			///
+				// transactionsBeans.setStatus(Const.Cancel_received);
+				status = Const.Cancel_received;
+				// appuserService.updateCommonTransaction(transactionsBeans,
+				// Const.Cancel_received, null);
 
-			
+			} else {
+
+				if (common.isAgree() && transactionsBeans.getCancle_reason() != 0) {
+					status = Const.Closed;
+					// appuserService.updateCommonTransaction(transactionsBeans,
+					// Const.Closed, null);
+				} else {
+					// appuserService.updateCommonTransaction(transactionsBeans,
+					// , null);
+					status = Const.Dealbreaker;
+				}
+
+				cacheService.updateBananaFromCacheByid(transactionsBeans.getBanana_id(), 0);
+
+			}
+			appuserService.updateCommonTransaction(transactionsBeans, status, null);
+
+			// common.getCancel_reason()
+
+			///
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -855,7 +854,6 @@ public class IntAppuserController extends BaseController {
 
 	}
 
-	
 	@RequestMapping(value = { "/transactions/{id}/finish" }, method = RequestMethod.POST)
 	@ResponseBody
 
@@ -884,30 +882,26 @@ public class IntAppuserController extends BaseController {
 				return rs;
 
 			}
-			int status=transactionsBeans.getStatus();
-			if(status==Const.Cancel_received){
+			int status = transactionsBeans.getStatus();
+			if (status == Const.Cancel_received) {
 				response.setStatus(HttpServletResponse.SC_CONFLICT);
 				return rs;
 			}
-			
-			if(status==Const.Finshed_receive){
-				status=Const.Finshed;
+
+			if (status == Const.Finshed_receive) {
+				status = Const.Finshed;
 				cacheService.removeBananaFromCacheByid((transactionsBeans.getBanana_id()));
-			}else{
-				status=Const.Finshed_receive;
+			} else {
+				status = Const.Finshed_receive;
 			}
 
 			if (transactionsBeans.getSharesby() == user.getId()) {
 				isGetBy = false;
 			}
-			
-			
-				appuserService.updateCommonTransaction(transactionsBeans, status, null);
-				
-				//push message thread request be received
-				
 
-			
+			appuserService.updateCommonTransaction(transactionsBeans, status, null);
+
+			// push message thread request be received
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -917,10 +911,6 @@ public class IntAppuserController extends BaseController {
 		return rs;
 
 	}
-	
-	
-	
-	
 
 	/**
 	 * 7.1 Get transaction
