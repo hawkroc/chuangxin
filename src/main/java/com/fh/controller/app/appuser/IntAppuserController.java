@@ -633,7 +633,7 @@ public class IntAppuserController extends BaseController {
 	public ResCommon zoningActive(@PathVariable String id, @RequestBody CommonRequst common,
 			HttpServletResponse response) {
 		System.out.println("this zoningActive is ");
-		ResCommon rs = null;
+		ResCommon rs = new ResCommon();
 		int status = 0;
 		// System.out.println(test);
 		if (checkToken()) {
@@ -655,6 +655,8 @@ public class IntAppuserController extends BaseController {
 				return rs;
 
 			}
+			
+			rs.setTransaction_id(transactionsBeans.getId());
 			BananaEntity banana = cacheService.getBananaFromCacheById(transactionsBeans.getBanana_id());
 			if (banana == null) {
 				// push notifiction timeout
@@ -677,12 +679,13 @@ public class IntAppuserController extends BaseController {
 				status = Const.Ignored;
 				cacheService.removeTransactionsFromCache(id);
 			}
-
+		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		rs.setStatus(status);
+		
 		return rs;
 
 	}
