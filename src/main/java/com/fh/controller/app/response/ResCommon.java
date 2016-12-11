@@ -1,5 +1,7 @@
 package com.fh.controller.app.response;
 
+import com.fusioncharts.exporter.error.Status;
+
 /**
  * @author PENG
  *
@@ -25,5 +27,14 @@ public class ResCommon {
 	}
 
 	private int status;
+	
+	private int responseResult;
+	public int getResponseResult() {
+		return responseResult;
+	}
+
+	public void setResponseResult(int responseResult) {
+		this.responseResult = responseResult;
+	}
 
 }

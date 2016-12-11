@@ -42,7 +42,7 @@
 		(id,status, prev_status, ended_time, threading, getsby, sharesbby,
 		banana_id)
 		VALUES
-		( #{id},#{status},0, #{ended_time}, #{jsonFromThreading}, #{getsby}, #{sharesbby}, #{banana_id})
+		( #{id},#{status},0, #{ended_time}, #{jsonFromThreading}, #{getsby}, #{sharesby}, #{banana_id})
 	</insert>
 
 

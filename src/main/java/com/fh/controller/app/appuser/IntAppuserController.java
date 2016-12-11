@@ -75,8 +75,8 @@ public class IntAppuserController extends BaseController {
 	@RequestMapping(value = { "/version", "/versiontest" }, method = RequestMethod.GET)
 	@ResponseBody
 
-	public Object getCurrentVersion() {
-		System.out.println(1234);
+	public Object getCurrentVersion(HttpServletResponse response) {
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		return new ResBase() {
 		};
 
@@ -412,7 +412,9 @@ public class IntAppuserController extends BaseController {
 	}
 
 	private UserEntity getUserFromCache() {
+	
 		String token = request.getHeader("Bearer");
+
 
 		return cacheService.getUserByTokenFromCache(token);
 	}
@@ -450,8 +452,8 @@ public class IntAppuserController extends BaseController {
 
 		String imagename = l + imgname;
 
-		String Imagepath = Const.Imagepath + imagename;
-		String Videopath = Const.Videopath + videoname;
+		String Imagepath = Const.testImagepath + imagename;
+		String Videopath = Const.testVideopath + videoname;
 		// String Imagepath = Const.testImagepath + imagename;
 		// String Videopath = Const.testVideopath + videoname;
 
@@ -553,6 +555,7 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/transactions", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
+	@ResponseBody
 	public ResCommon startTransaction(@RequestBody CommonRequst common, HttpServletResponse response) {
 		System.out.println("this orian");
 		// 5.1.1 Start Transaction & Zoning
@@ -562,25 +565,29 @@ public class IntAppuserController extends BaseController {
 		// *https://api.sosxsos.com/v1/transactions/#/cancellation
 		ResCommon result = new ResCommon();
 		UserEntity getby = getUserFromCache();
+
 		UserEntity shareby = null;
 		TransactionsBeans t = null;
+	
 		if (getby == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return result;
 
 		}
-
+	
 		if (getby.getStatus() < 2) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			result.setResponseResult(HttpServletResponse.SC_FORBIDDEN);
 			return result;
 		}
-
+	
 		if (common != null && common.getBanana_id() != 0) {
 			BananaEntity banana = cacheService.getBananaFromCacheById(common.getBanana_id());
 			if (banana == null) {
 				response.setStatus(HttpServletResponse.SC_GONE);
 				return result;
 			}
+			System.out.println(getby.getId()+1);
 			if (banana.getStatus() == 1) {
 				response.setStatus(HttpServletResponse.SC_CONFLICT);
 				return result;
@@ -591,10 +598,10 @@ public class IntAppuserController extends BaseController {
 				response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 				return result;
 			}
-
+		
 			try {
 				t = appuserService.generateTransactionsBeans(getby, banana.getId(), shareby);
-
+			
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -603,6 +610,7 @@ public class IntAppuserController extends BaseController {
 		}
 
 		if (t != null) {
+		
 			result.setTransaction_id(t.getId());
 			result.setStatus(t.getStatus());
 
