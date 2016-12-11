@@ -19,4 +19,20 @@ public class Threading {
 	private String place;
 	
 	
+	public int getShareByTimes() {
+		return shareByTimes;
+	}
+	public void setShareByTimes(int shareByTimes) {
+		this.shareByTimes = shareByTimes;
+	}
+	public int getGetByTimes() {
+		return getByTimes;
+	}
+	public void setGetByTimes(int getByTimes) {
+		this.getByTimes = getByTimes;
+	}
+	private int shareByTimes;
+	private int getByTimes;
+	
+	
 }

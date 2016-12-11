@@ -46,6 +46,7 @@ import com.fh.service.system.appuser.CacheService;
 import com.fh.util.Const;
 import com.fh.util.FileUtil;
 import com.fh.util.Tools;
+import com.sun.org.apache.bcel.internal.generic.PUSH;
 
 /**
  * 会员-接口类
@@ -60,10 +61,10 @@ public class IntAppuserController extends BaseController {
 	private HttpServletRequest request;
 	@Resource(name = "appuserService")
 	private AppuserService appuserService;
-	
+
 	@Resource(name = "cacheService")
 	private CacheService cacheService;
-	
+
 	/**
 	 * 1.Current version
 	 * 
@@ -75,7 +76,7 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public Object getCurrentVersion() {
-
+		System.out.println(1234);
 		return new ResBase() {
 		};
 
@@ -550,10 +551,10 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/transactions/{id}/{state}", method = RequestMethod.POST, produces = {
+	@RequestMapping(value = "/transactions", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
-	public ResCommon startTransaction(@RequestBody CommonRequst common, @PathVariable("id") String id,
-			@PathVariable("state") String state, HttpServletResponse response) {
+	public ResCommon startTransaction(@RequestBody CommonRequst common, HttpServletResponse response) {
+		System.out.println("this orian");
 		// 5.1.1 Start Transaction & Zoning
 		//// 5.2 Threading https://api.sosxsos.com/v1/transactions/#/threading
 		// 5.3 Finish the transaction
@@ -561,117 +562,379 @@ public class IntAppuserController extends BaseController {
 		// *https://api.sosxsos.com/v1/transactions/#/cancellation
 		ResCommon result = new ResCommon();
 		UserEntity getby = getUserFromCache();
-		UserEntity shareby=null;
-		TransactionsBeans t=null;
+		UserEntity shareby = null;
+		TransactionsBeans t = null;
 		if (getby == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return result;
 
-		} else if(getby.getStatus()<2){
+		}
+
+		if (getby.getStatus() < 2) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return result;
 		}
-		
-		
-		else if (common != null && !StringUtils.isNotEmpty(id)&&common.getBanana_id()!=0) {
-			BananaEntity banana=cacheService.getBananaFromCacheById(common.getBanana_id());
-			if(banana==null){
+
+		if (common != null && common.getBanana_id() != 0) {
+			BananaEntity banana = cacheService.getBananaFromCacheById(common.getBanana_id());
+			if (banana == null) {
 				response.setStatus(HttpServletResponse.SC_GONE);
 				return result;
 			}
-			if(banana.getStatus()==1){
+			if (banana.getStatus() == 1) {
 				response.setStatus(HttpServletResponse.SC_CONFLICT);
 				return result;
 			}
-			 shareby= cacheService.getUserByTokenFromCache(banana.getUserid());
-			
-			if(shareby.getStatus()<2){
+			shareby = cacheService.getUserByTokenFromCache(banana.getUserid());
+
+			if (shareby.getStatus() < 2) {
 				response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 				return result;
 			}
 
-      
 			try {
-				 t=	appuserService.generateTransactionsBeans(getby, banana.getId(),shareby);
-				
-				
+				t = appuserService.generateTransactionsBeans(getby, banana.getId(), shareby);
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-		} else if (StringUtils.isNotEmpty(id)&&state!=null) {
-			
-		
-			if(state.equalsIgnoreCase("zoning")){
-				if(common.isZone()){
-					try {
-						t=cacheService.getTransactionFromCache(id, "Transactions");
-						if(t==null){
-							
-						}
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-						
-					
-					// 11 - zoned
-					t=appuserService.updateZoningTransaction(t.getId(), 11);
-				}else{
-					// 40 - zoning ignored by Sharesby
-				}
-				
-			}
-			
-			
-			if(state.equalsIgnoreCase("threading")){
-				// do somethings
-				
-			}
-			if(state.equalsIgnoreCase("finish")){
-				// do somethings
-				
-			}
-			if(state.equalsIgnoreCase("cancellation")){
-				// do somethings
-				
-			}
-			
-			//
-			
-			
-			
-
-			
-			updateZoningTransaction
-			
-		
-
-			
-
 		}
-		
-		if(t!=null){
+
+		if (t != null) {
 			result.setTransaction_id(t.getId());
 			result.setStatus(t.getStatus());
+
+			// Zoning push notification
 		}
 		return result;
 
 	}
 
 	/**
-	 * 7.1 Get all active transactions 7.2 Get transaction details
+	 * 
+	 * @param id
+	 * @param common
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = { "/transactions/{id}/zoning" }, method = RequestMethod.POST)
+	@ResponseBody
+
+	public ResCommon zoningActive(@PathVariable String id, @RequestBody CommonRequst common,
+			HttpServletResponse response) {
+		System.out.println("this zoningActive is ");
+		ResCommon rs = null;
+		int status=0;
+		// System.out.println(test);
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return rs;
+		}
+		if (common == null || !StringUtils.isNotEmpty(id)) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return rs;
+		}
+
+		TransactionsBeans transactionsBeans = null;
+		try {
+			transactionsBeans = cacheService.getTransactionFromCache(id, "Transactions");
+			if (transactionsBeans == null) {
+				status=Const.zoningtimeout;
+				//push notifiction timeout
+				response.setStatus(HttpServletResponse.SC_GONE);
+				return rs;
+
+			}
+			BananaEntity banana = cacheService.getBananaFromCacheById(transactionsBeans.getBanana_id());
+			if (banana == null) {
+				//push notifiction timeout
+				status=Const.bananaExpired;
+				response.setStatus(HttpServletResponse.SC_GONE);
+				return rs;
+			}
+			
+			 status=transactionsBeans.getStatus();
+
+			if (common.isZone()) {
+				status=Const.zoned;
+
+				appuserService.updateZoningTransaction(transactionsBeans, Const.zoned);
+				cacheService.updateBananaFromCacheByid(transactionsBeans.getBanana_id(), 1);
+				// push zooed message success
+
+			} else {
+				// push zooing message faild zoning ignored by Sharesby
+				status=Const.Ignored;
+				cacheService.removeTransactionsFromCache(id);
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return rs;
+
+	}
+/**
+ * 
+ * @param id
+ * @param common
+ * @param response
+ * @return
+ */
+	@RequestMapping(value = { "/transactions/{id}/threading" }, method = RequestMethod.POST)
+	@ResponseBody
+
+	public ResCommon threadingActive(@PathVariable String id, @RequestBody CommonRequst common,
+			HttpServletResponse response) {
+		System.out.println("this threadingActive is ");
+		ResCommon rs = null;
+		UserEntity user = getUserFromCache();
+		boolean isGetBy = true;
+		// System.out.println(test);
+		if (user == null) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return rs;
+		}
+		if (common == null || !StringUtils.isNotEmpty(id)) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return rs;
+		}
+
+		TransactionsBeans transactionsBeans = null;
+		try {
+			transactionsBeans = cacheService.getTransactionFromCache(id, "TransactionsLong");
+
+			if (transactionsBeans == null) {
+				response.setStatus(HttpServletResponse.SC_GONE);
+				return rs;
+
+			}
+			
+			int status=transactionsBeans.getStatus();
+
+			if (transactionsBeans.getSharesby() == user.getId()) {
+				isGetBy = false;
+			}
+			
+			Threading threading = transactionsBeans.getThreading();
+
+			if (threading == null) {
+				threading = new Threading();
+
+			}
+
+			if (common.isAgree()) {
+				// threading
+				status=Const.threaded;
+				appuserService.updateCommonTransaction(transactionsBeans, status, null);
+				
+				//push message threading success
+
+			} else {
+				int n = 0;
+				if (isGetBy) {
+					n = threading.getGetByTimes() + 1;
+					if (n > 2) {
+						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+						status=Const.Threading_limit;
+						//push message 
+						return null;
+					} else {
+						threading.setGetByTimes(n);
+					}
+
+				} else  {
+					n = threading.getShareByTimes() + 1;
+
+					if (n > 1) {
+						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+						status=Const.Threading_limit;
+						//push message 
+						return null;
+					} else {
+						threading.setShareByTimes(n);
+					}
+
+				}
+				threading.setPlace(common.getPlace());
+				threading.setTime(common.getTime());
+				status=Const.Threading_received;
+				appuserService.updateCommonTransaction(transactionsBeans, status, threading);
+				//push message thread request be received
+				
+
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return rs;
+
+	}
+	
+	
+	@RequestMapping(value = { "/transactions/{id}/cancellation" }, method = RequestMethod.PUT)
+	@ResponseBody
+
+	public ResCommon cancellActive(@PathVariable String id, @RequestBody CommonRequst common,
+			HttpServletResponse response) {
+		System.out.println("this cancellActive is ");
+		ResCommon rs = null;
+		UserEntity user = getUserFromCache();
+		boolean isGetBy = true;
+		// System.out.println(test);
+		if (user == null) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return rs;
+		}
+		if (common == null || !StringUtils.isNotEmpty(id)) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return rs;
+		}
+
+		TransactionsBeans transactionsBeans = null;
+		try {
+			transactionsBeans = cacheService.getTransactionFromCache(id, "TransactionsLong");
+           
+			if (transactionsBeans == null) {
+				response.setStatus(HttpServletResponse.SC_GONE);
+				return rs;
+
+			}
+
+			if (transactionsBeans.getSharesby() == user.getId()) {
+				isGetBy = false;
+			}
+			int cancle_reason=common.getCancel_reason();
+			 int status=transactionsBeans.getStatus();
+			if(cancle_reason!=0){
+				if(transactionsBeans.getCancle_reason()!=0){
+					
+					response.setStatus(HttpServletResponse.SC_CONFLICT);
+					return rs;
+				}
+				transactionsBeans.setCancle_reason(cancle_reason);
+				//transactionsBeans.setStatus(Const.Cancel_received);
+				status=Const.Cancel_received;
+				//appuserService.updateCommonTransaction(transactionsBeans, Const.Cancel_received, null);
+				
+			
+			}else {
+				
+				if(common.isAgree()&& transactionsBeans.getCancle_reason()!=0){
+					status=Const.Closed;
+					//appuserService.updateCommonTransaction(transactionsBeans, Const.Closed, null);
+				}else{
+					//appuserService.updateCommonTransaction(transactionsBeans, , null);
+					status=Const.Dealbreaker;
+				}
+				
+				cacheService.updateBananaFromCacheByid(transactionsBeans.getBanana_id(), 1);
+				
+			}
+			appuserService.updateCommonTransaction(transactionsBeans,status, null);
+			
+			//common.getCancel_reason()
+			
+			///
+
+			
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return rs;
+
+	}
+
+	
+	@RequestMapping(value = { "/transactions/{id}/finish" }, method = RequestMethod.POST)
+	@ResponseBody
+
+	public ResCommon finishedActive(@PathVariable String id, @RequestBody CommonRequst common,
+			HttpServletResponse response) {
+		System.out.println("this finishedActive is ");
+		ResCommon rs = null;
+		UserEntity user = getUserFromCache();
+		boolean isGetBy = true;
+		// System.out.println(test);
+		if (user == null) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return rs;
+		}
+		if (common == null || !StringUtils.isNotEmpty(id)) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return rs;
+		}
+
+		TransactionsBeans transactionsBeans = null;
+		try {
+			transactionsBeans = cacheService.getTransactionFromCache(id, "TransactionsLong");
+
+			if (transactionsBeans == null) {
+				response.setStatus(HttpServletResponse.SC_GONE);
+				return rs;
+
+			}
+			int status=transactionsBeans.getStatus();
+			if(status==Const.Cancel_received){
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
+				return rs;
+			}
+			
+			if(status==Const.Finshed_receive){
+				status=Const.Finshed;
+				cacheService.removeBananaFromCacheByid((transactionsBeans.getBanana_id()));
+			}else{
+				status=Const.Finshed_receive;
+			}
+
+			if (transactionsBeans.getSharesby() == user.getId()) {
+				isGetBy = false;
+			}
+			
+			
+				appuserService.updateCommonTransaction(transactionsBeans, status, null);
+				
+				//push message thread request be received
+				
+
+			
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return rs;
+
+	}
+	
+	
+	
+	
+
+	/**
+	 * 7.1 Get transaction
 	 * 
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = { "/transactions/{id}" }, method = RequestMethod.GET)
+
+	@RequestMapping(value = { "/transactions" }, method = RequestMethod.GET)
 	@ResponseBody
 
-	public List<ResActiveTran> queryTransaction(@PathVariable String number, HttpServletResponse response) {
-		System.out.println("this number is " + number);
-		List<ResActiveTran> rs=null;
+	public List<ResActiveTran> queryTransaction(HttpServletResponse response) {
+		System.out.println("this number is ");
+		List<ResActiveTran> rs = null;
 		// System.out.println(test);
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -683,6 +946,32 @@ public class IntAppuserController extends BaseController {
 		return rs;
 
 	}
+
+	/**
+	 * 7.2 Get transaction details
+	 * 
+	 * @param p
+	 * @return
+	 */
+
+	@RequestMapping(value = { "/transactions/{id}" }, method = RequestMethod.GET)
+	@ResponseBody
+
+	public List<ResActiveTran> queryTransactionDetail(@PathVariable String id, HttpServletResponse response) {
+		System.out.println("this dsfsdf is " + id);
+		List<ResActiveTran> rs = null;
+		// System.out.println(test);
+		if (checkToken()) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+		} else {
+			// generate transaction_id
+
+		}
+		return rs;
+
+	}
+
 	// Get active threadings
 
 	// https://api.sosxsos.com/v1/threadings

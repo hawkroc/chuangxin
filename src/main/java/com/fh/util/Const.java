@@ -73,9 +73,36 @@ public class Const {
       
       public static final String vidoType="MP4";
       public static final String imageType="JPEG";
+      
       public static int zoning=10;
       public static int zoned=11;
-
+     // 41 - zoning timeout, Sharesby didn’t respond within 2 mins
+      public static int zoningtimeout=41;
+      //42banana expired before zoned successfully
+      public static int bananaExpired=42;
+      
+      public static int threaded=23;
+     // 21 - threading request received, this user needs to answer
+      
+      public static int Threading_received=21;
+      
+   // 43 - threading negotiation times reached limit
+      public static int Threading_limit=43;
+      
+      //31 - the current user clicked "cancel", waiting for the other party to
+      public static int Cancel_received=31;
+   // 91 - dealbreaker
+      public static int Dealbreaker=91;
+      
+      //92 - closed 
+      public static int Closed=92;
+      // 40 - zoning ignored by Sharesby	
+      public static int Ignored=40;
+   // 30 - the current user clicked "finish", waiting for the other party to    respond
+      public static int Finshed_receive=30;
+    //
+  	// 90 - finished successfully
+      public static int Finshed=90;
 //
 //
 //    prev_status: the previous status, mainly used for timeout, so the app can show the correct transaction history

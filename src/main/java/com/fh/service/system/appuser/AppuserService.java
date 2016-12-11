@@ -194,8 +194,8 @@ public class AppuserService {
 	 * @param status
 	 * @throws Exception
 	 */
-	public TransactionsBeans updateZoningTransaction(String transactions_id, int status) throws Exception  {
-		TransactionsBeans transactionsBeans = cacheService.getTransactionFromCache(transactions_id, "Transactions");
+	public TransactionsBeans updateZoningTransaction(TransactionsBeans transactions, int status) throws Exception  {
+		TransactionsBeans transactionsBeans =transactions;
 
 		if (transactionsBeans != null) {
 			transactionsBeans.setPrev_status(transactionsBeans.getStatus());
@@ -205,6 +205,9 @@ public class AppuserService {
 
 		return transactionsBeans;
 	}
+	
+	
+
 
 	//
 	//
@@ -246,7 +249,7 @@ public class AppuserService {
 	 * @param t
 	 * @throws Exception
 	 */
-	private TransactionsBeans updateCommonTransaction(TransactionsBeans transactions, int status, Threading t)
+	public TransactionsBeans updateCommonTransaction(TransactionsBeans transactions, int status, Threading t)
 			throws Exception {
 		// TransactionsBeans transactionsBeans=
 		// cacheService.getTransactionFromCache(transactions_id,"TransactionsLong");

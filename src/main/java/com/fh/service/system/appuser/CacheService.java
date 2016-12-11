@@ -6,6 +6,7 @@ import com.fh.entity.BananaEntity;
 import com.fh.entity.TransactionsBeans;
 import com.fh.entity.UserEntity;
 import com.fh.util.CacheUtil;
+import com.fh.util.Const;
 
 import net.sf.ehcache.Element;
 
@@ -96,7 +97,34 @@ public TransactionsBeans getTransactionFromCacheById(String id) throws Exception
      
 	return transactionsBeans;
 }
-
+/**
+ * 
+ * @param transactionId
+ * @return
+ * @throws Exception
+ */
+public int checkTimeout(String transactionId) throws Exception{
+	int res=0;
+	TransactionsBeans tmp=this.getTransactionFromCacheById(transactionId);
+	if(tmp==null){
+		res=Const.zoningtimeout;
+		return res;
+	}
+	if(this.getBananaFromCacheById(tmp.getBanana_id())==null){
+		res=Const.bananaExpired;
+	}
+	
+	return res;
+	
+}
+/**
+ * 
+ * @param id
+ */
+public void removeTransactionsFromCache(String id){
+	CacheUtil.removeCache(id, "Transactions");
+	CacheUtil.removeCache(id, "TransactionsLong");
+}
 	
 	// TransactionsLong
 	// UserBanana
@@ -129,6 +157,56 @@ public BananaEntity getBananaFromCache(String phone) {
 
 		return rsult;
 	}
+	
+	
+	/**
+	 * 
+	 * @param banana_id
+	 */
+	public BananaEntity updateBananaFromCacheByid(long banana_id,int status){
+		Element o = CacheUtil.getCacheObject(banana_id, "UserBananaId");
+		String phone = null;
+
+		BananaEntity rsult = null;
+		if (o != null) {
+			phone = (String) o.getObjectValue();
+			Element rs = CacheUtil.getCacheObject(phone, "UserBanana");
+			rsult = (BananaEntity) rs.getObjectValue();
+			rsult.setStatus(status);
+			CacheUtil.updateCache(phone, rsult, "UserBanana");
+		}
+
+		return rsult;
+		
+		
+	}
+	
+	/**
+	 * 
+	 * @param banana_id
+	 */
+	public void removeBananaFromCacheByid(long banana_id){
+		
+		Element o = CacheUtil.getCacheObject(banana_id, "UserBananaId");
+		String phone = null;
+
+		
+		if (o != null) {
+			phone = (String) o.getObjectValue();
+			//Element rs = CacheUtil.getCacheObject(phone, "UserBanana");
+			CacheUtil.removeCache(phone, "UserBanana");
+			
+		}
+		CacheUtil.removeCache(banana_id, "UserBananaId");
+		
+		
+	}
+	
+	
+	
+	
+	
+	
 
 	// topickeywords_banana
 }

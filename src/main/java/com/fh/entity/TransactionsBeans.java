@@ -111,6 +111,18 @@ public class TransactionsBeans {
 	private String ended_time;
 	private Threading threading;
 	private String id;
+	public int getCancle_reason() {
+		return cancle_reason;
+	}
+
+	public void setCancle_reason(int cancle_reason) {
+		this.cancle_reason = cancle_reason;
+	}
+
+
+
+
+	private int cancle_reason;
 	
 
 
