@@ -452,8 +452,8 @@ public class IntAppuserController extends BaseController {
 
 		String imagename = l + imgname;
 
-		String Imagepath = Const.testImagepath + imagename;
-		String Videopath = Const.testVideopath + videoname;
+		String Imagepath = Const.Imagepath + imagename;
+		String Videopath = Const.Videopath + videoname;
 		// String Imagepath = Const.testImagepath + imagename;
 		// String Videopath = Const.testVideopath + videoname;
 
