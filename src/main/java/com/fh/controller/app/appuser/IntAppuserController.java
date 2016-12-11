@@ -46,7 +46,6 @@ import com.fh.service.system.appuser.CacheService;
 import com.fh.util.Const;
 import com.fh.util.FileUtil;
 import com.fh.util.Tools;
-import com.sun.org.apache.bcel.internal.generic.PUSH;
 
 /**
  * 会员-接口类
@@ -183,7 +182,7 @@ public class IntAppuserController extends BaseController {
 
 		SignUpResponse rs = null;
 		HttpSession s = this.getRequest().getSession();
-		System.out.println("tst");
+		//System.out.println("tst");
 		// String token = request.getHeader("Bearer");
 		// boolean istype = StringUtils.isEmpty(p.getType());
 		try {
@@ -454,8 +453,8 @@ public class IntAppuserController extends BaseController {
 
 		String Imagepath = Const.Imagepath + imagename;
 		String Videopath = Const.Videopath + videoname;
-		// String Imagepath = Const.testImagepath + imagename;
-		// String Videopath = Const.testVideopath + videoname;
+//		 String Imagepath = Const.testImagepath + imagename;
+//		 String Videopath = Const.testVideopath + videoname;
 
 		String v = "video/" + videoname;
 		String i = "image/" + imagename;
@@ -959,7 +958,7 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public List<ResActiveTran> queryTransactionDetail(@PathVariable String id, HttpServletResponse response) {
-		System.out.println("this dsfsdf is " + id);
+		//System.out.println("this dsfsdf is " + id);
 		List<ResActiveTran> rs = null;
 		// System.out.println(test);
 		if (checkToken()) {

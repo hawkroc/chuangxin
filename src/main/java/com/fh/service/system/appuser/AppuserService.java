@@ -200,7 +200,7 @@ public class AppuserService {
 		if (transactionsBeans != null) {
 			transactionsBeans.setPrev_status(transactionsBeans.getStatus());
 			transactionsBeans.setStatus(status);
-			this.saveAndupdateTransaction(transactionsBeans, status);
+			this.saveAndupdateTransaction(transactionsBeans);
 		}
 
 		return transactionsBeans;
@@ -271,9 +271,10 @@ public class AppuserService {
 	 * @return
 	 * @throws Exception
 	 */
-	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t, int status) throws Exception  {
-		t.setStatus(status);
+	private TransactionsBeans saveAndupdateTransaction(TransactionsBeans t) throws Exception  {
+		//t.setStatus(status);
 		dao.save("WebappuserMapper.saveTransactions", t);
+	//	System.out.println(t.getId());
 		CacheUtil.cacheSave(t.getId(), t, "TransactionsLong");
 		CacheUtil.removeCache(t.getId(), "Transactions");
 		return t;
@@ -383,15 +384,15 @@ public class AppuserService {
 		String phone = userEntity.getPhone();
 
 		banana.setUserid(userid);
-		System.out.println(banana.toString());
+		//System.out.println(banana.toString());
 		BubbleEntity t = banana.getBubble();
 
 		t.setUserid(userid);
 		t.setImage_url(Imagepath);
 		t.setVideo_url(Videopath);
-		System.out.println(t.toString());
+		//System.out.println(t.toString());
 		ProductEntity product = banana.getProduct();
-		System.out.println(product.toString());
+		//System.out.println(product.toString());
 		product.setName(product.getItem_info().getName());
 		product.setPrice(product.getItem_info().getPrice());
 		dao.save("WebappuserMapper.saveThought", t);
