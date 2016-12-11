@@ -835,7 +835,7 @@ public class IntAppuserController extends BaseController {
 					status=Const.Dealbreaker;
 				}
 				
-				cacheService.updateBananaFromCacheByid(transactionsBeans.getBanana_id(), 1);
+				cacheService.updateBananaFromCacheByid(transactionsBeans.getBanana_id(), 0);
 				
 			}
 			appuserService.updateCommonTransaction(transactionsBeans,status, null);
