@@ -788,7 +788,7 @@ public class IntAppuserController extends BaseController {
 
 	}
 
-	@RequestMapping(value = { "/transactions/{id}/cancellation" }, method = RequestMethod.PUT)
+	@RequestMapping(value = { "/transactions/{id}/cancellation" }, method = RequestMethod.POST)
 	@ResponseBody
 
 	public ResCommon cancellActive(@PathVariable String id, @RequestBody CommonRequst common,
