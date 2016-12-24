@@ -43,10 +43,8 @@
     <property name="queueCapacity" value="25" />
 </bean>
 	
-	
-	
 	<!-- 阿里 druid数据库连接池 -->
-	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">  
+	<bean id="dataSource1" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">  
          <!-- 数据库基本信息配置 -->
          <property name="url" value="${url}" />  
          <property name="username" value="${username}" />  
@@ -78,6 +76,26 @@
          <property name="logAbandoned" value="${logAbandoned}" />
 	</bean>  
 	
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+    <property name="poolName" value="springHikariCP" />
+    <property name="connectionTestQuery" value="SELECT 1" />
+    <property name="dataSourceClassName"       value="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" />
+    <property name="dataSourceProperties">
+        <props>
+            <prop key="url">${url}</prop>
+            <prop key="user">${username}</prop>
+            <prop key="password">${password}</prop>
+            
+            <prop key="cachePrepStmts">${cachePrepStmts}</prop>
+            <prop key="prepStmtCacheSize">${prepStmtCacheSize}</prop>
+            <prop key="prepStmtCacheSqlLimit">${prepStmtCacheSqlLimit}</prop>
+        </props>
+    </property>
+</bean>
+
+<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+    <constructor-arg ref="hikariConfig" />
+</bean>
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="delete*" propagation="REQUIRED" read-only="false" 

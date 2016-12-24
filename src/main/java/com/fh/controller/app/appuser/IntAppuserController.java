@@ -869,7 +869,7 @@ public class IntAppuserController extends BaseController {
 
 	public ResCommon finishedActive(@PathVariable String id, @RequestBody CommonRequst common,
 			HttpServletResponse response) {
-		System.out.println("this finishedActive is ");
+		//System.out.println("this finishedActive is ");
 		ResCommon rs = null;
 		UserEntity user = getUserFromCache();
 		boolean isGetBy = true;
@@ -933,16 +933,20 @@ public class IntAppuserController extends BaseController {
 	@ResponseBody
 
 	public List<ResActiveTran> queryTransaction(HttpServletResponse response) {
-		System.out.println("this number is ");
+		
 		List<ResActiveTran> rs = null;
 		// System.out.println(test);
-		if (checkToken()) {
+		UserEntity user = getUserFromCache();
+		// System.out.println(test);
+		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-		} else {
-			// generate transaction_id
-
+			return rs;
 		}
+		
+		
+		
+		
+		
 		return rs;
 
 	}
@@ -961,13 +965,14 @@ public class IntAppuserController extends BaseController {
 		//System.out.println("this dsfsdf is " + id);
 		List<ResActiveTran> rs = null;
 		// System.out.println(test);
-		if (checkToken()) {
+		UserEntity user = getUserFromCache();
+		// System.out.println(test);
+		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-		} else {
-			// generate transaction_id
-
+			return rs;
 		}
+		
+		
 		return rs;
 
 	}
