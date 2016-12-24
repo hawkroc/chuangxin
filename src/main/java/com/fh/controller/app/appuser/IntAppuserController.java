@@ -1034,5 +1034,42 @@ public class IntAppuserController extends BaseController {
 		};
 
 	}
+	
+	//9.1 Get user profile
+
+	//https://api.sosxsos.com/v1/residents/#
+	public Object getResidents(HttpServletResponse response) {
+
+		UserEntity user = getUserFromCache();
+		//TheardingRes rs=null;
+		// System.out.println(test);
+		if (user == null) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		}
+		return new ResBase() {
+		};
+
+	}
+	
+	
+	//9.2 Report abuse https://api.sosxsos.com/v1/reports
+//	{
+//		  "type": int,
+//		}
+	
+	public Object makeReportsAbuse(HttpServletResponse response) {
+
+		UserEntity user = getUserFromCache();
+		//TheardingRes rs=null;
+		// System.out.println(test);
+		if (user == null) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		}
+		return new ResBase() {
+		};
+
+	}
 
 }
