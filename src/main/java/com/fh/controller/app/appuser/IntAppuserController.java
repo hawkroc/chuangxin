@@ -1023,12 +1023,12 @@ public class IntAppuserController extends BaseController {
 
 	public Object getZoning_requests(HttpServletResponse response) {
 
-		if (checkToken()) {
+		UserEntity user = getUserFromCache();
+		//TheardingRes rs=null;
+		// System.out.println(test);
+		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-		} else {
-			// generate transaction_id
-
+			return null;
 		}
 		return new ResBase() {
 		};
