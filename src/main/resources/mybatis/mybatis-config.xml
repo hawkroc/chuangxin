@@ -34,7 +34,8 @@
 				<typeAlias type="com.fh.entity.ProductEntity" alias="product"/>
 				
 					<typeAlias type="com.fh.entity.BananaEntity" alias="banana"/>
-			
+		
+					<typeAlias type="com.fh.entity.TransactionsBeans" alias="TransactionsBeans"/>	
 		
 	</typeAliases>
 	

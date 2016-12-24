@@ -27,11 +27,11 @@ import com.fh.controller.app.request.CommonRequst;
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
-import com.fh.controller.app.response.ResActiveTran;
 import com.fh.controller.app.response.ResBase;
 import com.fh.controller.app.response.ResCommon;
 import com.fh.controller.app.response.Resident;
 import com.fh.controller.app.response.SignUpResponse;
+import com.fh.controller.app.response.TheardingRes;
 import com.fh.controller.base.BaseController;
 import com.fh.entity.BananaEntity;
 import com.fh.entity.LocationEntity;
@@ -46,6 +46,7 @@ import com.fh.service.system.appuser.CacheService;
 import com.fh.util.Const;
 import com.fh.util.DateUtil;
 import com.fh.util.FileUtil;
+import com.fh.util.PageData;
 import com.fh.util.Tools;
 
 /**
@@ -928,14 +929,15 @@ public class IntAppuserController extends BaseController {
 	 * 
 	 * @param p
 	 * @return
+	 * @throws Exception 
 	 */
 
 	@RequestMapping(value = { "/transactions" }, method = RequestMethod.GET)
 	@ResponseBody
 
-	public List<ResActiveTran> queryTransaction(HttpServletResponse response) {
+	public List<PageData> queryTransaction(HttpServletResponse response) {
 		
-		List<ResActiveTran> rs = null;
+		List<PageData> rs = null;
 		// System.out.println(test);
 		UserEntity user = getUserFromCache();
 		// System.out.println(test);
@@ -944,7 +946,12 @@ public class IntAppuserController extends BaseController {
 			return rs;
 		}
 		
-		
+		try {
+			rs=appuserService.queryTransactionsListShareBy(user);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		
@@ -957,14 +964,15 @@ public class IntAppuserController extends BaseController {
 	 * 
 	 * @param p
 	 * @return
+	 * @throws Exception 
 	 */
 
 	@RequestMapping(value = { "/transactions/{id}" }, method = RequestMethod.GET)
 	@ResponseBody
 
-	public List<ResActiveTran> queryTransactionDetail(@PathVariable String id, HttpServletResponse response) {
+	public TransactionsBeans queryTransactionDetail(@PathVariable String id, HttpServletResponse response) throws Exception {
 		//System.out.println("this dsfsdf is " + id);
-		List<ResActiveTran> rs = null;
+		TransactionsBeans rs = null;
 		// System.out.println(test);
 		UserEntity user = getUserFromCache();
 		// System.out.println(test);
@@ -974,7 +982,7 @@ public class IntAppuserController extends BaseController {
 		}
 		
 		
-		return rs;
+		return appuserService.queryTransactionsDetail(id);
 
 	}
 
@@ -985,17 +993,24 @@ public class IntAppuserController extends BaseController {
 	@RequestMapping(value = { "/threadings" }, method = RequestMethod.GET)
 	@ResponseBody
 
-	public Object getThreadings(HttpServletResponse response) {
-
-		if (checkToken()) {
+	public TheardingRes getThreadings(HttpServletResponse response) {
+		// System.out.println(test);
+		UserEntity user = getUserFromCache();
+		TheardingRes rs=null;
+		// System.out.println(test);
+		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-		} else {
-			// generate transaction_id
-
+			return rs;
 		}
-		return new ResBase() {
-		};
+		
+		try {
+			rs=appuserService.queryTheardingsByUserID(user);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return rs;
 
 	}
 

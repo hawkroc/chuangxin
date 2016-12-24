@@ -13,6 +13,7 @@ import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.Resident;
+import com.fh.controller.app.response.TheardingRes;
 import com.fh.dao.DaoSupport;
 import com.fh.entity.BananaEntity;
 import com.fh.entity.BubbleEntity;
@@ -27,6 +28,7 @@ import com.fh.entity.SignUpEntity;
 import com.fh.entity.Threading;
 import com.fh.entity.TransactionsBeans;
 import com.fh.entity.UserEntity;
+import com.fh.entity.system.User;
 import com.fh.util.CacheUtil;
 import com.fh.util.Const;
 import com.fh.util.LatLonUtil;
@@ -279,6 +281,35 @@ public class AppuserService {
 		CacheUtil.removeCache(t.getId(), "Transactions");
 		return t;
 
+	}
+	
+	
+	public List<PageData> queryTransactionsListShareBy(UserEntity u) throws Exception{
+		//dao.save("WebappuserMapper.saveTransactions", t);
+		return (List<PageData>)	dao.findForList("WebappuserMapper.queryTransactionsListShareBy", u.getId());
+	
+	}
+	
+	public List<PageData> queryTransactionsListGetBy(UserEntity u) throws Exception{
+		//dao.save("WebappuserMapper.saveTransactions", t);
+		return (List<PageData>)	dao.findForList("WebappuserMapper.queryTransactionsListGetBy", u.getId());
+	
+	}
+	
+	public TransactionsBeans queryTransactionsDetail(String id) throws Exception{
+		return (TransactionsBeans)	dao.findForObject("WebappuserMapper.queryTransactionsDetail", id);
+	}
+	/**
+	 * 
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	public TheardingRes queryTheardingsByUserID(UserEntity user) throws Exception{
+		TheardingRes theardingRes= new TheardingRes();
+		theardingRes.setGetsby_threadings(this.queryTransactionsListShareBy(user));
+		theardingRes.setSharesby_threadings(this.queryTransactionsListShareBy(user));
+		return theardingRes;
 	}
 
 	/**

@@ -10,6 +10,13 @@
 		<result column="lat" property="lat" />
 	</resultMap>
 
+	<!-- <resultMap type="TransactionsBeans" id="TransactionsBeansList"> <id 
+		column="id" property="user_id" /> <result column="phone" property="phone" 
+		/> <result column="lon" property="lon" /> <result column="lat" property="lat" 
+		/> </resultMap> -->
+
+
+
 
 	<!-- 新增app用户 -->
 	<insert id="saveU" parameterType="SignUp">
@@ -38,11 +45,15 @@
 	<!-- 新增transactions -->
 
 	<insert id="saveTransactions" parameterType="com.fh.entity.TransactionsBeans">
-		INSERT INTO webapp_transactions
-		(id,status, prev_status,zone_time, ended_time, threading, getsby, sharesbby,
+		INSERT INTO
+		webapp_transactions
+		(id,status, prev_status,zone_time, ended_time,
+		threading, getsby, sharesbby,
 		banana_id)
 		VALUES
-		( #{id},#{status},#{prev_status},#{zone_time}, #{ended_time}, #{jsonFromThreading}, #{getsby}, #{sharesby}, #{banana_id})
+		(
+		#{id},#{status},#{prev_status},#{zone_time}, #{ended_time},
+		#{jsonFromThreading}, #{getsby}, #{sharesby}, #{banana_id})
 	</insert>
 
 
@@ -50,17 +61,44 @@
 	<!-- update transactions -->
 
 	<update id="updateTransactions" parameterType="com.fh.entity.TransactionsBeans">
-UPDATE webapp_transactions 
-SET 
-status=#{status},
-threading=#{jsonFromThreading},
-WHERE id=#{id}
+		UPDATE webapp_transactions
+		SET
+		status=#{status},
+		threading=#{jsonFromThreading},
+		WHERE id=#{id}
 	</update>
 
 
+	<select id="queryTransactionsListShareBy" parameterType="java.lang.Integer"
+		resultType="pd">
+		SELECT t.id transactions,bu.image_url,threading FROM webapp_banana b
+		,webapp_transactions t,webapp_bubble bu WHERE b.id=t.banana_id and
+		b.bubble_id=bu.id and sharesbby=#{id}
+	</select>
 
 
-	<select id="queryUserByBanana" parameterType="String" resultType="java.lang.Integer">
+	<select id="queryTransactionsListGetBy" parameterType="java.lang.Integer"
+		resultType="pd">
+		SELECT t.id transactions,bu.image_url threading FROM webapp_banana b
+		,webapp_transactions t,webapp_bubble bu WHERE b.id=t.banana_id and
+		b.bubble_id=bu.id and getsby=#{id}
+	</select>
+
+
+
+
+
+
+	<select id="queryTransactionsDetail" parameterType="String"
+		resultType="com.fh.entity.TransactionsBeans">	
+		SELECT `id`, `status`, `prev_status`, `ended_time`, `zone_time`, 
+		`threading`, `getsby`, `sharesbby`, `banana_id`, `cancel_reason` FROM `webapp_transactions` 
+		WHERE id=#{id}
+	</select>
+
+
+	<select id="queryUserByBanana" parameterType="String"
+		resultType="java.lang.Integer">
 		select
 		userid
 		from webapp_banana
@@ -122,7 +160,8 @@ WHERE id=#{id}
 		bubble_id,
 		product_id
 
-		) values (
+		)
+		values (
 		#{userid},
 		#{thoughtId},
 		#{productId}
@@ -191,7 +230,8 @@ WHERE id=#{id}
 		where
 		u.lat between #{minLat} and #{maxLat}
 		and
-		u.lon between #{minLng} and #{maxLng}
+		u.lon between #{minLng} and
+		#{maxLng}
 	</select>
 
 
