@@ -44,6 +44,7 @@ import com.fh.entity.UserEntity;
 import com.fh.service.system.appuser.AppuserService;
 import com.fh.service.system.appuser.CacheService;
 import com.fh.util.Const;
+import com.fh.util.DateUtil;
 import com.fh.util.FileUtil;
 import com.fh.util.Tools;
 
@@ -668,7 +669,7 @@ public class IntAppuserController extends BaseController {
 
 			if (common.isZone()) {
 				status = Const.zoned;
-
+				transactionsBeans.setZoned_time(DateUtil.getTimeBySecondChange(7200));
 				appuserService.updateZoningTransaction(transactionsBeans, Const.zoned);
 				cacheService.updateBananaFromCacheByid(transactionsBeans.getBanana_id(), 1);
 				// push zooed message success
@@ -701,7 +702,7 @@ public class IntAppuserController extends BaseController {
 
 	public ResCommon threadingActive(@PathVariable String id, @RequestBody CommonRequst common,
 			HttpServletResponse response) {
-		System.out.println("this threadingActive is ");
+	//	System.out.println("this threadingActive is ");
 		ResCommon rs = null;
 		UserEntity user = getUserFromCache();
 		boolean isGetBy = true;

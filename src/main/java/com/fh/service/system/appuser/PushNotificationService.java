@@ -30,7 +30,7 @@ public class PushNotificationService {
 
 	static String key = "cmyTYjk0PlM:APA91bGRJwN-53L6RSpHiUCpJuk7at969T9erYJGeX0_SYfRaQ_eREM2P71t7lS0u4eM0K-3UAYQkCXShwDqZuj4wWkN6hMlsaVuL1tmfrt0u5hnUi9-Cp7mufAngINK0BvBlEfNPY8S";
 
-	static String server_key = "AAAAI7XCZBk:APA91bGIsZn5vYjRg4r15AIO25Or4jVBSFDjiHxBgeP8K6DP8eUCRzW2pCDIHwmVgZq4CIaU-MY9jDv8W6qLflqQqOYu-5CS3M1-d2KLpjshtrMV_wgl90q22gpSluR3Yw0tOy4YsvS9clgc1spWNXgmyar3OYBZVg";
+	//static String server_key = "AAAAI7XCZBk:APA91bGIsZn5vYjRg4r15AIO25Or4jVBSFDjiHxBgeP8K6DP8eUCRzW2pCDIHwmVgZq4CIaU-MY9jDv8W6qLflqQqOYu-5CS3M1-d2KLpjshtrMV_wgl90q22gpSluR3Yw0tOy4YsvS9clgc1spWNXgmyar3OYBZVg";
 	static String Authorization = "key=AIzaSyAJ6M6y2O81iJDhhGWcbzH7b788R3Zdj_k";
 
 	/**

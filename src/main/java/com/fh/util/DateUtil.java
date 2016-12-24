@@ -100,6 +100,12 @@ public class DateUtil {
 			return false;
 		}
 	}
+	/**
+	 * 
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
 	public static int getDiffYear(String startTime,String endTime) {
 		DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
 		try {
@@ -110,6 +116,11 @@ public class DateUtil {
 			// 如果throw java.text.ParseException或者NullPointerException，就说明格式不对
 			return 0;
 		}
+	}
+	//ISO8601 format (like "2010-01-01T14:00:00Z"s)
+	
+	public static String getTimeBySecondChange(long seconds){
+		return sdfTime.format(new java.util.Date(System.currentTimeMillis()+seconds*1000));
 	}
 	  /**
      * <li>功能描述：时间相减得到天数

@@ -39,10 +39,10 @@
 
 	<insert id="saveTransactions" parameterType="com.fh.entity.TransactionsBeans">
 		INSERT INTO webapp_transactions
-		(id,status, prev_status, ended_time, threading, getsby, sharesbby,
+		(id,status, prev_status,zone_time, ended_time, threading, getsby, sharesbby,
 		banana_id)
 		VALUES
-		( #{id},#{status},0, #{ended_time}, #{jsonFromThreading}, #{getsby}, #{sharesby}, #{banana_id})
+		( #{id},#{status},#{prev_status},#{zone_time}, #{ended_time}, #{jsonFromThreading}, #{getsby}, #{sharesby}, #{banana_id})
 	</insert>
 
 
