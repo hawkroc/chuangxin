@@ -307,7 +307,7 @@ public class AppuserService {
 	 */
 	public TheardingRes queryTheardingsByUserID(UserEntity user) throws Exception{
 		TheardingRes theardingRes= new TheardingRes();
-		theardingRes.setGetsby_threadings(this.queryTransactionsListShareBy(user));
+		theardingRes.setGetsby_threadings(this.queryTransactionsListGetBy(user));
 		theardingRes.setSharesby_threadings(this.queryTransactionsListShareBy(user));
 		return theardingRes;
 	}

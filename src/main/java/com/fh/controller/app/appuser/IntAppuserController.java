@@ -970,20 +970,26 @@ public class IntAppuserController extends BaseController {
 	@RequestMapping(value = { "/transactions/{id}" }, method = RequestMethod.GET)
 	@ResponseBody
 
-	public TransactionsBeans queryTransactionDetail(@PathVariable String id, HttpServletResponse response) throws Exception {
+	public TransactionsBeans queryTransactionDetail(@PathVariable String id, HttpServletResponse response)  {
 		//System.out.println("this dsfsdf is " + id);
 		TransactionsBeans rs = null;
 		// System.out.println(test);
 		UserEntity user = getUserFromCache();
+		TransactionsBeans res=null;
 		// System.out.println(test);
 		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return rs;
+			return res;
 		}
 		
 		
-		return appuserService.queryTransactionsDetail(id);
-
+		try {
+			 res=appuserService.queryTransactionsDetail(id);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return res;
 	}
 
 	// Get active threadings
@@ -1038,6 +1044,8 @@ public class IntAppuserController extends BaseController {
 	//9.1 Get user profile
 
 	//https://api.sosxsos.com/v1/residents/#
+	@RequestMapping(value = { "/residents" }, method = RequestMethod.GET)
+	@ResponseBody
 	public Object getResidents(HttpServletResponse response) {
 
 		UserEntity user = getUserFromCache();
@@ -1057,6 +1065,8 @@ public class IntAppuserController extends BaseController {
 //	{
 //		  "type": int,
 //		}
+	@RequestMapping(value = { "/reports" }, method = RequestMethod.POST)
+	@ResponseBody
 	
 	public Object makeReportsAbuse(HttpServletResponse response) {
 
