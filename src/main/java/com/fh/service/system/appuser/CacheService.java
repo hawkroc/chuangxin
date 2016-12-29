@@ -14,8 +14,18 @@ import net.sf.ehcache.Element;
 public class CacheService {
 	// userCache
 	// userCacheEntity
+/**
+ * 
+ * @param u
+ * @param token
+ */
+public void updateCacheUse(UserEntity u,String token) {
+	
+		CacheUtil.updateCache(token, u, "userCacheEntity");
 
-
+		CacheUtil.updateCache(u.getId(), u, "userCacheEntityByid");
+	
+}
 	public void removeUserCache(String token,UserEntity u) {
 		CacheUtil.removeCache(token, "userCache");
 		CacheUtil.removeCache(token, "userCacheEntity");

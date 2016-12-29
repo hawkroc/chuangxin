@@ -32,4 +32,13 @@ private String phone;
 		this.type = type;
 	}
 	private String type;
+	
+	private int id;
+
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 }

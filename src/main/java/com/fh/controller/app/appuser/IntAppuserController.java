@@ -3,10 +3,12 @@ package com.fh.controller.app.appuser;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fh.controller.app.request.AddBananaAction;
 import com.fh.controller.app.request.CommonRequst;
@@ -26,11 +29,13 @@ import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
 import com.fh.controller.app.response.ResBase;
 import com.fh.controller.app.response.ResCommon;
+import com.fh.controller.app.response.ResProfile;
 import com.fh.controller.app.response.Resident;
 import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.app.response.TheardingRes;
 import com.fh.controller.base.BaseController;
 import com.fh.entity.BananaEntity;
+import com.fh.entity.BubbleEntity;
 import com.fh.entity.LocationEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.PushBean;
@@ -118,7 +123,7 @@ public class IntAppuserController extends BaseController {
 
 		try {
 			if (appuserService.checkPhone(p.getPhone()) == null && StringUtils.isEmpty(p.getUser_token())) {
-				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return t;
 			}
 			t = appuserService.updateLoginAppUser(p);
@@ -181,7 +186,7 @@ public class IntAppuserController extends BaseController {
 
 		SignUpResponse rs = null;
 		HttpSession s = this.getRequest().getSession();
-		//System.out.println("tst");
+		// System.out.println("tst");
 		// String token = request.getHeader("Bearer");
 		// boolean istype = StringUtils.isEmpty(p.getType());
 		try {
@@ -410,9 +415,8 @@ public class IntAppuserController extends BaseController {
 	}
 
 	private UserEntity getUserFromCache() {
-	
-		String token = request.getHeader("Bearer");
 
+		String token = request.getHeader("Bearer");
 
 		return cacheService.getUserByTokenFromCache(token);
 	}
@@ -452,8 +456,8 @@ public class IntAppuserController extends BaseController {
 
 		String Imagepath = Const.Imagepath + imagename;
 		String Videopath = Const.Videopath + videoname;
-//		 String Imagepath = Const.testImagepath + imagename;
-//		 String Videopath = Const.testVideopath + videoname;
+		// String Imagepath = Const.testImagepath + imagename;
+		// String Videopath = Const.testVideopath + videoname;
 
 		String v = "video/" + videoname;
 		String i = "image/" + imagename;
@@ -555,7 +559,7 @@ public class IntAppuserController extends BaseController {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
 	public ResCommon startTransaction(@RequestBody CommonRequst common, HttpServletResponse response) {
-		System.out.println("this orian");
+
 		// 5.1.1 Start Transaction & Zoning
 		//// 5.2 Threading https://api.sosxsos.com/v1/transactions/#/threading
 		// 5.3 Finish the transaction
@@ -566,26 +570,26 @@ public class IntAppuserController extends BaseController {
 
 		UserEntity shareby = null;
 		TransactionsBeans t = null;
-	
+
 		if (getby == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return result;
 
 		}
-	
+
 		if (getby.getStatus() < 2) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			result.setResponseResult(HttpServletResponse.SC_FORBIDDEN);
 			return result;
 		}
-	
+
 		if (common != null && common.getBanana_id() != 0) {
 			BananaEntity banana = cacheService.getBananaFromCacheById(common.getBanana_id());
 			if (banana == null) {
 				response.setStatus(HttpServletResponse.SC_GONE);
 				return result;
 			}
-			System.out.println(getby.getId()+1);
+			System.out.println(getby.getId() + 1);
 			if (banana.getStatus() == 1) {
 				response.setStatus(HttpServletResponse.SC_CONFLICT);
 				return result;
@@ -596,10 +600,10 @@ public class IntAppuserController extends BaseController {
 				response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 				return result;
 			}
-		
+
 			try {
 				t = appuserService.generateTransactionsBeans(getby, banana.getId(), shareby);
-			
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -608,7 +612,7 @@ public class IntAppuserController extends BaseController {
 		}
 
 		if (t != null) {
-		
+
 			result.setTransaction_id(t.getId());
 			result.setStatus(t.getStatus());
 
@@ -653,7 +657,7 @@ public class IntAppuserController extends BaseController {
 				return rs;
 
 			}
-			
+
 			rs.setTransaction_id(transactionsBeans.getId());
 			BananaEntity banana = cacheService.getBananaFromCacheById(transactionsBeans.getBanana_id());
 			if (banana == null) {
@@ -677,13 +681,13 @@ public class IntAppuserController extends BaseController {
 				status = Const.Ignored;
 				cacheService.removeTransactionsFromCache(id);
 			}
-		
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		rs.setStatus(status);
-		
+
 		return rs;
 
 	}
@@ -700,7 +704,7 @@ public class IntAppuserController extends BaseController {
 
 	public ResCommon threadingActive(@PathVariable String id, @RequestBody CommonRequst common,
 			HttpServletResponse response) {
-	//	System.out.println("this threadingActive is ");
+		// System.out.println("this threadingActive is ");
 		ResCommon rs = null;
 		UserEntity user = getUserFromCache();
 		boolean isGetBy = true;
@@ -863,12 +867,20 @@ public class IntAppuserController extends BaseController {
 
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @param common
+	 * @param response
+	 * @return
+	 */
+
 	@RequestMapping(value = { "/transactions/{id}/finish" }, method = RequestMethod.POST)
 	@ResponseBody
 
 	public ResCommon finishedActive(@PathVariable String id, @RequestBody CommonRequst common,
 			HttpServletResponse response) {
-		//System.out.println("this finishedActive is ");
+		// System.out.println("this finishedActive is ");
 		ResCommon rs = null;
 		UserEntity user = getUserFromCache();
 		boolean isGetBy = true;
@@ -926,14 +938,14 @@ public class IntAppuserController extends BaseController {
 	 * 
 	 * @param p
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 
 	@RequestMapping(value = { "/transactions" }, method = RequestMethod.GET)
 	@ResponseBody
 
 	public List<PageData> queryTransaction(HttpServletResponse response) {
-		
+
 		List<PageData> rs = null;
 		// System.out.println(test);
 		UserEntity user = getUserFromCache();
@@ -942,16 +954,14 @@ public class IntAppuserController extends BaseController {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return rs;
 		}
-		
+
 		try {
-			rs=appuserService.queryTransactionsListShareBy(user);
+			rs = appuserService.queryTransactionsListShareBy(user);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
+
 		return rs;
 
 	}
@@ -961,27 +971,26 @@ public class IntAppuserController extends BaseController {
 	 * 
 	 * @param p
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 
 	@RequestMapping(value = { "/transactions/{id}" }, method = RequestMethod.GET)
 	@ResponseBody
 
-	public TransactionsBeans queryTransactionDetail(@PathVariable String id, HttpServletResponse response)  {
-		//System.out.println("this dsfsdf is " + id);
+	public TransactionsBeans queryTransactionDetail(@PathVariable String id, HttpServletResponse response) {
+		// System.out.println("this dsfsdf is " + id);
 		TransactionsBeans rs = null;
 		// System.out.println(test);
 		UserEntity user = getUserFromCache();
-		TransactionsBeans res=null;
+		TransactionsBeans res = null;
 		// System.out.println(test);
 		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return res;
 		}
-		
-		
+
 		try {
-			 res=appuserService.queryTransactionsDetail(id);
+			res = appuserService.queryTransactionsDetail(id);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -999,20 +1008,20 @@ public class IntAppuserController extends BaseController {
 	public TheardingRes getThreadings(HttpServletResponse response) {
 		// System.out.println(test);
 		UserEntity user = getUserFromCache();
-		TheardingRes rs=null;
+		TheardingRes rs = null;
 		// System.out.println(test);
 		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return rs;
 		}
-		
+
 		try {
-			rs=appuserService.queryTheardingsByUserID(user);
+			rs = appuserService.queryTheardingsByUserID(user);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return rs;
 
 	}
@@ -1027,7 +1036,7 @@ public class IntAppuserController extends BaseController {
 	public Object getZoning_requests(HttpServletResponse response) {
 
 		UserEntity user = getUserFromCache();
-		//TheardingRes rs=null;
+		// TheardingRes rs=null;
 		// System.out.println(test);
 		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -1037,43 +1046,59 @@ public class IntAppuserController extends BaseController {
 		};
 
 	}
-	
-	//9.1 Get user profile
 
-	//https://api.sosxsos.com/v1/residents/#
+	// 9.1 Get user profile
+
+	// https://api.sosxsos.com/v1/residents/#
 	@RequestMapping(value = { "/residents" }, method = RequestMethod.GET)
 	@ResponseBody
-	public Object getResidents(HttpServletResponse response) {
+	public ResProfile getResidents(HttpServletResponse response) {
 
 		UserEntity user = getUserFromCache();
-		//TheardingRes rs=null;
+		// TheardingRes rs=null;
 		// System.out.println(test);
 		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
-		return new ResBase() {
-		};
+		BananaEntity bananaEntity = cacheService.getBananaFromCache(user.getPhone());
+		ResProfile rs = new ResProfile();
+		rs.setStatus(user.getStatus());
+		rs.setVerified_email(user.getVerified_email());
+		rs.setVerified_id(user.isVerified_id());
+		rs.setStatistics(user.getStatisticsEntity());
+		if (bananaEntity != null) {
+			rs.setBubble(bananaEntity.getBubble());
+
+			rs.setMedia(bananaEntity.getMedia());
+
+		}
+
+		return rs;
 
 	}
-	
-	
-	//9.2 Report abuse https://api.sosxsos.com/v1/reports
-//	{
-//		  "type": int,
-//		}
+
+	// 9.2 Report abuse https://api.sosxsos.com/v1/reports
+	// {
+	// "type": int,
+	// }
 	@RequestMapping(value = { "/reports" }, method = RequestMethod.POST)
 	@ResponseBody
-	
+
 	public Object makeReportsAbuse(HttpServletResponse response) {
 
 		UserEntity user = getUserFromCache();
-		//TheardingRes rs=null;
+		// TheardingRes rs=null;
 		// System.out.println(test);
 		if (user == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
+		String token = request.getHeader("Bearer");
+		user.setReported(user.getReported()+1);
+		cacheService.updateCacheUse(user, token);
+		
+		
 		return new ResBase() {
 		};
 

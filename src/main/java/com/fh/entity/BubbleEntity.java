@@ -2,6 +2,11 @@ package com.fh.entity;
 
 public class BubbleEntity extends BaseEntity {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6188356815325263821L;
+
+	/**
 	 * “ “thought”: { “topic”: string, “key_word”: string }
 	 * 
 	 * 

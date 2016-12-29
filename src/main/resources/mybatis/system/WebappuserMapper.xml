@@ -19,7 +19,8 @@
 
 
 	<!-- 新增app用户 -->
-	<insert id="saveU" parameterType="SignUp">
+	<insert id="saveU" useGeneratedKeys="true" keyProperty="id"
+		parameterType="SignUp">
 		insert into webapp_user (
 		PASSWORD,
 		PHONE
@@ -29,6 +30,41 @@
 		)
 	</insert>
 
+
+	<!-- 新增用户统计 -->
+	<insert id="saveStatistics" parameterType="java.lang.Integer">
+		INSERT
+		INTO
+		`webapp_statistics`(
+		`zoned`,
+		`reported`,
+		`agree`,
+		`success`,
+		`recycle`,
+		`video`,
+		`user_id`
+		)
+		VALUES(
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		#{userid}
+		)
+	</insert>
+
+
+	<!-- update statistics -->
+	<update id="updateStatistics" parameterType="com.fh.entity.StatisticsEntity">
+		UPDATE
+		`webapp_statistics`
+		SET `zoned`=
+		#{zoned},`reported`=#{reported},`agree`=#{agree},`success`=#{success},`recycle`=#{recycle},`video`=#{video}
+		WHERE `user_id`=#{userid}
+
+	</update>
 
 
 	<!-- update password -->
@@ -61,7 +97,8 @@
 	<!-- update transactions -->
 
 	<update id="updateTransactions" parameterType="com.fh.entity.TransactionsBeans">
-		UPDATE webapp_transactions
+		UPDATE
+		webapp_transactions
 		SET
 		status=#{status},
 		threading=#{jsonFromThreading},
@@ -71,16 +108,20 @@
 
 	<select id="queryTransactionsListShareBy" parameterType="java.lang.Integer"
 		resultType="pd">
-		SELECT t.id transactions,bu.image_url,threading FROM webapp_banana b
-		,webapp_transactions t,webapp_bubble bu WHERE b.id=t.banana_id and
+		SELECT t.id transactions,bu.image_url,threading FROM
+		webapp_banana b
+		,webapp_transactions t,webapp_bubble bu WHERE
+		b.id=t.banana_id and
 		b.bubble_id=bu.id and sharesbby=#{id}
 	</select>
 
 
 	<select id="queryTransactionsListGetBy" parameterType="java.lang.Integer"
 		resultType="pd">
-		SELECT t.id transactions,bu.image_url threading FROM webapp_banana b
-		,webapp_transactions t,webapp_bubble bu WHERE b.id=t.banana_id and
+		SELECT t.id transactions,bu.image_url threading FROM
+		webapp_banana b
+		,webapp_transactions t,webapp_bubble bu WHERE
+		b.id=t.banana_id and
 		b.bubble_id=bu.id and getsby=#{id}
 	</select>
 
@@ -90,9 +131,12 @@
 
 
 	<select id="queryTransactionsDetail" parameterType="String"
-		resultType="com.fh.entity.TransactionsBeans">	
-		SELECT `id`, `status`, `prev_status`, `ended_time`, `zone_time`, 
-		`threading`, `getsby`, `sharesbby`, `banana_id`, `cancel_reason` FROM `webapp_transactions` 
+		resultType="com.fh.entity.TransactionsBeans">
+		SELECT `id`, `status`, `prev_status`, `ended_time`,
+		`zone_time`,
+		`threading`, `getsby`, `sharesbby`, `banana_id`,
+		`cancel_reason` FROM
+		`webapp_transactions`
 		WHERE id=#{id}
 	</select>
 
@@ -111,7 +155,7 @@
 
 
 
-	<!-- 新增thought -->
+	<!-- 新增buble -->
 
 	<insert id="saveThought" parameterType="com.fh.entity.BubbleEntity"
 		useGeneratedKeys="true" keyProperty="id">
@@ -184,9 +228,12 @@
 	<select id="queryUser" parameterType="String" resultType="com.fh.entity.UserEntity">
 		select
 		*
-		from webapp_user
+		from webapp_user ,webapp_statistics
 		where
-		phone = #{phone}
+		webapp_statistics.user_id=webapp_user.id
+		and
+		webapp_user.phone =
+		#{phone}
 	</select>
 
 
@@ -261,6 +308,10 @@
 		phone= #{phone}
 
 	</update>
+
+
+
+
 
 
 

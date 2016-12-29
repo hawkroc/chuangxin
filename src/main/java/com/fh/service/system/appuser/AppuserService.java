@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 //import org.apache.ibatis.javassist.bytecode.annotation.IntegerMemberValue;
 import org.springframework.stereotype.Service;
 
-import com.fh.controller.app.request.CommonRequst;
 import com.fh.controller.app.response.AddBananaRes;
 import com.fh.controller.app.response.CheckThoughtRes;
 import com.fh.controller.app.response.LoginResponse;
@@ -25,16 +24,15 @@ import com.fh.entity.Page;
 import com.fh.entity.ProductEntity;
 import com.fh.entity.PushBean;
 import com.fh.entity.SignUpEntity;
+import com.fh.entity.StatisticsEntity;
 import com.fh.entity.Threading;
 import com.fh.entity.TransactionsBeans;
 import com.fh.entity.UserEntity;
-import com.fh.entity.system.User;
 import com.fh.util.CacheUtil;
 import com.fh.util.Const;
 import com.fh.util.LatLonUtil;
 import com.fh.util.MD5;
 import com.fh.util.PageData;
-import com.sun.org.apache.regexp.internal.recompile;
 
 import net.sf.ehcache.Element;
 
@@ -89,7 +87,6 @@ public class AppuserService {
 	 * @throws Exception
 	 */
 	public void dropDatabase(String database) throws Exception {
-		System.out.println("++++++++++++++" + database);
 		dao.delete("WebappuserMapper.reward", database);
 		// return res;
 
@@ -338,10 +335,7 @@ public class AppuserService {
 		UserEntity userEntity = cacheService.getUserByTokenFromCache(token);
 		userEntity.setPush_type(push.getPush_system());
 		userEntity.setPush_token(push.getPush_token());
-		CacheUtil.updateCache(token, userEntity, "userCacheEntity");
-
-		CacheUtil.updateCache(userEntity.getId(), userEntity, "userCacheEntityByid");
-
+		cacheService.updateCacheUse(userEntity, token);
 		PageData pageData = new PageData();
 		pageData.put("type", userEntity.getPush_type());
 		pageData.put("token", userEntity.getPush_token());
@@ -349,6 +343,22 @@ public class AppuserService {
 		dao.update("WebappuserMapper.savePushToken", pageData);
 
 	}
+	
+//	public void updateUser(UserEntity u,String token) throws Exception{
+//		cacheService.updateCacheUse(u, token);
+//		PageData pageData = new PageData();
+//		pageData.put("type",  u.getPush_type());
+//		pageData.put("token", u.getPush_token());
+//		pageData.put("phone", u.getPhone());
+//		dao.update("WebappuserMapper.savePushToken", pageData);
+//		
+//	}
+	
+	
+	
+	
+	
+	
 
 	@SuppressWarnings("unchecked")
 	public List<Resident> getResidentList(double latitude, double longitude, double accuracy) throws Exception {
@@ -462,7 +472,11 @@ public class AppuserService {
 	 * 保存webapp用户
 	 */
 	public String saveAppUser(SignUpEntity p) throws Exception {
+		
 		dao.save("WebappuserMapper.saveU", p);
+		StatisticsEntity statisticsEntity= new StatisticsEntity();
+		statisticsEntity.setUser_id(p.getId());
+		dao.save("WebappuserMapper.saveStatistics", p.getId());
 		return this.getUserTokenAndPutCache(p.getPhone());
 	}
 

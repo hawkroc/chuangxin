@@ -95,9 +95,27 @@ public class TransactionsBeans {
 	public void setGetsby(long getsby) {
 		this.getsby = getsby;
 	}
+//	"getsby_threads: int,
+//    "getsby_sucesses": int,
 
+    private int getsby_threads;
+    public int getGetsby_threads() {
+		return getsby_threads;
+	}
 
+	public void setGetsby_threads(int getsby_threads) {
+		this.getsby_threads = getsby_threads;
+	}
 
+	public int getGetsby_sucesses() {
+		return getsby_sucesses;
+	}
+
+	public void setGetsby_sucesses(int getsby_sucesses) {
+		this.getsby_sucesses = getsby_sucesses;
+	}
+
+	private int getsby_sucesses ;
 
 	private long sharesby;
 	
