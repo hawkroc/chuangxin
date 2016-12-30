@@ -47,8 +47,9 @@ private int code;
 	  	                               "/messages");
 	  	       MultivaluedMapImpl formData = new MultivaluedMapImpl();
 	  	       formData.add("from", "Excited User <mailgun@mail.sosxsos.com>");
-	  	       formData.add("to", "yinpengroc@gmail.com");
+	  	      // formData.add("to", "yinpengroc@gmail.com");
 	  	       formData.add("to", this.maill);
+	  	      // System.out.println("dsfsdfd receive the email" +this.maill);
 	  	       formData.add("subject", "Dot reply sosxsos verification");
 	  	       formData.add("text", "verification code is !  "+this.code);
 	  	       return webResource.type(MediaType.APPLICATION_FORM_URLENCODED).
@@ -101,6 +102,7 @@ private int code;
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		System.out.println("send email");
 		this.sendSimpleMessage();
 		
 	}

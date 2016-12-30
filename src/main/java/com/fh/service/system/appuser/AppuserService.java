@@ -79,6 +79,15 @@ public class AppuserService {
 		return res;
 
 	}
+	
+	
+	
+	public UserEntity getUserEntityByPhone(String phone) throws Exception {
+		System.out.println("this phone is "+phone);
+		UserEntity res= (UserEntity) dao.findForObject("WebappuserMapper.checkUserEntity", phone);
+		return res;
+	}
+	
 
 	/**
 	 * 

@@ -77,8 +77,7 @@ public class IntAppuserController extends BaseController {
 	@Resource(name = "threadsPool")
 	private ThreadPoolTaskExecutor threadsPool;
 
-
-	@Resource(name="smsService")
+	@Resource(name = "smsService")
 	private SmsService smsService;
 
 	/**
@@ -169,7 +168,7 @@ public class IntAppuserController extends BaseController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = { "/verification_code", "/forgot" }, method = RequestMethod.POST, produces = {
+	@RequestMapping(value = { "/verification_code" }, method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
 	public Object verifyCodeByPhone(@RequestBody SignUpEntity p, HttpServletResponse response) {
@@ -179,20 +178,48 @@ public class IntAppuserController extends BaseController {
 		// System.out.println("tst");
 		// String token = request.getHeader("Bearer");
 		// boolean istype = StringUtils.isEmpty(p.getType());
+		UserEntity userEntity = null;
+		int Verification_code = Tools.getRandomNum();
+	//	System.out.println("test12334");
 		try {
+			userEntity = appuserService.getUserEntityByPhone(p.getPhone());
 
-			if (appuserService.checkPhone(p.getPhone()) != null) {
-				response.setStatus(HttpServletResponse.SC_CONFLICT);
+			if (userEntity != null) {
+				String verified_email = userEntity.getVerified_email();
+				if ("0".equalsIgnoreCase(p.getType())) {
+					response.setStatus(HttpServletResponse.SC_CONFLICT);
+					return null;
 
-			} else {
+				} else {
+					if (verified_email != null) {
+						emailService.setCode(Verification_code);
+						emailService.setMaill(verified_email);
+						threadsPool.execute(emailService);
+						s.setAttribute("Verification_code", Verification_code);
+						s.setAttribute("Verification_code_time", System.currentTimeMillis());
+
+					} else {
+						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+						return null;
+					}
+				}
+
+			}
+
+			if ("0".equalsIgnoreCase(p.getType())) {
+				
 				rs = new SignUpResponse();
-				String Verification_code = String.valueOf(Tools.getRandomNum());
-		
-				rs.setVerification_code(Verification_code);
-				smsService.sendMessage(p.getPhone(),Verification_code);
+				String sp = "+" + p.getPhone();
+				smsService.setContent(String.valueOf(Verification_code));
+				smsService.setPhone(sp);
+				threadsPool.execute(smsService);
+			//	smsService.sendMessage(sp, String.valueOf(Verification_code));
+				
+				rs.setVerification_code(String.valueOf(Verification_code));
+			//System.out.println("ttt");
 				s.setAttribute("Verification_code", Verification_code);
 				s.setAttribute("Verification_code_time", System.currentTimeMillis());
-
+				//System.out.println("dsfdsfdf");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -210,7 +237,7 @@ public class IntAppuserController extends BaseController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = { "/sign_up", "/forgot" }, method = RequestMethod.POST, produces = {
+	@RequestMapping(value = { "/sign_up" }, method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
 	public Object signUp(@RequestBody SignUpEntity p, HttpServletResponse response) {
@@ -218,47 +245,72 @@ public class IntAppuserController extends BaseController {
 		SignUpResponse rs = new SignUpResponse();
 		HttpSession s = this.getRequest().getSession();
 		String token = request.getHeader("Bearer");
-		boolean istype = StringUtils.isEmpty(p.getType());
+		// boolean istype = StringUtils.isEmpty(p.getType());
 		try {
-
-			if (appuserService.checkPhone(p.getPhone()) != null && istype) {
+		UserEntity	userEntity = appuserService.getUserEntityByPhone(p.getPhone());
+			if (userEntity != null) {
+				System.out.println(userEntity.getPhone());
 				response.setStatus(HttpServletResponse.SC_CONFLICT);
 
-			} else if (StringUtils.isEmpty((p.getVerification_code()))
-					|| s.getAttribute("Verification_code_time") == null) {
-				String Verification_code = String.valueOf(Tools.getRandomNum());
-				rs.setVerification_code(Verification_code);
-				s.setAttribute("Verification_code", Verification_code);
-				s.setAttribute("Verification_code_time", System.currentTimeMillis());
 			} else {
 
 				long sec = ((System.currentTimeMillis()) - (long) s.getAttribute("Verification_code_time")) / 1000;
-
-				if (p.getVerification_code().equalsIgnoreCase((String) s.getAttribute("Verification_code"))
+                 int temp=Integer.valueOf(p.getVerification_code());
+				if (temp==((int) s.getAttribute("Verification_code"))
 						&& sec < Const.secEx) {
-
-					if (!istype) {
-
-						if (!StringUtils.isEmpty(token) && appuserService.getPhoneByTokenFromCache(token) != null) {
-							if (appuserService.getPhoneByTokenFromCache(token).equalsIgnoreCase(p.getPhone())) {
-
-								rs.setUser_token(appuserService.updateAppUserPassword(p));
-								response.setStatus(HttpServletResponse.SC_CREATED);
-								return rs;
-							}
-						}
-						response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-						return rs;
-					} else {
-						rs.setUser_token(appuserService.saveAppUser(p));
-						response.setStatus(HttpServletResponse.SC_CREATED);
-					}
+					rs.setUser_token(appuserService.saveAppUser(p));
+					response.setStatus(HttpServletResponse.SC_CREATED);
 				} else {
 					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-
+					return rs;
 				}
 
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return rs;
+
+	}
+
+	/**
+	 * //2.4 https://api.sosxsos.com/v1/forgot
+	 * 
+	 * @param p
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = { "/forgot" }, method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
+	@ResponseBody
+	public Object forgotPassWord(@RequestBody SignUpEntity p, HttpServletResponse response) {
+
+		SignUpResponse rs = new SignUpResponse();
+		HttpSession s = this.getRequest().getSession();
+		String token = request.getHeader("Bearer");
+		boolean istype = StringUtils.isEmpty(p.getType());
+		try {
+			UserEntity	userEntity = appuserService.getUserEntityByPhone(p.getPhone());
+			if (userEntity== null) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+			}
+
+			long sec = ((System.currentTimeMillis()) - (long) s.getAttribute("Verification_code_time")) / 1000;
+		    int temp=Integer.valueOf(p.getVerification_code());
+						if (temp==((int) s.getAttribute("Verification_code"))&& sec < Const.secEx){
+							
+						
+		
+
+				rs.setUser_token(appuserService.updateAppUserPassword(p));
+				//response.setStatus(HttpServletResponse.SC_CREATED);
+
+			} else {
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			}
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -307,7 +359,7 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/verification/codes", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
-	public void get_verification_code(CommonRequst email, HttpServletResponse response) {
+	public void get_verification_code(@RequestBody CommonRequst email, HttpServletResponse response) {
 		// String token = request.getHeader("Bearer");
 		String token = request.getHeader("Bearer");
 		UserEntity userEntity = getUserFromCache(token);
@@ -315,12 +367,12 @@ public class IntAppuserController extends BaseController {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
 		}
-		int code = (int) (Math.random() * 9000 + 1000);
+		int code = Tools.getRandomNum();
 		// String token = request.getHeader("Bearer");
 		userEntity.setCode(code);
 		String verified_email = email.getEmail();
 		userEntity.setVerified_email(verified_email);
-
+         System.out.println(verified_email);
 		emailService.setCode(code);
 		emailService.setMaill(verified_email);
 		threadsPool.execute(emailService);
@@ -336,7 +388,7 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/verification/emailes", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
-	public Object verify_email(CommonRequst code, HttpServletResponse response) {
+	public Object verify_email(@RequestBody CommonRequst code, HttpServletResponse response) {
 		String token = request.getHeader("Bearer");
 
 		UserEntity userEntity = getUserFromCache(token);
