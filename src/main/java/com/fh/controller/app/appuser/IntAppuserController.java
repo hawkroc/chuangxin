@@ -253,8 +253,13 @@ public class IntAppuserController extends BaseController {
 				response.setStatus(HttpServletResponse.SC_CONFLICT);
 
 			} else {
+				long time=(long) s.getAttribute("Verification_code_time") ;
+				if(time==0){
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					return rs;
+				}
 
-				long sec = ((System.currentTimeMillis()) - (long) s.getAttribute("Verification_code_time")) / 1000;
+				long sec = ((System.currentTimeMillis()) - time) / 1000;
                  int temp=Integer.valueOf(p.getVerification_code());
 				if (temp==((int) s.getAttribute("Verification_code"))
 						&& sec < Const.secEx) {
@@ -296,8 +301,13 @@ public class IntAppuserController extends BaseController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
 			}
+			long time=(long) s.getAttribute("Verification_code_time") ;
+			if(time==0){
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return rs;
+			}
 
-			long sec = ((System.currentTimeMillis()) - (long) s.getAttribute("Verification_code_time")) / 1000;
+			long sec = ((System.currentTimeMillis()) - time) / 1000;
 		    int temp=Integer.valueOf(p.getVerification_code());
 						if (temp==((int) s.getAttribute("Verification_code"))&& sec < Const.secEx){
 							
@@ -372,7 +382,7 @@ public class IntAppuserController extends BaseController {
 		userEntity.setCode(code);
 		String verified_email = email.getEmail();
 		userEntity.setVerified_email(verified_email);
-         System.out.println(verified_email);
+       
 		emailService.setCode(code);
 		emailService.setMaill(verified_email);
 		threadsPool.execute(emailService);
@@ -386,7 +396,7 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/verification/emailes", method = RequestMethod.POST, produces = {
+	@RequestMapping(value = "/verification/emails", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	public Object verify_email(@RequestBody CommonRequst code, HttpServletResponse response) {
 		String token = request.getHeader("Bearer");
