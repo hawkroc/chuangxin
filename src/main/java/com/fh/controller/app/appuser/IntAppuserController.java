@@ -72,7 +72,7 @@ public class IntAppuserController extends BaseController {
 
 	@Resource(name = "emailService")
 	private EmailService emailService;
-	
+
 	@Resource(name = "threadsPool")
 	private ThreadPoolTaskExecutor threadsPool;
 
@@ -354,7 +354,7 @@ public class IntAppuserController extends BaseController {
 				response.setStatus(HttpServletResponse.SC_CONFLICT);
 				// userEntity.setVerified_email(null);
 			}
-			//userEntity.setCode(0);
+			// userEntity.setCode(0);
 			cacheService.updateCacheUse(userEntity, token);
 		} else {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -395,15 +395,51 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "verification/identifications", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
-	public void identifications(@RequestParam("image") CommonsMultipartFile image, HttpServletResponse response) {
+	public Object identifications(@RequestParam("image") CommonsMultipartFile image, HttpServletResponse response) {
 		// String token = request.getHeader("Bearer");
-		if (checkToken()) {
+		UserEntity userEntity = getUserFromCache();
+		if (userEntity == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-		} else {
-			// Verify mail
-
 		}
+
+		String imgname = image.getOriginalFilename();
+		// System.out.println(vidoname);
+		if (!FileUtil.checkFileType(imgname, Const.imageType)) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return null;
+		}
+
+		// long l = new Date().getTime();
+
+		String imagename = userEntity.getPhone();
+
+		String Imagepath = Const.profile + imagename;
+
+		// String i = "user_profile/" + imagename;
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		File newImage = new File(Imagepath);
+		// 通过CommonsMultipartFile的方法直接写文件（注意这个时候）
+		try {
+
+			image.transferTo(newImage);
+			System.out.println("this is the image path " + Imagepath);
+			appuserService.updateUserProfile(userEntity);
+
+			// AddBananaAction addBananaAction = mapper.readValue(json,
+			// AddBananaAction.class);
+			// System.out.println("test key word: " +
+			// addBananaAction.getBanana().getBubble().getKey_word());
+			// t = appuserService.saveBanana(addBananaAction.getBanana(), token,
+			// i, v);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+		return null;
 
 	}
 
@@ -512,7 +548,8 @@ public class IntAppuserController extends BaseController {
 			image.transferTo(newImage);
 
 			AddBananaAction addBananaAction = mapper.readValue(json, AddBananaAction.class);
-			System.out.println("test key word:   " + addBananaAction.getBanana().getBubble().getKey_word());
+			// System.out.println("test key word: " +
+			// addBananaAction.getBanana().getBubble().getKey_word());
 			t = appuserService.saveBanana(addBananaAction.getBanana(), token, i, v);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -542,7 +579,7 @@ public class IntAppuserController extends BaseController {
 			return null;
 		}
 		CheckThoughtRes t = null;
-		System.out.println("topic: " + topic + " key_word: " + key_word);
+		// System.out.println("topic: " + topic + " key_word: " + key_word);
 		try {
 			t = appuserService.checkBubbles(topic.trim(), key_word.trim());
 		} catch (Exception e) {

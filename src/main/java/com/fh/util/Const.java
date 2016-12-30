@@ -64,6 +64,7 @@ public class Const {
       public static final int Bad_Reques=400;   
       public static final int Not_Found=404;  
       public static final String Imagepath = "/usr/share/nginx/html/image/";//"C:/" + new Date().getTime() + video.getOriginalFilename();	
+      public static final String profile = "/usr/share/nginx/html/profile/";
       public static final String Videopath = "/usr/share/nginx/html/video/";
       
       public static final String testImagepath = "C:/image/";//"C:/" + new Date().getTime() + video.getOriginalFilename();	

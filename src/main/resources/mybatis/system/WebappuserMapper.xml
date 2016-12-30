@@ -322,6 +322,16 @@
 
 
 
+		<update id="updateProfile" parameterType="pd">
+		update webapp_user
+		set
+		verified_id = true,
+		status=4
+		where
+		phone= #{phone}
+
+	</update>
+
 
 
 

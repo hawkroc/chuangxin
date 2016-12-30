@@ -354,6 +354,15 @@ public class AppuserService {
 	}
 	
 	
+	public void updateUserProfile(UserEntity u) throws Exception{
+	//	cacheService.updateCacheUse(u, token);
+		PageData pageData = new PageData();
+       // pageData.put("mail", u.getVerified_email());
+		pageData.put("phone", u.getPhone());
+		dao.update("WebappuserMapper.updateProfile", pageData);
+		
+	}
+	
 	
 	
 	
