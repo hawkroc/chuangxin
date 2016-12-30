@@ -133,6 +133,13 @@ public class UserEntity {
 	private int		success;
 	private int		recycle;
 	private int	video;
+	public int getCode() {
+		return code;
+	}
+	public void setCode(int code) {
+		this.code = code;
+	}
+	private int code;
 	
 	
 	

@@ -1,10 +1,11 @@
 package com.fh.service.system.appuser;
 
 import java.io.File;
-import java.util.List;
 
 import javax.ws.rs.core.MediaType;
+
 import org.springframework.stereotype.Service;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -13,35 +14,54 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
 @Service("emailService")
-public class EmailService {
+public class EmailService implements Runnable {
 	private static String domain = "mail.sosxsos.com";
 	private static String pubkey = "pubkey-cdaaaccad370f3134b14933dcfa4a260";
 	private static String key = "key-29af45b614e8a3a330f3af36d1e6ac58";
+private	String maill;
+
+
+
+public void setMaill(String maill) {
+	this.maill = maill;
+}
+
+
+
+public void setCode(int code) {
+	this.code = code;
+}
+
+private int code;
+
+	  	/**
+	  	 * 
+	  	 * @return
+	  	 */
+	  	private  ClientResponse sendSimpleMessage() {
+	  	       Client client = Client.create();
+	  	       client.addFilter(new HTTPBasicAuthFilter("api",
+	  	                       key));
+	  	       WebResource webResource =
+	  	               client.resource("https://api.mailgun.net/v3/"+domain +
+	  	                               "/messages");
+	  	       MultivaluedMapImpl formData = new MultivaluedMapImpl();
+	  	       formData.add("from", "Excited User <mailgun@mail.sosxsos.com>");
+	  	       formData.add("to", "yinpengroc@gmail.com");
+	  	       formData.add("to", this.maill);
+	  	       formData.add("subject", "Dot reply sosxsos verification");
+	  	       formData.add("text", "verification code is !  "+this.code);
+	  	       return webResource.type(MediaType.APPLICATION_FORM_URLENCODED).
+	  	               post(ClientResponse.class, formData);
+	  	}
+	  
+	  
 
 	/**
 	 * 
 	 * @return
 	 */
-	public  ClientResponse SendSimpleMessage(List<String> toMails, String content, String subject) {
-		Client client = Client.create();
-		client.addFilter(new HTTPBasicAuthFilter("api", key));
-		WebResource webResource = client.resource("https://api.mailgun.net/v3/" + domain + "/messages");
-		MultivaluedMapImpl formData = new MultivaluedMapImpl();
-		formData.add("from", "Excited User <mailgun@mail.sosxsos.com>");
-		for (String mail : toMails) {
-			formData.add("to", mail);
-		}
-
-		formData.add("subject", subject);
-		formData.add("text", content);
-		return webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static ClientResponse SendComplexMessage() {
+	  	private  ClientResponse SendComplexMessage() {
 		Client client = Client.create();
 		client.addFilter(new HTTPBasicAuthFilter("api", "YOUR_API_KEY"));
 		WebResource webResource = client.resource("https://api.mailgun.net/v3/" + domain + "/messages");
@@ -64,7 +84,7 @@ public class EmailService {
 	 * 
 	 * @return
 	 */
-	public static ClientResponse SendMimeMessage() {
+	public  ClientResponse SendMimeMessage() {
 		Client client = Client.create();
 		client.addFilter(new HTTPBasicAuthFilter("api", "YOUR_API_KEY"));
 		WebResource webResource = client.resource("https://api.mailgun.net/v3/" + domain + "/messages.mime");
@@ -74,5 +94,14 @@ public class EmailService {
 		File mimeFile = new File("." + file_separator + "files" + file_separator + "message.mime");
 		form.bodyPart(new FileDataBodyPart("message", mimeFile, MediaType.APPLICATION_OCTET_STREAM_TYPE));
 		return webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).post(ClientResponse.class, form);
+	}
+
+
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		this.sendSimpleMessage();
+		
 	}
 }

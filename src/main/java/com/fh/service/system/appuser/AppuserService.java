@@ -344,15 +344,14 @@ public class AppuserService {
 
 	}
 	
-//	public void updateUser(UserEntity u,String token) throws Exception{
-//		cacheService.updateCacheUse(u, token);
-//		PageData pageData = new PageData();
-//		pageData.put("type",  u.getPush_type());
-//		pageData.put("token", u.getPush_token());
-//		pageData.put("phone", u.getPhone());
-//		dao.update("WebappuserMapper.savePushToken", pageData);
-//		
-//	}
+	public void updateUserMail(UserEntity u) throws Exception{
+	//	cacheService.updateCacheUse(u, token);
+		PageData pageData = new PageData();
+        pageData.put("mail", u.getVerified_email());
+		pageData.put("phone", u.getPhone());
+		dao.update("WebappuserMapper.saveMail", pageData);
+		
+	}
 	
 	
 	

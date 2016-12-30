@@ -308,6 +308,17 @@
 		phone= #{phone}
 
 	</update>
+	
+	
+		<update id="saveMail" parameterType="pd">
+		update webapp_user
+		set
+		verified_email = #{mail},
+		status=3
+		where
+		phone= #{phone}
+
+	</update>
 
 
 

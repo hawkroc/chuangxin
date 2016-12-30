@@ -1,7 +1,5 @@
 package com.fh.controller.app.response;
 
-import com.fusioncharts.exporter.error.Status;
-
 /**
  * @author PENG
  *

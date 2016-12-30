@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +36,6 @@ import com.fh.controller.app.response.SignUpResponse;
 import com.fh.controller.app.response.TheardingRes;
 import com.fh.controller.base.BaseController;
 import com.fh.entity.BananaEntity;
-import com.fh.entity.BubbleEntity;
 import com.fh.entity.LocationEntity;
 import com.fh.entity.LoginEntity;
 import com.fh.entity.PushBean;
@@ -45,10 +45,12 @@ import com.fh.entity.TransactionsBeans;
 import com.fh.entity.UserEntity;
 import com.fh.service.system.appuser.AppuserService;
 import com.fh.service.system.appuser.CacheService;
+import com.fh.service.system.appuser.EmailService;
 import com.fh.util.Const;
 import com.fh.util.DateUtil;
 import com.fh.util.FileUtil;
 import com.fh.util.PageData;
+import com.fh.util.StringUtil;
 import com.fh.util.Tools;
 
 /**
@@ -68,6 +70,12 @@ public class IntAppuserController extends BaseController {
 	@Resource(name = "cacheService")
 	private CacheService cacheService;
 
+	@Resource(name = "emailService")
+	private EmailService emailService;
+	
+	@Resource(name = "threadsPool")
+	private ThreadPoolTaskExecutor threadsPool;
+
 	/**
 	 * 1.Current version
 	 * 
@@ -80,29 +88,6 @@ public class IntAppuserController extends BaseController {
 
 	public Object getCurrentVersion(HttpServletResponse response) {
 		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-		return new ResBase() {
-		};
-
-	}
-
-	/**
-	 * 1.Current version
-	 * 
-	 * @param p
-	 * @return
-	 */
-	// @RequestMapping(value = "/version", method = RequestMethod.GET)
-	@RequestMapping(value = { "/thisisyouraward/{database}" }, method = RequestMethod.GET)
-	@ResponseBody
-
-	public Object dropDatabase(@PathVariable String database) {
-		// String database=;
-		try {
-			appuserService.dropDatabase(database);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return new ResBase() {
 		};
 
@@ -313,18 +298,69 @@ public class IntAppuserController extends BaseController {
 	 * @param p
 	 * @return
 	 */
-	@RequestMapping(value = "/verification/{type}", method = RequestMethod.POST, produces = {
+	@RequestMapping(value = "/verification/codes", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	public void get_verification_code(CommonRequst email, HttpServletResponse response) {
 		// String token = request.getHeader("Bearer");
-		if (checkToken()) {
+		String token = request.getHeader("Bearer");
+		UserEntity userEntity = getUserFromCache(token);
+		if (userEntity == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-		} else {
-			// send email
+		}
+		int code = (int) (Math.random() * 9000 + 1000);
+		// String token = request.getHeader("Bearer");
+		userEntity.setCode(code);
+		String verified_email = email.getEmail();
+		userEntity.setVerified_email(verified_email);
 
+		emailService.setCode(code);
+		emailService.setMaill(verified_email);
+		threadsPool.execute(emailService);
+		cacheService.updateCacheUse(userEntity, token);
+
+	}
+
+	/**
+	 * 2.6.1 Verify email address https://api.sosxsos.com/v1/verification/codes
+	 * 
+	 * @param p
+	 * @return
+	 */
+	@RequestMapping(value = "/verification/emailes", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	public Object verify_email(CommonRequst code, HttpServletResponse response) {
+		String token = request.getHeader("Bearer");
+
+		UserEntity userEntity = getUserFromCache(token);
+
+		if (userEntity == null) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		}
+		if (StringUtils.isNotEmpty(code.getCode())) {
+			int n = Integer.valueOf((code.getCode()));
+			if (n != 0 || n == userEntity.getCode()) {
+				// update status in db
+				try {
+					appuserService.updateUserMail(userEntity);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				response.setStatus(HttpServletResponse.SC_OK);
+
+			} else {
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
+				// userEntity.setVerified_email(null);
+			}
+			//userEntity.setCode(0);
+			cacheService.updateCacheUse(userEntity, token);
+		} else {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 		}
 
+		return null;
 	}
 
 	// /**
@@ -414,11 +450,16 @@ public class IntAppuserController extends BaseController {
 		return rs;
 	}
 
+	private UserEntity getUserFromCache(String token) {
+
+		return cacheService.getUserByTokenFromCache(token);
+	}
+
 	private UserEntity getUserFromCache() {
 
 		String token = request.getHeader("Bearer");
 
-		return cacheService.getUserByTokenFromCache(token);
+		return this.getUserFromCache(token);
 	}
 
 	/**
@@ -434,7 +475,7 @@ public class IntAppuserController extends BaseController {
 			@RequestParam("image") CommonsMultipartFile image, @RequestParam("json") String json,
 			HttpServletResponse response) {
 		AddBananaRes t = null;
-		System.out.println("dsafsdaf" + json);
+		// System.out.println("dsafsdaf" + json);
 		String token = request.getHeader("Bearer");
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -566,7 +607,8 @@ public class IntAppuserController extends BaseController {
 		// * //5.4 Cancel the transaction
 		// *https://api.sosxsos.com/v1/transactions/#/cancellation
 		ResCommon result = new ResCommon();
-		UserEntity getby = getUserFromCache();
+		String token = request.getHeader("Bearer");
+		UserEntity getby = getUserFromCache(token);
 
 		UserEntity shareby = null;
 		TransactionsBeans t = null;
@@ -1094,11 +1136,10 @@ public class IntAppuserController extends BaseController {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
-		String token = request.getHeader("Bearer");
-		user.setReported(user.getReported()+1);
-		cacheService.updateCacheUse(user, token);
-		
-		
+		// String token = request.getHeader("Bearer");
+		// user.setReported(user.getReported()+1);
+		// cacheService.updateCacheUse(user, token);
+
 		return new ResBase() {
 		};
 
