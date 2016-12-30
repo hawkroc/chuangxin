@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,11 +47,11 @@ import com.fh.entity.UserEntity;
 import com.fh.service.system.appuser.AppuserService;
 import com.fh.service.system.appuser.CacheService;
 import com.fh.service.system.appuser.EmailService;
+import com.fh.service.system.appuser.SmsService;
 import com.fh.util.Const;
 import com.fh.util.DateUtil;
 import com.fh.util.FileUtil;
 import com.fh.util.PageData;
-import com.fh.util.StringUtil;
 import com.fh.util.Tools;
 
 /**
@@ -75,6 +76,10 @@ public class IntAppuserController extends BaseController {
 
 	@Resource(name = "threadsPool")
 	private ThreadPoolTaskExecutor threadsPool;
+
+
+	@Resource(name="smsService")
+	private SmsService smsService;
 
 	/**
 	 * 1.Current version
@@ -176,13 +181,15 @@ public class IntAppuserController extends BaseController {
 		// boolean istype = StringUtils.isEmpty(p.getType());
 		try {
 
-			if (appuserService.checkPhone(p.getPhone()) == null) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			if (appuserService.checkPhone(p.getPhone()) != null) {
+				response.setStatus(HttpServletResponse.SC_CONFLICT);
 
 			} else {
 				rs = new SignUpResponse();
 				String Verification_code = String.valueOf(Tools.getRandomNum());
+		
 				rs.setVerification_code(Verification_code);
+				smsService.sendMessage(p.getPhone(),Verification_code);
 				s.setAttribute("Verification_code", Verification_code);
 				s.setAttribute("Verification_code_time", System.currentTimeMillis());
 

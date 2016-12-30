@@ -23,7 +23,7 @@ public class SmsService {
   * @param content
   */
   public void sendMessage(String phone,String content){
-	  Message message = Message.creator(new PhoneNumber(phone), new PhoneNumber("+61451266222"),
+	  Message message = Message.creator(new PhoneNumber(phone), new PhoneNumber(phone),
 			  content).create();
   }
 
