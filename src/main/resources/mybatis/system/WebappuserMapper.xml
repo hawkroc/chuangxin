@@ -241,10 +241,9 @@
 	<select id="queryUser" parameterType="String" resultType="com.fh.entity.UserEntity">
 		select
 		*
-		from webapp_user ,webapp_statistics
+		from webapp_user 
 		where
-		webapp_statistics.user_id=webapp_user.id
-		and
+		
 		webapp_user.phone =
 		#{phone}
 	</select>

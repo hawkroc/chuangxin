@@ -4,7 +4,7 @@
 	updateCheck="false">
 	<!-- <diskStore path="java.io.tmpdir" /> 缓存存放目录(此目录为放入系统默认缓存目录),也可以是”D:/cache“ 
 		java.io.tmpdir -->
-	<defaultCache maxElementsInMemory="1000" eternal="false"
+	<cache name="common" maxElementsInMemory="1000" eternal="false"
 		timeToIdleSeconds="120" timeToLiveSeconds="120" overflowToDisk="false"
 		maxElementsOnDisk="10000000" diskPersistent="false"
 		diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" />
@@ -12,7 +12,7 @@
 <!-- token phone -->
 	<cache name="userCache" maxElementsInMemory="10000"
 		maxElementsOnDisk="0" eternal="true" overflowToDisk="false"
-		diskPersistent="false" timeToIdleSeconds="0" timeToLiveSeconds="72000"
+		diskPersistent="false" 
 		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU" />
 
@@ -21,7 +21,7 @@
 <!-- token userbean -->
 	<cache name="userCacheEntity" maxElementsInMemory="10000"
 		maxElementsOnDisk="0" eternal="true" overflowToDisk="false"
-		diskPersistent="false" timeToIdleSeconds="0" timeToLiveSeconds="72000"
+		diskPersistent="false" 
 		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU" />
 		
@@ -31,7 +31,7 @@
 <!-- id userbean -->
 	<cache name="userCacheEntityByid" maxElementsInMemory="10000"
 		maxElementsOnDisk="0" eternal="true" overflowToDisk="false"
-		diskPersistent="false" timeToIdleSeconds="0" timeToLiveSeconds="72000"
+		diskPersistent="false" 
 		diskSpoolBufferSizeMB="50" diskExpiryThreadIntervalSeconds="120"
 		memoryStoreEvictionPolicy="LFU" />
 

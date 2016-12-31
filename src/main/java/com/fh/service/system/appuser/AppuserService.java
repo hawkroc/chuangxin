@@ -28,6 +28,7 @@ import com.fh.entity.StatisticsEntity;
 import com.fh.entity.Threading;
 import com.fh.entity.TransactionsBeans;
 import com.fh.entity.UserEntity;
+import com.fh.entity.system.User;
 import com.fh.util.CacheUtil;
 import com.fh.util.Const;
 import com.fh.util.LatLonUtil;
@@ -329,6 +330,9 @@ public class AppuserService {
 		CacheUtil.cacheSave(token, phone, "userCache");
 		UserEntity use = (UserEntity) dao.findForObject("WebappuserMapper.queryUser", phone);
 		CacheUtil.cacheSave(token, use, "userCacheEntity");
+	if(use==null){
+		System.out.println("this is null");
+	}
 		CacheUtil.cacheSave(use.getId(), use, "userCacheEntityByid");
 		return token;
 

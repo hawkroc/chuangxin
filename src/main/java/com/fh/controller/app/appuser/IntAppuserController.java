@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +47,7 @@ import com.fh.service.system.appuser.AppuserService;
 import com.fh.service.system.appuser.CacheService;
 import com.fh.service.system.appuser.EmailService;
 import com.fh.service.system.appuser.SmsService;
+import com.fh.util.CacheUtil;
 import com.fh.util.Const;
 import com.fh.util.DateUtil;
 import com.fh.util.FileUtil;
@@ -195,8 +195,9 @@ public class IntAppuserController extends BaseController {
 						emailService.setCode(Verification_code);
 						emailService.setMaill(verified_email);
 						threadsPool.execute(emailService);
-						s.setAttribute("Verification_code", Verification_code);
-						s.setAttribute("Verification_code_time", System.currentTimeMillis());
+//						s.setAttribute("Verification_code", Verification_code);
+//						s.setAttribute("Verification_code_time", System.currentTimeMillis());
+						CacheUtil.cacheSave(Verification_code, System.currentTimeMillis(),"common");
 
 					} else {
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -210,6 +211,7 @@ public class IntAppuserController extends BaseController {
 				
 				rs = new SignUpResponse();
 				String sp = "+" + p.getPhone();
+			
 				smsService.setContent(String.valueOf(Verification_code));
 				smsService.setPhone(sp);
 				threadsPool.execute(smsService);
@@ -217,8 +219,11 @@ public class IntAppuserController extends BaseController {
 				
 				rs.setVerification_code(String.valueOf(Verification_code));
 			//System.out.println("ttt");
-				s.setAttribute("Verification_code", Verification_code);
-				s.setAttribute("Verification_code_time", System.currentTimeMillis());
+//				s.setAttribute("Verification_code", Verification_code);
+//			
+//				s.setAttribute("Verification_code_time", System.currentTimeMillis());
+				
+				CacheUtil.cacheSave(Verification_code, System.currentTimeMillis(),"common");
 				//System.out.println("dsfdsfdf");
 			}
 		} catch (Exception e) {
@@ -244,38 +249,43 @@ public class IntAppuserController extends BaseController {
 
 		SignUpResponse rs = new SignUpResponse();
 		HttpSession s = this.getRequest().getSession();
-		String token = request.getHeader("Bearer");
+		//String token = request.getHeader("Bearer");
 		// boolean istype = StringUtils.isEmpty(p.getType());
+	
 		try {
+		
 		UserEntity	userEntity = appuserService.getUserEntityByPhone(p.getPhone());
+	
 			if (userEntity != null) {
-				System.out.println(userEntity.getPhone());
+				//System.out.println(userEntity.getPhone());
 				response.setStatus(HttpServletResponse.SC_CONFLICT);
 
 			} else {
-				long time=(long) s.getAttribute("Verification_code_time") ;
-				if(time==0){
-					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-					return rs;
-				}
-
-				long sec = ((System.currentTimeMillis()) - time) / 1000;
+			  
+//				if( s.getAttribute("Verification_code_time")==null){
+//					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//					return rs;
+//				}
+				//long time=(long) s.getAttribute("Verification_code_time") ;
+			
+				//long sec = ((System.currentTimeMillis()) - time) / 1000;
                  int temp=Integer.valueOf(p.getVerification_code());
-				if (temp==((int) s.getAttribute("Verification_code"))
-						&& sec < Const.secEx) {
+           //  	System.out.println("************2  :"+temp);
+				if (cacheService.checkCodeByFrontEnd(temp)) {
 					rs.setUser_token(appuserService.saveAppUser(p));
+				
 					response.setStatus(HttpServletResponse.SC_CREATED);
 				} else {
 					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 					return rs;
 				}
-
+			//	System.out.println("************3  :"+p.getVerification_code());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+	//	System.out.println("************4  :"+rs.getUser_token());
 		return rs;
 
 	}
@@ -301,12 +311,12 @@ public class IntAppuserController extends BaseController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
 			}
-			long time=(long) s.getAttribute("Verification_code_time") ;
-			if(time==0){
+			
+			if( s.getAttribute("Verification_code_time")==null){
 				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 				return rs;
 			}
-
+			long time=(long) s.getAttribute("Verification_code_time") ;
 			long sec = ((System.currentTimeMillis()) - time) / 1000;
 		    int temp=Integer.valueOf(p.getVerification_code());
 						if (temp==((int) s.getAttribute("Verification_code"))&& sec < Const.secEx){
@@ -369,16 +379,21 @@ public class IntAppuserController extends BaseController {
 	 */
 	@RequestMapping(value = "/verification/codes", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
-	public void get_verification_code(@RequestBody CommonRequst email, HttpServletResponse response) {
+	public Object get_verification_code(@RequestBody CommonRequst email, HttpServletResponse response) {
 		// String token = request.getHeader("Bearer");
 		String token = request.getHeader("Bearer");
 		UserEntity userEntity = getUserFromCache(token);
+	
 		if (userEntity == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
 
 		}
+		
+		System.out.println("this token is "+token);
 		int code = Tools.getRandomNum();
 		// String token = request.getHeader("Bearer");
+	
 		userEntity.setCode(code);
 		String verified_email = email.getEmail();
 		userEntity.setVerified_email(verified_email);
@@ -387,6 +402,7 @@ public class IntAppuserController extends BaseController {
 		emailService.setMaill(verified_email);
 		threadsPool.execute(emailService);
 		cacheService.updateCacheUse(userEntity, token);
+		return null;
 
 	}
 
@@ -402,7 +418,8 @@ public class IntAppuserController extends BaseController {
 		String token = request.getHeader("Bearer");
 
 		UserEntity userEntity = getUserFromCache(token);
-
+		
+		System.out.println("this token is "+token);
 		if (userEntity == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
@@ -547,6 +564,7 @@ public class IntAppuserController extends BaseController {
 
 	private boolean checkToken() {
 		String token = request.getHeader("Bearer");
+		System.out.println("thisdfdsfdf token is "+token);
 		boolean rs = false;
 		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
 			rs = true;
@@ -563,7 +581,10 @@ public class IntAppuserController extends BaseController {
 	private UserEntity getUserFromCache() {
 
 		String token = request.getHeader("Bearer");
-
+		System.out.println("thisdfdsfdf token is "+token);
+       if(StringUtils.isEmpty(token)){
+    	   return null;
+       }
 		return this.getUserFromCache(token);
 	}
 

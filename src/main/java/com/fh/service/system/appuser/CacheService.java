@@ -19,6 +19,31 @@ public class CacheService {
  * @param u
  * @param token
  */
+	
+	public boolean checkCodeByFrontEnd(int code){
+		Element o = CacheUtil.getCacheObject(code, "common");
+	//	UserEntity user = null;
+		
+		boolean rs=false;
+		if (o == null) {
+			
+			return rs;
+		}
+		//System.out.println("this is value in cache"+o.getObjectValue());
+		long codetime = (long) o.getObjectValue();
+		long sec = ((System.currentTimeMillis()) - codetime) / 1000;
+		if(sec<Const.secEx){
+			return true;
+		}
+		CacheUtil.removeCache(code, "common");
+		return rs;
+		
+		
+	}
+	
+	
+	
+	
 public void updateCacheUse(UserEntity u,String token) {
 	
 		CacheUtil.updateCache(token, u, "userCacheEntity");
