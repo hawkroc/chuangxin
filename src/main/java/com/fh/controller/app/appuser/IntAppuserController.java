@@ -128,8 +128,10 @@ public class IntAppuserController extends BaseController {
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
 			e.printStackTrace();
 		}
+		t.setUser_token("Bearer "+t.getUser_token());
 		return t;
 
 	}
@@ -145,7 +147,7 @@ public class IntAppuserController extends BaseController {
 
 	public Object logout(HttpServletResponse response) {
 		LoginResponse t = null;
-		String token = request.getHeader("Bearer");
+		String token =this.getToken();
 		if ((checkToken())) {
 
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -291,6 +293,7 @@ public class IntAppuserController extends BaseController {
 			e.printStackTrace();
 		}
 		// System.out.println("************4 :"+rs.getUser_token());
+		rs.setUser_token("Bearer "+rs.getUser_token());
 		return rs;
 
 	}
@@ -308,7 +311,7 @@ public class IntAppuserController extends BaseController {
 
 		SignUpResponse rs = new SignUpResponse();
 		HttpSession s = this.getRequest().getSession();
-		String token = request.getHeader("Bearer");
+	//	String token = this.getToken();
 		boolean istype = StringUtils.isEmpty(p.getType());
 		try {
 			UserEntity userEntity = appuserService.getUserEntityByPhone(p.getPhone());
@@ -359,7 +362,7 @@ public class IntAppuserController extends BaseController {
 		} else {
 			try {
 
-				String token = request.getHeader("Bearer");
+				String token = this.getToken();
 				appuserService.updatePushTacken(token, p);
 
 				// to be done
@@ -490,24 +493,26 @@ public class IntAppuserController extends BaseController {
 		UserEntity userEntity = getUserFromCache();
 		if (userEntity == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-		}
-
-		String photo_front = image_front.getOriginalFilename();
-		String photo_back = image_back.getOriginalFilename();
-		String photo_selfie = image_selfie.getOriginalFilename();
-		// System.out.println(vidoname);
-		if (!FileUtil.checkFileType(photo_front, Const.imageType)
-				|| !FileUtil.checkFileType(photo_back, Const.imageType)
-				|| !FileUtil.checkFileType(photo_selfie, Const.imageType)) {
-			// System.out.println("this is the img "+imgname);
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
+
 		}
+	System.out.println();
+		
+	//	System.out.println("photo_front  "+image_front.getOriginalFilename());
+		//System.out.println("photo_back  "+image_back.getOriginalFilename());
+	
+		// System.out.println(vidoname);
+//		if (!FileUtil.checkFileType(photo_front, Const.imageType)
+//				|| !FileUtil.checkFileType(photo_back, Const.imageType)
+//				|| !FileUtil.checkFileType(photo_selfie, Const.imageType)) {
+//			 System.out.println("this is the img name is error ");
+//			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+//			return null;
+//		}
 
 		// long l = new Date().getTime();
 
-		String imagename = userEntity.getPhone();
+		String imagename = userEntity.getPhone()+Const.imageType;
 
 		String Imagepath_photo_front = Const.profile+"photo_front/" + imagename;
 		
@@ -519,21 +524,17 @@ public class IntAppuserController extends BaseController {
 
 		// String i = "user_profile/" + imagename;
 
-		ObjectMapper mapper = new ObjectMapper();
+		//ObjectMapper mapper = new ObjectMapper();
 
 		File front = new File(Imagepath_photo_front);
 		File back = new File(Imagepath_photo_back);
 		File selfie = new File(Imagepath_photo_selfie);
 		// 通过CommonsMultipartFile的方法直接写文件（注意这个时候）
 		try {
-
 			image_front.transferTo(front);
 			image_back.transferTo(back);
 			image_selfie.transferTo(selfie);
-			
-			System.out.println("this is the image path " + front);
-			System.out.println("this is the image path " + back);
-			System.out.println("this is the image path " + selfie);
+		
 			appuserService.updateUserProfile(userEntity);
 
 			// AddBananaAction addBananaAction = mapper.readValue(json,
@@ -544,6 +545,7 @@ public class IntAppuserController extends BaseController {
 			// i, v);
 		} catch (Exception e) {
 			// TODO: handle exception
+			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
 			e.printStackTrace();
 		}
 
@@ -583,9 +585,23 @@ public class IntAppuserController extends BaseController {
 		return null;
 
 	}
-
+    /**
+     * 
+     * @return
+     */
+	private String getToken(){
+		String token = request.getHeader("Authorization");
+		String rs=null;
+		if(token!=null){
+		rs=token.replace("Bearer", "").trim();
+		}
+		return null;
+		
+	}
+	
+	
 	private boolean checkToken() {
-		String token = request.getHeader("Bearer");
+		String token = this.getToken();
 		System.out.println("thisdfdsfdf token is " + token);
 		boolean rs = false;
 		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
@@ -602,7 +618,7 @@ public class IntAppuserController extends BaseController {
 
 	private UserEntity getUserFromCache() {
 
-		String token = request.getHeader("Bearer");
+		String token = this.getToken();
 		System.out.println("thisdfdsfdf token is " + token);
 		if (StringUtils.isEmpty(token)) {
 			return null;
@@ -624,14 +640,13 @@ public class IntAppuserController extends BaseController {
 			HttpServletResponse response) {
 		AddBananaRes t = null;
 		// System.out.println("dsafsdaf" + json);
-		String token = request.getHeader("Bearer");
+		String token =this.getToken();
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
 		String vidoname = video.getOriginalFilename();
 		String imgname = image.getOriginalFilename();
-		System.out.println(vidoname);
 		if (!FileUtil.checkFileType(vidoname, Const.vidoType) || !FileUtil.checkFileType(imgname, Const.imageType)) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
@@ -756,7 +771,7 @@ public class IntAppuserController extends BaseController {
 		// * //5.4 Cancel the transaction
 		// *https://api.sosxsos.com/v1/transactions/#/cancellation
 		ResCommon result = new ResCommon();
-		String token = request.getHeader("Bearer");
+		String token = this.getToken();
 		UserEntity getby = getUserFromCache(token);
 
 		UserEntity shareby = null;

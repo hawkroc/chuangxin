@@ -326,7 +326,7 @@ public class AppuserService {
 	 * @throws Exception
 	 */
 	private String getUserTokenAndPutCache(String phone) throws Exception {
-		String token = MD5.md5((phone + System.currentTimeMillis()));
+		String token =MD5.md5((phone + System.currentTimeMillis()));
 		CacheUtil.cacheSave(token, phone, "userCache");
 		UserEntity use = (UserEntity) dao.findForObject("WebappuserMapper.queryUser", phone);
 		CacheUtil.cacheSave(token, use, "userCacheEntity");
