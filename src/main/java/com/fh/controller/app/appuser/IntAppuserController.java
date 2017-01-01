@@ -310,30 +310,32 @@ public class IntAppuserController extends BaseController {
 	public Object forgotPassWord(@RequestBody SignUpEntity p, HttpServletResponse response) {
 
 		SignUpResponse rs = new SignUpResponse();
-		HttpSession s = this.getRequest().getSession();
 	//	String token = this.getToken();
-		boolean istype = StringUtils.isEmpty(p.getType());
+		//boolean istype = StringUtils.isEmpty(p.getType());
 		try {
+			
+			
+
 			UserEntity userEntity = appuserService.getUserEntityByPhone(p.getPhone());
+
 			if (userEntity == null) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-
-			}
-
-			if (s.getAttribute("Verification_code_time") == null) {
-				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-				return rs;
-			}
-			long time = (long) s.getAttribute("Verification_code_time");
-			long sec = ((System.currentTimeMillis()) - time) / 1000;
-			int temp = Integer.valueOf(p.getVerification_code());
-			if (temp == ((int) s.getAttribute("Verification_code")) && sec < Const.secEx) {
-
-				rs.setUser_token(appuserService.updateAppUserPassword(p));
-				// response.setStatus(HttpServletResponse.SC_CREATED);
+				// System.out.println(userEntity.getPhone());
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				return null;
 
 			} else {
-				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				int temp = Integer.valueOf(p.getVerification_code());
+				if (cacheService.checkCodeByFrontEnd(temp)) {
+				//	rs.setUser_token(appuserService.saveAppUser(p));
+					rs.setUser_token(appuserService.updateAppUserPassword(p));
+					response.setStatus(HttpServletResponse.SC_OK);
+				} else {
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					return rs;
+				}
+			
+			
+			
 			}
 
 		} catch (Exception e) {
@@ -386,7 +388,7 @@ public class IntAppuserController extends BaseController {
 			"application/json;charset=UTF-8" })
 	public Object get_verification_code(@RequestBody CommonRequst email, HttpServletResponse response) {
 		// String token = request.getHeader("Bearer");
-		String token = request.getHeader("Bearer");
+		String token =this.getToken();
 		UserEntity userEntity = getUserFromCache(token);
 
 		if (userEntity == null) {
@@ -395,7 +397,7 @@ public class IntAppuserController extends BaseController {
 
 		}
 
-		System.out.println("this token is " + token);
+	
 		int code = Tools.getRandomNum();
 		// String token = request.getHeader("Bearer");
 
@@ -420,11 +422,12 @@ public class IntAppuserController extends BaseController {
 	@RequestMapping(value = "/verification/emails", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	public Object verify_email(@RequestBody CommonRequst code, HttpServletResponse response) {
-		String token = request.getHeader("Bearer");
-
+		String token = this.getToken();
+       
 		UserEntity userEntity = getUserFromCache(token);
+	
 
-		System.out.println("this token is " + token);
+		//System.out.println("this token is " + token);
 		if (userEntity == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
@@ -496,7 +499,7 @@ public class IntAppuserController extends BaseController {
 			return null;
 
 		}
-	System.out.println();
+
 		
 	//	System.out.println("photo_front  "+image_front.getOriginalFilename());
 		//System.out.println("photo_back  "+image_back.getOriginalFilename());
@@ -591,18 +594,21 @@ public class IntAppuserController extends BaseController {
      */
 	private String getToken(){
 		String token = request.getHeader("Authorization");
+
+	//
 		String rs=null;
 		if(token!=null){
 		rs=token.replace("Bearer", "").trim();
+		//System.out.println("234+"+rs);
 		}
-		return null;
+		return rs;
 		
 	}
 	
 	
 	private boolean checkToken() {
 		String token = this.getToken();
-		System.out.println("thisdfdsfdf token is " + token);
+		//System.out.println("thisdfdsfdf token is " + token);
 		boolean rs = false;
 		if (StringUtils.isEmpty(token) || appuserService.getPhoneByTokenFromCache(token) == null) {
 			rs = true;
@@ -619,7 +625,6 @@ public class IntAppuserController extends BaseController {
 	private UserEntity getUserFromCache() {
 
 		String token = this.getToken();
-		System.out.println("thisdfdsfdf token is " + token);
 		if (StringUtils.isEmpty(token)) {
 			return null;
 		}
@@ -639,7 +644,6 @@ public class IntAppuserController extends BaseController {
 			@RequestParam("image") CommonsMultipartFile image, @RequestParam("json") String json,
 			HttpServletResponse response) {
 		AddBananaRes t = null;
-		// System.out.println("dsafsdaf" + json);
 		String token =this.getToken();
 		if (checkToken()) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -660,8 +664,7 @@ public class IntAppuserController extends BaseController {
 
 		String Imagepath = Const.Imagepath + imagename;
 		String Videopath = Const.Videopath + videoname;
-		// String Imagepath = Const.testImagepath + imagename;
-		// String Videopath = Const.testVideopath + videoname;
+
 
 		String v = "video/" + videoname;
 		String i = "image/" + imagename;
@@ -706,7 +709,6 @@ public class IntAppuserController extends BaseController {
 			return null;
 		}
 		CheckThoughtRes t = null;
-		// System.out.println("topic: " + topic + " key_word: " + key_word);
 		try {
 			t = appuserService.checkBubbles(topic.trim(), key_word.trim());
 		} catch (Exception e) {
